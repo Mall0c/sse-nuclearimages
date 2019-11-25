@@ -1,143 +1,135 @@
 <!DOCTYPE html>
 <html>
-<style>
-* {
-  box-sizing: border-box;
-}
 
-body {
-  margin: auto;
-  width: 80%;
-  font-family: Arial;
-  background-color: #161618;
-}
+<head>
+    <link rel="stylesheet" href="css/style.css">
+    <script class="jsbin" src="https://ajax.googleapis.com/ajax/libs/jquery/1/jquery.min.js"></script>
+    <script src="js/main.js"></script>
 
-.header {
-  text-align: center;
-  color: white;
-  padding-left: 8px;
-  padding-right: 8px;
-}
+</head>
 
-.row {
-  display: -ms-flexbox; /* IE10 */
-  display: flex;
-  -ms-flex-wrap: wrap; /* IE10 */
-  flex-wrap: wrap;
-  padding: 0 4px;
-}
-
-/* Create four equal columns that sits next to each other */
-.column {
-  -ms-flex: 25%; /* IE10 */
-  flex: 25%;
-  max-width: 25%;
-  padding: 0 4px;
-}
-
-.column img {
-  margin-top: 8px;
-  vertical-align: middle;
-  width: 100%;
-}
-
-/* Responsive layout - makes a two column-layout instead of four columns */
-@media screen and (max-width: 800px) {
-  .column {
-    -ms-flex: 50%;
-    flex: 50%;
-    max-width: 50%;
-  }
-}
-
-/* Responsive layout - makes the two columns stack on top of each other instead of next to each other */
-@media screen and (max-width: 600px) {
-  .column {
-    -ms-flex: 100%;
-    flex: 100%;
-    max-width: 100%;
-  }
-}
-
-ul {
-  list-style-type: none;
-  margin: 0;
-  padding: 0;
-  overflow: hidden;
-  background-color: black;
-}
-
-li {
-  float: left;
-}
-
-.right {
-	float: right;
-}
-
-li a {
-  display: block;
-  color: white;
-  text-align: center;
-  padding: 14px 14px;
-  text-decoration: none;
-}
-
-li a:hover {
-  background-color: #111;
-}
-</style>
 <body>
 
-<!-- Header -->
-<div class="header">
-	<ul>
-		<li><a class="active" href="#home">Home</a></li>
-		<li><a href="#news">News</a></li>
-		<li><a href="#contact">Contact</a></li>
-		<li><a href="#about">About</a></li>
-		<li class="right"><a href="#about">T1</a></li>
-		<li class="right"><a href="#about">T2</a></li>
-		<li class="right"><a href="#about">T3</a></li>
-	</ul>
-</div>
+    <!-- The Modal -->
+    <div id="myModal" class="modal">
 
-<!-- Photo Grid -->
-<div class="row"> 
-  <div class="column">
-    <img src="img/rocks.jpg" style="width:100%">
-    <img src="img/falls2.jpg" style="width:100%">
-    <img src="img/paris.jpg" style="width:100%">
-    <img src="img/nature.jpg" style="width:100%">
-    <img src="img/mist.jpg" style="width:100%">
-    <img src="img/paris.jpg" style="width:100%">
-  </div>
-  <div class="column">
-    <img src="/img/underwater.jpg" style="width:100%">
-    <img src="/img/ocean.jpg" style="width:100%">
-    <img src="/img/wedding.jpg" style="width:100%">
-    <img src="/img/mountainskies.jpg" style="width:100%">
-    <img src="/img/rocks.jpg" style="width:100%">
-    <img src="/img/underwater.jpg" style="width:100%">
-  </div>  
-  <div class="column">
-    <img src="img/wedding.jpg" style="width:100%">
-    <img src="img/rocks.jpg" style="width:100%">
-    <img src="img/falls2.jpg" style="width:100%">
-    <img src="img/paris.jpg" style="width:100%">
-    <img src="img/nature.jpg" style="width:100%">
-    <img src="img/mist.jpg" style="width:100%">
-    <img src="img/paris.jpg" style="width:100%">
-  </div>
-  <div class="column">
-    <img src="img/underwater.jpg" style="width:100%">
-    <img src="img/ocean.jpg" style="width:100%">
-    <img src="img/wedding.jpg" style="width:100%">
-    <img src="img/mountainskies.jpg" style="width:100%">
-    <img src="img/rocks.jpg" style="width:100%">
-    <img src="img/underwater.jpg" style="width:100%">
-  </div>
-</div>
+        <!-- Modal content -->
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <div class="file-upload">
+                <button class="file-upload-btn" type="button" onclick="$('.file-upload-input').trigger( 'click' )">Add Image</button>
 
+                <div class="image-upload-wrap">
+                    <input class="file-upload-input" type='file' onchange="readURL(this);" accept="image/*" />
+                    <div class="drag-text">
+                        <h3>Drag and drop a file or select add Image</h3>
+                    </div>
+                </div>
+                <div class="file-upload-content">
+                    <img class="file-upload-image" src="#" alt="your image" />
+                    <div class="image-title-wrap">
+                        <button type="button" onclick="removeUpload()" class="remove-image">Remove <span class="image-title">Uploaded Image</span></button>
+                    </div>
+                    <div class="image-title-wrap">
+                        <button type="button" onclick="removeUpload()" class="send-image">Send <span class="image-title">Uploaded Image</span></button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- Header -->
+    <div class="header topnav" id="myTopnav">
+        <ul>
+            <li>
+                <a href=""><img style="width: 35px;height: 25px;" src="img/nuclear.png"></img>
+                </a>
+            </li>
+            <li><a href="#home">browse</a></li>
+            <li>
+                <input class="inputField" type="text" placeholder="Search...">
+            </li>
+            <li>
+                <a href=""><img src="img/searchIcon.svg" style="width: 20px;height: auto;filter: brightness(0) invert(1);"></img>
+                </a>
+            </li>
+            <li>
+                <a href="#" id="myBtn"><img src="img/upload.svg" style="width: 20px;height: auto;filter: brightness(0) invert(1);"></img>
+                </a>
+            </li>
+            <li class="right">
+                <a href="#about"><img src="img/cogwheel.svg" style="width: 20px;height: auto;filter: brightness(0) invert(1);"></img>
+                </a>
+            </li>
+            <li class="right"><a href="#about">gmpbigsun</a></li>
+        </ul>
+    </div>
+    </div>
+
+    <!-- Photo Grid -->
+    <div class="row">
+        <div class="column">
+            <img src="img/rocks.jpg" style="width:100%">
+            <img src="img/falls2.jpg" style="width:100%">
+            <img src="img/paris.jpg" style="width:100%">
+            <img src="img/nature.jpg" style="width:100%">
+            <img src="img/mist.jpg" style="width:100%">
+            <img src="img/paris.jpg" style="width:100%">
+        </div>
+        <div class="column">
+            <img src="/img/underwater.jpg" style="width:100%">
+            <img src="/img/ocean.jpg" style="width:100%">
+            <img src="/img/wedding.jpg" style="width:100%">
+            <img src="/img/mountainskies.jpg" style="width:100%">
+            <img src="/img/rocks.jpg" style="width:100%">
+            <img src="/img/underwater.jpg" style="width:100%">
+        </div>
+        <div class="column">
+            <img src="img/wedding.jpg" style="width:100%">
+            <img src="img/rocks.jpg" style="width:100%">
+            <img src="img/falls2.jpg" style="width:100%">
+            <img src="img/paris.jpg" style="width:100%">
+            <img src="img/nature.jpg" style="width:100%">
+            <img src="img/mist.jpg" style="width:100%">
+            <img src="img/paris.jpg" style="width:100%">
+        </div>
+        <div class="column">
+            <img src="img/underwater.jpg" style="width:100%">
+            <img src="img/ocean.jpg" style="width:100%">
+            <img src="img/wedding.jpg" style="width:100%">
+            <img src="img/mountainskies.jpg" style="width:100%">
+            <img src="img/rocks.jpg" style="width:100%">
+            <img src="img/underwater.jpg" style="width:100%">
+        </div>
+    </div>
+    <script>
+        // Get the modal
+        var modal = document.getElementById("myModal");
+
+        // Get the button that opens the modal
+        var btn = document.getElementById("myBtn");
+
+        // Get the <span> element that closes the modal
+        var span = document.getElementsByClassName("close")[0];
+
+        // When the user clicks the button, open the modal 
+        btn.onclick = function() {
+            modal.style.display = "block";
+        }
+
+        // When the user clicks on <span> (x), close the modal
+        span.onclick = function() {
+            modal.style.display = "none";
+        }
+
+        // When the user clicks anywhere outside of the modal, close it
+        window.onclick = function(event) {
+            if (event.target == modal) {
+                modal.style.display = "none";
+            }
+        }
+    </script>
 </body>
+
 </html>

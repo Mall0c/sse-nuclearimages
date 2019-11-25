@@ -3,12 +3,14 @@ const app = express();
 const path=require('path');
 const mysql = require('mysql');
 const fileUpload = require('express-fileupload');
+const verifyToken = require(verifyToken.js);
+const dbConfig = require('dbConfig');
 
 var con = mysql.createConnection({
-    host: "localhost",
-    user: "root",
-    password: "",
-    database: "nuclear_images"
+    host: dbConfig.host,
+    user: dbConfig.user,
+    password: dbConfig.password,
+    database: dbConfig.database
 });
 
 app.use(express.static(path.join(__dirname, "public")));

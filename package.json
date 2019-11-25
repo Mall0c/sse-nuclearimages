@@ -1,0 +1,22 @@
+{
+  "name": "sse",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Mall0c/sse-nuclearimages.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Mall0c/sse-nuclearimages/issues"
+  },
+  "homepage": "https://github.com/Mall0c/sse-nuclearimages#readme",
+  "dependencies": {
+    "express": "^4.17.1"
+  }
+}

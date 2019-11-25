@@ -3,8 +3,8 @@ const app = express();
 const path=require('path');
 const mysql = require('mysql');
 const fileUpload = require('express-fileupload');
-const verifyToken = require(verifyToken.js);
-const dbConfig = require('dbConfig');
+//const verifyToken = require(verifyToken.js);
+const dbConfig = require('./dbConfig');
 
 var con = mysql.createConnection({
     host: dbConfig.host,

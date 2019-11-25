@@ -105,3 +105,6 @@ dist
 
 # dbConfig.js
 dbConfig.js
+
+# Richard's static test files
+public/richard_test/

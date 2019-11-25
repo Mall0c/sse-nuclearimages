@@ -5,6 +5,11 @@ var fs = require('fs');
 
 app.use(express.static(path.join(__dirname, "public")));
 
+app.get('/', (req, res) => {
+    var paths = ['image_upload/a.jpg','image_upload/b.jpg','image_upload/c.jpg'];              
+    res.render('gallery', { imgs: paths, layout:false});
+});
+
 app.get('/:userId', (req, res) => {
     var test = req.params.userId;
     return res.send('Received a GET HTTP method with argument ' + test);

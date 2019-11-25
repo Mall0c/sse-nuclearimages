@@ -17,6 +17,8 @@
   },
   "homepage": "https://github.com/Mall0c/sse-nuclearimages#readme",
   "dependencies": {
-    "express": "^4.17.1"
+    "express": "^4.17.1",
+    "express-fileupload": "^1.1.6",
+    "mysql": "^2.17.1"
   }
 }

@@ -23,7 +23,7 @@ app.use(fileUpload());
 
 // Query the last <count> images with <offset> for.
 // Initial query would be with offset = 0.
-app.get('/frontpage/:count/:offset', (req, res) => {
+app.get('/frontpage/:count/:offset', verifyToken, (req, res) => {
     const limit = parseInt(req.params.count, 10);
     const offset = parseInt(req.params.offset, 10);
     con.query("SELECT * FROM images ORDER BY uploadTime DESC LIMIT ? OFFSET ?", [limit, offset], (err, result, fields) => {
@@ -34,7 +34,7 @@ app.get('/frontpage/:count/:offset', (req, res) => {
     });
 });
 
-app.post('/upload', (req, res) => {
+app.post('/upload', verifyToken, (req, res) => {
     var imageAsBase64 = base64_encode(req.files.foo)
     const timestamp = Date.now();
     con.query('INSERT INTO images (image, uploadTime, uploader) VALUES (?, ?, ?)', [imageAsBase64, timestamp, 1], (err, result, fields) => {

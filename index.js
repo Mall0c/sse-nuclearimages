@@ -35,7 +35,7 @@ app.get('/frontpage/:count/:offset', verifyToken, (req, res) => {
 });
 
 app.post('/upload', verifyToken, (req, res) => {
-    var imageAsBase64 = base64_encode(req.files.foo)
+    var imageAsBase64 = base64_encode(req.files.file)
     const timestamp = Date.now();
     con.query('INSERT INTO images (image, uploadTime, uploader) VALUES (?, ?, ?)', [imageAsBase64, timestamp, 1], (err, result, fields) => {
         if(err) {

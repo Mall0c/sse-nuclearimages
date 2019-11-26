@@ -7,7 +7,13 @@
      font-family: Arial;
      background-color: #161618;
 }
+ .progress {
+     display: none;
+}
  .header {
+     position: fixed;
+     top: 0;
+     width: 80%;
      text-align: center;
      color: white;
      padding-left: 8px;
@@ -20,6 +26,7 @@
      -ms-flex-wrap: wrap;
     /* IE10 */
      flex-wrap: wrap;
+     margin-top: 50px;
      padding: 0 4px;
 }
 /* Create four equal columns that sits next to each other */
@@ -246,3 +253,4 @@
      border: 0;
      transition: all .2s ease;
 }
+ 

@@ -10,6 +10,7 @@ const bodyParser = require('body-parser');
 const jwt = require('jsonwebtoken');
 const fs = require('fs');
 const crypto = require('crypto');
+const jimp = require('jimp');
 
 var con = mysql.createConnection({
     host: dbConfig.host,
@@ -28,18 +29,34 @@ app.use(fileUpload());
 app.get('/frontpage/:count/:offset', verifyToken, (req, res) => {
     const limit = parseInt(req.params.count, 10);
     const offset = parseInt(req.params.offset, 10);
-    con.query("SELECT image FROM images ORDER BY uploadTime DESC LIMIT ? OFFSET ?", [limit, offset], (err, result, fields) => {
+    con.query("SELECT id, image FROM images ORDER BY uploadTime DESC LIMIT ? OFFSET ?", [limit, offset], (err, result, fields) => {
         if(err) {
             console.log(err);
+            throw err;
         }
         var response = [];
         result.forEach(element => {
-            var imageData = fs.readFileSync('image_upload/' + element.image);
+            var imageData = fs.readFileSync('image_upload/' + "thumbnail_" + element.image);
             // Split file name to get the file's suffix (e.g. jpg or png).
             var splitFileName = element.image.split(".");
-            response.push(splitFileName[splitFileName.length - 1] + ":" + base64_encode(imageData))
+            response.push(element.id + ":" + splitFileName[1] + ":" + base64_encode(imageData))
         });
         res.status(200).send(response);
+    });
+});
+
+app.get('/frontpage/:imageId', verifyToken, (req, res) => {
+    const imageId = parseInt(req.params.imageId, 10);
+    con.query("SELECT image FROM images WHERE id = ?", imageId, (err, result, fields) => {
+        if(err) {
+            console.log(err);
+            throw err;
+        }
+        console.log(result);
+        var imageData = fs.readFileSync('image_upload/' + result[0].image);
+        // Split file name to get the file's suffix (e.g. jpg or png).
+        var splitFileName = result[0].image.split(".");
+        return res.status(200).send(splitFileName[1] + ":" + base64_encode(imageData));
     });
 });
 
@@ -58,8 +75,14 @@ app.post('/upload', verifyToken, (req, res) => {
             if(err) {
                 console.log(err);
             }
+            jimp.read('image_upload/' + imageName, (err, img) => {
+                if(err) throw err;
+                img
+                    .scale(0.5)
+                    .write('image_upload/' + "thumbnail_" + imageName);
+                return res.status(200).send('File upload was successful.');
+            });
         });
-        return res.status(200).send('File upload was successful.');
     });
 });
 

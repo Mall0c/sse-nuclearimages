@@ -110,4 +110,4 @@ dbConfig.js
 public/richard_test/
 
 # image_upload
-image_upload/
+image_upload/*

@@ -46,10 +46,10 @@ app.get('/frontpage/:count/:offset', verifyToken, (req, res) => {
 
 app.post('/upload', verifyToken, (req, res) => {
     // Split file name to get the file's suffix (e.g. jpg or png).
-    var splitFileName = req.files.foo.name.split(".");
+    var splitFileName = req.files.file.name.split(".");
     // Image's name is a random string concatenated with the file ending.
     var imageName = crypto.randomBytes(16).toString('hex') + "." + splitFileName[splitFileName.length - 1];
-    fs.writeFile('image_upload/' + imageName, req.files.foo.data, (err) => {
+    fs.writeFile('image_upload/' + imageName, req.files.file.data, (err) => {
         if(err) {
             console.log(err);
             throw err;

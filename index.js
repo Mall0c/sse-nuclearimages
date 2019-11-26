@@ -8,6 +8,8 @@ const dbConfig = require('./dbConfig');
 const bcrypt = require('bcrypt');
 const bodyParser = require('body-parser');
 const jwt = require('jsonwebtoken');
+const fs = require('fs');
+const crypto = require('crypto');
 
 var con = mysql.createConnection({
     host: dbConfig.host,
@@ -26,23 +28,39 @@ app.use(fileUpload());
 app.get('/frontpage/:count/:offset', verifyToken, (req, res) => {
     const limit = parseInt(req.params.count, 10);
     const offset = parseInt(req.params.offset, 10);
-    con.query("SELECT * FROM images ORDER BY uploadTime DESC LIMIT ? OFFSET ?", [limit, offset], (err, result, fields) => {
+    con.query("SELECT image FROM images ORDER BY uploadTime DESC LIMIT ? OFFSET ?", [limit, offset], (err, result, fields) => {
         if(err) {
             console.log(err);
         }
-        res.send(result);
+        var response = [];
+        result.forEach(element => {
+            var imageData = fs.readFileSync('image_upload/' + element.image);
+            // Split file name to get the file's suffix (e.g. jpg or png).
+            var splitFileName = element.image.split(".");
+            response.push(splitFileName[splitFileName.length - 1] + ":" + base64_encode(imageData))
+        });
+        res.status(200).send(response);
     });
 });
 
 app.post('/upload', verifyToken, (req, res) => {
-    var imageAsBase64 = base64_encode(req.files.file)
-    const timestamp = Date.now();
-    con.query('INSERT INTO images (image, uploadTime, uploader) VALUES (?, ?, ?)', [imageAsBase64, timestamp, 1], (err, result, fields) => {
+    // Split file name to get the file's suffix (e.g. jpg or png).
+    var splitFileName = req.files.file.name.split(".");
+    // Image's name is a random string concatenated with the file ending.
+    var imageName = crypto.randomBytes(16).toString('hex') + "." + splitFileName[splitFileName.length - 1];
+    fs.writeFile('image_upload/' + imageName, req.files.file.data, (err) => {
         if(err) {
             console.log(err);
+            throw err;
         }
+        const timestamp = Date.now();
+        con.query('INSERT INTO images (image, uploadTime, uploader) VALUES (?, ?, ?)', [imageName, timestamp, 1], (err, result, fields) => {
+            if(err) {
+                console.log(err);
+            }
+        });
+        return res.status(200).send('File upload was successful.');
     });
-    return res.status(200).send('File upload was successful.');
 });
 
 app.post('/login', (req, res) => {
@@ -87,6 +105,6 @@ app.listen(3000, () =>
 );
 
 // function to encode file data to base64 encoded string
-function base64_encode(file) {
-    return Buffer.from(file.data).toString('base64');
+function base64_encode(data) {
+    return Buffer.from(data).toString('base64');
 }

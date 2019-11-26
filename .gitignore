@@ -108,3 +108,6 @@ dbConfig.js
 
 # Richard's static test files
 public/richard_test/
+
+# image_upload
+image_upload/

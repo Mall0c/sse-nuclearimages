@@ -14,7 +14,8 @@ function getImages(count, offset) {
                 if (currentColumn == columnsMax)
                     currentColumn = 0;
                 var elem = document.createElement("img");
-                var base64String = data[i]["image"].split(":");
+                console.log(data);
+                var base64String = data[i].split(":");
                 elem.src = 'data:image/'+base64String[0] +';base64,' + base64String[1];
                 document.getElementById("column" + (currentColumn + 1)).appendChild(elem);
                 currentColumn++;

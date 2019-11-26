@@ -12,16 +12,18 @@
 <body>
 
     <!-- The Modal -->
-    <div id="myModal" class="modal">
+    <div id="uploadModal" class="modal">
 
         <!-- Modal content -->
         <div class="modal-content">
-            <span class="close">&times;</span>
+            <span class="closeUpload">&times;</span>
             <div class="file-upload">
                 <form id='myForm' method="post">
-                    <button class="file-upload-btn" type="button" onclick="$('.file-upload-input').trigger( 'click' )">Add Image</button>
+                    <button class="file-upload-btn" type="button"
+                        onclick="$('.file-upload-input').trigger( 'click' )">Add Image</button>
                     <div class="image-upload-wrap">
-                        <input class="file-upload-input" name="file" type='file' onchange="readURL(this);" accept="image/*" />
+                        <input class="file-upload-input" name="file" type='file' onchange="readURL(this);"
+                            accept="image/*" />
                         <div class="drag-text">
                             <h3>Drag and drop a file or select add Image</h3>
                         </div>
@@ -29,7 +31,8 @@
                     <div class="file-upload-content">
                         <img class="file-upload-image" src="#" alt="your image" />
                         <div class="image-title-wrap">
-                            <button type="button" onclick="removeUpload()" class="remove-image">Remove <span class="image-title">Uploaded Image</span></button>
+                            <button type="button" onclick="removeUpload()" class="remove-image">Remove <span
+                                    class="image-title">Uploaded Image</span></button>
                         </div>
                         <div class="image-title-wrap">
                             Send <span class="image-title">Uploaded Image</span> </br>
@@ -40,6 +43,42 @@
                     </div>
                 </form>
             </div>
+        </div>
+
+    </div>
+
+    <!-- The Modal -->
+    <div id="loginRegisterModal" class="modal">
+
+        <!-- Modal content -->
+        <div class="modal-content">
+            <span class="closeLogin">&times;</span>
+            <form action="/action_page.php">
+                <div class="container">
+                    <h1>Register</h1>
+                    <p>Please fill in this form to create an account.</p>
+                    <hr>
+
+                    <label for="email"><b>Email</b></label>
+                    <input class="loginRegisterField" type="text" placeholder="Enter Email" name="email" required>
+
+                    <label for="psw"><b>Password</b></label>
+                    <input class="loginRegisterField" type="password" placeholder="Enter Password" name="psw" required>
+
+                    <label for="psw-repeat"><b>Repeat Password</b></label>
+                    <input class="loginRegisterField" type="password" placeholder="Repeat Password" name="psw-repeat"
+                        required>
+                    <hr>
+                    <p>By creating an account you agree to our <a href="#">Terms & Privacy</a>.</p>
+
+                    <button type="submit" class="registerbtn">Register</button>
+                </div>
+
+                <div class="container signin">
+                    <p>Already have an account? <a href="#">Sign in</a>.</p>
+                </div>
+            </form>
+
         </div>
 
     </div>
@@ -56,21 +95,24 @@
                 <input class="inputField" type="text" placeholder="Search...">
             </li>
             <li>
-                <a href=""><img src="img/searchIcon.svg" style="width: 20px;height: auto;filter: brightness(0) invert(1);"></img>
+                <a href=""><img src="img/searchIcon.svg"
+                        style="width: 20px;height: auto;filter: brightness(0) invert(1);"></img>
                 </a>
             </li>
             <li>
-                <a href="#" id="myBtn"><img src="img/upload.svg" style="width: 20px;height: auto;filter: brightness(0) invert(1);"></img>
+                <a href="#" id="uploadButton"><img src="img/upload.svg"
+                        style="width: 20px;height: auto;filter: brightness(0) invert(1);"></img>
                 </a>
             </li>
             <li class="right">
-                <a href="#about"><img src="img/cogwheel.svg" style="width: 20px;height: auto;filter: brightness(0) invert(1);"></img>
+                <a href="#about"><img src="img/cogwheel.svg"
+                        style="width: 20px;height: auto;filter: brightness(0) invert(1);"></img>
                 </a>
             </li>
-            <li class="right"><a href="#about">gmpbigsun</a></li>
+            <li id="loginButton" class="right"><a href="#signin">sign in</a></li>
         </ul>
     </div>
-    </div>
+
 
     <!-- Photo Grid -->
     <div class="row">
@@ -85,29 +127,42 @@
     </div>
     <script>
         // Get the modal
-        var modal = document.getElementById("myModal");
+        var uploadModal = document.getElementById("uploadModal");
+        var loginRegisterModal = document.getElementById("loginRegisterModal");
 
         // Get the button that opens the modal
-        var btn = document.getElementById("myBtn");
+        var uploadBtn = document.getElementById("uploadButton");
+        var loginBtn = document.getElementById("loginButton");
 
         // Get the <span> element that closes the modal
-        var span = document.getElementsByClassName("close")[0];
+        var uploadSpan = document.getElementsByClassName("closeUpload")[0];
+        var loginSpan = document.getElementsByClassName("closeLogin")[0];
 
         // When the user clicks the button, open the modal 
-        btn.onclick = function() {
-            modal.style.display = "block";
+        uploadBtn.onclick = function () {
+            uploadModal.style.display = "block";
+        }
+
+        loginBtn.onclick = function () {
+            loginRegisterModal.style.display = "block";
         }
 
         // When the user clicks on <span> (x), close the modal
-        span.onclick = function() {
-            modal.style.display = "none";
+        uploadSpan.onclick = function () {
+            uploadModal.style.display = "none";
+        }
+
+        loginSpan.onclick = function () {
+            loginRegisterModal.style.display = "none";
         }
 
         // When the user clicks anywhere outside of the modal, close it
-        window.onclick = function(event) {
-            if (event.target == modal) {
-                modal.style.display = "none";
-            }
+        window.onclick = function (event) {
+            if (event.target == uploadModal)
+                uploadModal.style.display = "none";
+            else if (event.target == loginRegisterModal)
+                loginRegisterModal.style.display = "none";
+
         }
     </script>
 </body>

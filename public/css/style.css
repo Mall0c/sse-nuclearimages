@@ -4,6 +4,7 @@
 body {
   margin: auto;
   width: 80%;
+  overflow-x: hidden;
   font-family: Arial;
   background-color: #161618;
 }
@@ -272,7 +273,6 @@ li a:hover {
 /* Add padding to containers */
 .container {
   padding: 16px;
-  width: 50%;
   background-color: white;
 }
 
@@ -323,3 +323,8 @@ a {
   background-color: #f1f1f1;
   text-align: center;
 }
+
+.vl {
+    border-left: 2px solid grey;
+    height: 500px;
+  }

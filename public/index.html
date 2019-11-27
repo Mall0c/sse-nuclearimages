@@ -13,15 +13,14 @@
 <body>
 
     <!-- The Modal -->
-    <div id="imageViewModal" class="modal">
-            <!-- Modal content -->
-            <div class="modal-content">
-                <span class="closeImageView">&times;</span>
-                <img id="imageForModal" style="width: 100%; height: 100%;"></div>
-            </div>
-
+    <div id="imageViewModal" class="image-modal">
+        <!-- Modal content -->
+        <div class="image-modal-content">
+            <span class="closeImageView">&times;</span>
+            <img id="imageForModal" style="width: 100%; height: 100%;">
         </div>
-    
+    </div>
+
 
     <!-- The Modal -->
     <div id="uploadModal" class="modal">
@@ -73,7 +72,8 @@
                         <hr>
 
                         <label for="username"><b>Username</b></label>
-                        <input class="loginRegisterField" type="text" placeholder="Enter Username" name="username" required>
+                        <input class="loginRegisterField" type="text" placeholder="Enter Username" name="username"
+                            required>
 
                         <label for="psw"><b>Password</b></label>
                         <input class="loginRegisterField" type="password" placeholder="Enter Password" name="password"
@@ -95,14 +95,15 @@
                         <hr>
 
                         <label for="username"><b>Username</b></label>
-                        <input class="loginRegisterField" type="text" placeholder="Enter Username" name="username" required>
+                        <input class="loginRegisterField" type="text" placeholder="Enter Username" name="username"
+                            required>
 
                         <label for="psw"><b>Password</b></label>
                         <input class="loginRegisterField" type="password" placeholder="Enter Password" name="password"
-                            required>                            
-                            <div class="forgotPwContainer">
-                                Forgot <a href="#">password?</a>
-                              </div>
+                            required>
+                        <div class="forgotPwContainer">
+                            Forgot <a href="#">password?</a>
+                        </div>
                         <hr>
                         <button type="submit" class="registerbtn">Login</button>
                     </div>

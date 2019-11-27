@@ -273,7 +273,13 @@ li a:hover {
 /* Add padding to containers */
 .container {
   padding: 16px;
-  background-color: white;
+  background-color: white;  
+  width: 50%;
+}
+
+.forgotPwContainer {
+  font-size: 12px;
+  width: 100%;
 }
 
 /* Full-width input fields */

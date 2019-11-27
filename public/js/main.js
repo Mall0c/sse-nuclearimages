@@ -16,7 +16,7 @@ function getImages(count, offset) {
                 var elem = document.createElement("img");
                 console.log(data);
                 var base64String = data[i].split(":");
-                elem.src = 'data:image/'+base64String[0] +';base64,' + base64String[1];
+                elem.src = 'data:image/'+base64String[1] +';base64,' + base64String[2];
                 document.getElementById("column" + (currentColumn + 1)).appendChild(elem);
                 currentColumn++;
             }

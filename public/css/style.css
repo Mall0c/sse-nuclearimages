@@ -136,6 +136,19 @@ li a:hover {
   cursor: pointer;
 }
 /* The Close Button */
+.closeImageView {
+  color: #aaaaaa;
+  float: right;
+  font-size: 28px;
+  font-weight: bold;
+}
+.closeImageView:hover,
+.closeImageView:focus {
+  color: #000;
+  text-decoration: none;
+  cursor: pointer;
+}
+/* The Close Button */
 .closeLogin {
   color: #aaaaaa;
   float: right;

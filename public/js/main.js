@@ -1,87 +1,180 @@
 var offset = 0;
+var columnsMax = 4;
+
+function sendToken(xhr) {
+  xhr.setRequestHeader("x-access-token", document.cookie);
+}
 
 function getImages(count, offset) {
-    var xhr = new XMLHttpRequest();
-    const columnsMax = 4;
-    xhr.open("GET", "/frontpage/" + count + "/" + offset);
-    xhr.responseType = "json";
-    xhr.onload = function() {
-        var data = xhr.response;
-        // if operation is completed and successful handle highscore data client side
-        if (data !== null && xhr.readyState === 4 && xhr.status === 200) {
-            var currentColumn = 0;
-            for (let i = 0; i < data.length; i++) {
-                if (currentColumn == columnsMax)
-                    currentColumn = 0;
-                var elem = document.createElement("img");
-                console.log(data);
-                var base64String = data[i].split(":");
-                elem.src = 'data:image/'+base64String[1] +';base64,' + base64String[2];
-                document.getElementById("column" + (currentColumn + 1)).appendChild(elem);
-                currentColumn++;
-            }
+  $.ajax({
+    url: "/frontpage/" + count + "/" + offset,
+    dataType: "json", // what to expect back from the PHP script, if anything
+    cache: false,
+    contentType: false,
+    processData: false,
+    type: "GET",
+    beforeSend: sendToken,
+    success: function(data, textStatus, jQxhr) {
+      //console.log(data);
+      if (data !== null) {
+        var currentColumn = 0;
+        for (let i = 0; i < data.length; i++) {
+          if (currentColumn == columnsMax) currentColumn = 0;
+          var elem = document.createElement("img");
+          var base64String = data[i].split(":");
+          elem.style = "cursor: pointer;";
+          elem.imgID = base64String[0];
+          elem.onclick = function() {
+            $.ajax({
+              url: "/frontpage/"+this.imgID, //location of where you want to send image
+              beforeSend: sendToken,
+              cache: false,
+              contentType: false,
+              processData: false,
+              type: "GET",
+              success: function(data, textStatus, jQxhr) {
+                var base64String = data.split(":");
+                var elem = document.getElementById("imageForModal");
+                elem.src =
+                    "data:image/" + base64String[0] + ";base64," + base64String[1];
+                imageViewModal.style.display = "block";
+              },
+              error: function(jqXhr, textStatus, errorThrown) {
+                console.log(errorThrown);
+              }
+            });
+          };
+          elem.src =
+            "data:image/" + base64String[1] + ";base64," + base64String[2];
+          document
+            .getElementById("column" + (currentColumn + 1))
+            .appendChild(elem);
+          currentColumn++;
         }
-    };
-    xhr.send();
+      }
+    },
+    error: function(jqXhr, textStatus, errorThrown) {
+      console.log(errorThrown);
+    }
+  });
 }
 
 getImages(20, 0);
 
 window.onscroll = function(ev) {
-    if ((window.innerHeight + window.scrollY) >= document.body.offsetHeight) {
-        offset = offset + 20;
-        getImages(20, offset);
-    }
+  if (window.innerHeight + window.scrollY >= document.body.offsetHeight) {
+    offset = offset + 20;
+    getImages(20, offset);
+  }
 };
 
 $(document).ready(function() {
-    $("#myForm").submit(function(e) {
-        //Stops submit button from refreshing page.
-        e.preventDefault();
+  $("#uploadFile").submit(function(e) {
+    //Stops submit button from refreshing page.
+    e.preventDefault();
 
-        var form_data = new FormData(this);
+    var form_data = new FormData(this);
 
-        $.ajax({
-            url: '/upload', //location of where you want to send image
-            dataType: 'json', // what to expect back from the PHP script, if anything
-            cache: false,
-            contentType: false,
-            processData: false,
-            data: form_data,
-            type: 'post',
-        });
+    $.ajax({
+      url: "/upload", //location of where you want to send image
+      dataType: "json",
+      beforeSend: sendToken,
+      cache: false,
+      contentType: false,
+      processData: false,
+      data: form_data,
+      type: "post",
+      success: function(data, textStatus, jQxhr) {
+        console.log(data);
+      },
+      error: function(jqXhr, textStatus, errorThrown) {
+        console.log(errorThrown);
+      }
     });
+  });
+});
+
+$(document).ready(function() {
+  $("#login").submit(function(e) {
+    //Stops submit button from refreshing page.
+    e.preventDefault();
+
+    var form_data = new FormData(this);
+
+    $.ajax({
+      url: "/login", //location of where you want to send image
+      dataType: "json",
+      beforeSend: sendToken,
+      cache: false,
+      contentType: false,
+      processData: false,
+      data: form_data,
+      type: "post",
+      success: function(data, textStatus, jQxhr) {
+        console.log(data);
+        if (data["auth"] == true) document.cookie = data["token"];
+      },
+      error: function(jqXhr, textStatus, errorThrown) {
+        console.log(errorThrown);
+      }
+    });
+  });
+});
+
+$(document).ready(function() {
+  $("#register").submit(function(e) {
+    //Stops submit button from refreshing page.
+    e.preventDefault();
+
+    var form_data = new FormData(this);
+
+    $.ajax({
+      url: "/register", //location of where you want to send image
+      dataType: "json", // what to expect back from the PHP script, if anything
+      cache: false,
+      contentType: false,
+      beforeSend: sendToken,
+      processData: false,
+      data: form_data,
+      type: "post",
+      success: function(data, textStatus, jQxhr) {
+        console.log(data);
+        if (data["auth"] == true) document.cookie = data["token"];
+      },
+      error: function(jqXhr, textStatus, errorThrown) {
+        console.log(errorThrown);
+      }
+    });
+  });
 });
 
 function readURL(input) {
-    if (input.files && input.files[0]) {
+  if (input.files && input.files[0]) {
+    var reader = new FileReader();
 
-        var reader = new FileReader();
+    reader.onload = function(e) {
+      $(".image-upload-wrap").hide();
 
-        reader.onload = function(e) {
-            $('.image-upload-wrap').hide();
+      $(".file-upload-image").attr("src", e.target.result);
+      $(".file-upload-content").show();
 
-            $('.file-upload-image').attr('src', e.target.result);
-            $('.file-upload-content').show();
+      $(".image-title").html(input.files[0].name);
+    };
 
-            $('.image-title').html(input.files[0].name);
-        };
-
-        reader.readAsDataURL(input.files[0]);
-
-    } else {
-        removeUpload();
-    }
+    reader.readAsDataURL(input.files[0]);
+  } else {
+    removeUpload();
+  }
 }
 
 function removeUpload() {
-    $('.file-upload-input').replaceWith($('.file-upload-input').clone());
-    $('.file-upload-content').hide();
-    $('.image-upload-wrap').show();
+  $(".file-upload-input").replaceWith($(".file-upload-input").clone());
+  $(".file-upload-content").hide();
+  $(".image-upload-wrap").show();
 }
-$('.image-upload-wrap').bind('dragover', function() {
-    $('.image-upload-wrap').addClass('image-dropping');
+$(".image-upload-wrap").bind("dragover", function() {
+  $(".image-upload-wrap").addClass("image-dropping");
 });
-$('.image-upload-wrap').bind('dragleave', function() {
-    $('.image-upload-wrap').removeClass('image-dropping');
+$(".image-upload-wrap").bind("dragleave", function() {
+  $(".image-upload-wrap").removeClass("image-dropping");
 });

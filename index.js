@@ -24,7 +24,7 @@ app.use(bodyParser.urlencoded({ extended: false }));
 app.use(express.static(path.join(__dirname, "public")));
 app.use(fileUpload());
 
-// Query the last <count> images with <offset> for.
+// Return the last <count> images' thumbnails with <offset>.
 // Initial query would be with offset = 0.
 app.get('/frontpage/:count/:offset', verifyToken, (req, res) => {
     const limit = parseInt(req.params.count, 10);
@@ -45,6 +45,7 @@ app.get('/frontpage/:count/:offset', verifyToken, (req, res) => {
     });
 });
 
+// Returns an image by ID.
 app.get('/frontpage/:imageId', verifyToken, (req, res) => {
     const imageId = parseInt(req.params.imageId, 10);
     con.query("SELECT image FROM images WHERE id = ?", imageId, (err, result, fields) => {
@@ -101,14 +102,14 @@ app.post('/login', (req, res) => {
                 });
                 return res.status(200).send({ auth: true, token: token });
             } else {
-                return res.status(403).send({ auth: false });
+                return res.status(403).send({ auth: false, token: null });
             }
         });
     });
 });
 
 // Why bcrypt: https://auth0.com/blog/hashing-in-action-understanding-bcrypt/
-// Unter anderem: random salt durch library
+// Unter anderem: random salt durch library, der kryptographisch sicher ist.
 app.post('/register', (req, res) => {
     const username = req.body.username;
     const plainTextPassword = req.body.password;

@@ -32,7 +32,7 @@ exports.register = (req, res, next) => {
     bcrypt
         .genSalt(10)
         .then(salt => { return bcrypt.hash(plainTextPassword, salt); })
-        .then(hash => { mysql_query('INSERT INTO user (username, password) VALUES (?, ?)', [username, hash]) })
+        .then(hash => { mysql_query('INSERT INTO user (username, password, email) VALUES (?, ?, ?)', [username, hash]) })
         .catch(err => console.error(err.message))
     var token = jwt.sign({ username: username }, dbConfig.secret, {
         expiresIn: 86400*31 // expires in 31 days

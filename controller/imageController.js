@@ -65,6 +65,27 @@ exports.upload = (req, res, next) => {
     });
 };
 
+// Should return all images, that contain at least of the provided tags.
+exports.searchForTags = (req, res, next) => {
+    const limit = parseInt(req.params.count, 10);
+    const offset = parseInt(req.params.offset, 10);
+    const tag = req.params.tag;
+    mysql_query('SELECT id, image FROM images WHERE tags LIKE \'%' + req.params.tag + '%\' ORDER BY uploadTime DESC LIMIT ? OFFSET ?', [limit, offset], (err, result, fields) => {
+        if(err) {
+            console.log(err);
+            throw err;
+        }
+        var response = [];
+        result.forEach(element => {
+            var imageData = fs.readFileSync('./image_upload/' + "thumbnail_" + element.image);
+            // Split file name to get the file's suffix (e.g. jpg or png).
+            var splitFileName = element.image.split(".");
+            response.push(element.id + ":" + splitFileName[1] + ":" + base64_encode(imageData))
+        });
+        res.status(200).send(response);
+    });
+};
+
 // function to encode file data to base64 encoded string
 function base64_encode(data) {
     return Buffer.from(data).toString('base64');

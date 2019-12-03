@@ -25,3 +25,21 @@ exports.writeComment = (req, res, next) => {
         })
     return res.send("xd");
 };
+
+exports.editComment = (req, res, next) => {
+    const commentId = parseInt(req.params.commentId)
+    mysql_query('SELECT id, autor FROM comments WHERE id = ?', [commentId], (err1, result1, fields1) => {
+        if(err1) throw err1;
+        if(result1.length === 0) {
+            return res.status(404).send("Comment does not exist.");
+        }
+        if(result1[0].autor !== req.id) {
+            return res.status(403).send("No permission to edit comment.");
+        }
+
+        mysql_query('UPDATE comments SET text = ? WHERE id = ?', [req.body.text, commentId], (err2, result2, fields2) => {
+            if(err2) throw err2;
+            return res.status(200).send("Changed text");
+        });
+    })
+}

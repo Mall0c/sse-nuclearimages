@@ -19,4 +19,21 @@ router.get('/comments/:imageId', commentController.allComments);
 
 router.post('/comments/:imageId', verifyToken, commentController.writeComment);
 
+router.put('/comments/:commentId', verifyToken, commentController.editComment);
+
+router.get('/search/:count/:offset/:tag', imageController.searchForTags);
+
+// TODO:
+router.get('/logout');
+
+router.delete('/comments/:commentId');
+
+router.put('/upvoteComment/:commentId');
+
+router.put('/upvoteImage/:imageId');
+
+router.delete('/user');
+
+router.put('/user/:properties');
+
 module.exports = router;

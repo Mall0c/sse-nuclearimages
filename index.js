@@ -124,6 +124,32 @@ app.post('/register', (req, res) => {
     return res.status(200).send({ auth: true, token: token });
 });
 
+app.get('/comments/:imageId', (req, res) => {
+    con.query('SELECT comments.text, comments.bewertung, user.username FROM user, comments WHERE user.id = comments.autor AND comments.image = ? ORDER BY comments.bewertung DESC', 
+        [req.params.imageId], (err, result, fields) => {
+            if(err) {
+                console.log(err);
+                throw err;
+            }
+            return res.status(200).send(result);
+        });
+});
+
+app.post('/comments/:imageId', verifyToken, (req, res) => {
+    if(req.username === undefined) {
+        return res.status(403).send("Not logged in");
+    }
+    con.query('INSERT INTO comments (text, bewertung, autor, image) VALUES (?, ?, ?, ?)',
+        [req.body.comment, 0, req.id, parseInt(req.params.imageId)], (err, result, fields) => {
+            if(err) {
+                console.log(err);
+                throw err;
+            }
+            return res.status(200).send();
+        })
+    return res.send("xd");
+});
+
 app.listen(3000, () =>
     console.log(`Example app listening on port 3000!`),
 );

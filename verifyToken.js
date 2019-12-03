@@ -17,18 +17,18 @@ function verifyToken(req, res, next) {
                 return res.status(403).send({ auth: false, message: 'Failed to authenticate token.' });
             // If everything good, save to request for use in other routes.
             req.username = decoded.username;
-            mysql_query('SELECT id FROM user WHERE username = ?', [req.username], (err, result, fields) => {
+            mysql_query('SELECT ID FROM user WHERE Username = ?', [req.username], (err, result, fields) => {
                 if (err) {
                     console.log(err);
                     throw err;
                 }
-                req.id = result[0].id;
+                req.id = result[0].ID;
                 next();
             });
         });
     } else {
         // No token provided. Do nothing.
-        console.log("token missing");
+        console.log("jwt token missing (verifyToken.js)");
         next();
     }
 }

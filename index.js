@@ -14,8 +14,3 @@ app.use('/', routes);
 app.listen(3000, () =>
     console.log(`Example app listening on port 3000!`),
 );
-
-// function to encode file data to base64 encoded string
-function base64_encode(data) {
-    return Buffer.from(data).toString('base64');
-}

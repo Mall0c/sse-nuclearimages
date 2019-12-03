@@ -8,17 +8,17 @@ const crypto = require('crypto');
 exports.frontpage = (req, res, next) => {
     const limit = parseInt(req.params.count, 10);
     const offset = parseInt(req.params.offset, 10);
-    mysql_query("SELECT id, image FROM images ORDER BY uploadTime DESC LIMIT ? OFFSET ?", [limit, offset], (err, result, fields) => {
+    mysql_query("SELECT ID, Image FROM images ORDER BY Upload_Time DESC LIMIT ? OFFSET ?", [limit, offset], (err, result, fields) => {
         if(err) {
             console.log(err);
             throw err;
         }
         var response = [];
         result.forEach(element => {
-            var imageData = fs.readFileSync('./image_upload/' + "thumbnail_" + element.image);
+            var imageData = fs.readFileSync('./image_upload/' + "thumbnail_" + element.Image);
             // Split file name to get the file's suffix (e.g. jpg or png).
-            var splitFileName = element.image.split(".");
-            response.push(element.id + ":" + splitFileName[1] + ":" + base64_encode(imageData))
+            var splitFileName = element.Image.split(".");
+            response.push(element.ID + ":" + splitFileName[1] + ":" + base64_encode(imageData))
         });
         res.status(200).send(response);
     });
@@ -27,14 +27,14 @@ exports.frontpage = (req, res, next) => {
 // Returns an image by ID.
 exports.oneImage = (req, res, next) => {
     const imageId = parseInt(req.params.imageId, 10);
-    mysql_query("SELECT image FROM images WHERE id = ?", imageId, (err, result, fields) => {
+    mysql_query("SELECT Image FROM images WHERE ID = ?", imageId, (err, result, fields) => {
         if(err) {
             console.log(err);
             throw err;
         }
-        var imageData = fs.readFileSync('./image_upload/' + result[0].image);
+        var imageData = fs.readFileSync('./image_upload/' + result[0].Image);
         // Split file name to get the file's suffix (e.g. jpg or png).
-        var splitFileName = result[0].image.split(".");
+        var splitFileName = result[0].Image.split(".");
         return res.status(200).send(splitFileName[1] + ":" + base64_encode(imageData));
     });
 };
@@ -50,7 +50,7 @@ exports.upload = (req, res, next) => {
             throw err;
         }
         const timestamp = Date.now();
-        mysql_query('INSERT INTO images (image, uploadTime, uploader) VALUES (?, ?, ?)', [imageName, timestamp, 1], (err, result, fields) => {
+        mysql_query('INSERT INTO images (Image, Upload_Time, Uploader) VALUES (?, ?, ?)', [imageName, timestamp, 1], (err, result, fields) => {
             if(err) {
                 console.log(err);
             }
@@ -70,19 +70,40 @@ exports.searchForTags = (req, res, next) => {
     const limit = parseInt(req.params.count, 10);
     const offset = parseInt(req.params.offset, 10);
     const tag = req.params.tag;
-    mysql_query('SELECT id, image FROM images WHERE tags LIKE \'%' + req.params.tag + '%\' ORDER BY uploadTime DESC LIMIT ? OFFSET ?', [limit, offset], (err, result, fields) => {
+    mysql_query('SELECT ID, Image FROM images WHERE Tags LIKE \'%' + req.params.tag + '%\' ORDER BY Upload_Time DESC LIMIT ? OFFSET ?', [limit, offset], (err, result, fields) => {
         if(err) {
             console.log(err);
             throw err;
         }
         var response = [];
         result.forEach(element => {
-            var imageData = fs.readFileSync('./image_upload/' + "thumbnail_" + element.image);
+            var imageData = fs.readFileSync('./image_upload/' + "thumbnail_" + element.Image);
             // Split file name to get the file's suffix (e.g. jpg or png).
-            var splitFileName = element.image.split(".");
-            response.push(element.id + ":" + splitFileName[1] + ":" + base64_encode(imageData))
+            var splitFileName = element.Image.split(".");
+            response.push(element.ID + ":" + splitFileName[1] + ":" + base64_encode(imageData))
         });
         res.status(200).send(response);
+    });
+};
+
+exports.rateImage = (req, res, next) => {
+    const imageId = parseInt(req.params.imageId);
+    const ratingValue = parseInt(req.body.ratingValue);
+    mysql_query('SELECT ID FROM images WHERE ID = ?', [imageId], (err1, result1, fields1) => {
+        if(err1) throw err1;
+        if(result1.length === 0) {
+            return res.status(404).send("Image does not exist.");
+        }
+        mysql_query('SELECT Image_ID FROM images_ratings WHERE Image_ID = ? AND User_ID = ?', [imageId, req.id], (err2, result2, fields2) => {
+            if(err2) throw err2;
+            if(result2.length !== 0) {
+                return res.status(403).send("Already voted this image.");
+            }
+            mysql_query('INSERT INTO images_ratings (Image_ID, User_ID, Rating_Value) VALUES (?, ?, ?)', [imageId, req.id, ratingValue], (err3, result3, fields3) => {
+                if(err3) throw err3;
+                return res.status(200).send("Upvote successful.");
+            });
+        });
     });
 };
 

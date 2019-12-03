@@ -9,6 +9,8 @@ router.get('/frontpage/:count/:offset', verifyToken, imageController.frontpage);
 
 router.get('/frontpage/:imageId', verifyToken, imageController.oneImage);
 
+router.put('/voteImage/:imageId', verifyToken, imageController.rateImage);
+
 router.post('/upload', verifyToken, imageController.upload);
 
 router.post('/login', userController.login);
@@ -21,16 +23,14 @@ router.post('/comments/:imageId', verifyToken, commentController.writeComment);
 
 router.put('/comments/:commentId', verifyToken, commentController.editComment);
 
+router.delete('/comments/:commentId', verifyToken, commentController.deleteComment);
+
+router.put('/voteComment/:commentId', verifyToken, commentController.rateComment);
+
 router.get('/search/:count/:offset/:tag', imageController.searchForTags);
 
 // TODO:
 router.get('/logout');
-
-router.delete('/comments/:commentId');
-
-router.put('/upvoteComment/:commentId');
-
-router.put('/upvoteImage/:imageId');
 
 router.delete('/user');
 

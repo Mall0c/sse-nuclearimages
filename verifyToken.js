@@ -34,6 +34,7 @@ function verifyToken(req, res, next) {
         });
     } else {
         // No token provided. Do nothing.
+        console.log("token missing");
         next();
     }
 }

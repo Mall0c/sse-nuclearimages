@@ -7,8 +7,8 @@ const dbConfig = require('../dbConfig');
 exports.login = (req, res, next) => {
     const username = req.body.username;
     const plainTextPassword = req.body.password;
-    mysql_query('SELECT Password FROM user WHERE Username = ?', username, (err, result, fields) => {
-        const hashedPassword = result[0].password;
+    mysql_query('SELECT Password FROM user WHERE Username = ? AND Deleted = 0', username, (err, result, fields) => {
+        const hashedPassword = result[0].Password;
         bcrypt
         .compare(plainTextPassword, hashedPassword)
         .then(result => {
@@ -29,13 +29,34 @@ exports.login = (req, res, next) => {
 exports.register = (req, res, next) => {
     const username = req.body.username;
     const plainTextPassword = req.body.password;
+    const email = req.body.email;
     bcrypt
         .genSalt(10)
         .then(salt => { return bcrypt.hash(plainTextPassword, salt); })
-        .then(hash => { mysql_query('INSERT INTO user (Username, Password, EMail) VALUES (?, ?, ?)', [username, hash]) })
+        .then(hash => { mysql_query('INSERT INTO user (Username, Password, EMail) VALUES (?, ?, ?)', [username, hash, email]) })
         .catch(err => console.error(err.message))
     var token = jwt.sign({ username: username }, dbConfig.secret, {
         expiresIn: 86400*31 // expires in 31 days
     });
     return res.status(200).send({ auth: true, token: token });
 }
+
+exports.deleteUser = (req, res, next) => {
+    const userId = parseInt(req.params.userId);
+    if(req.username === undefined) {
+        return res.status(401).send("Not logged in");
+    }
+    mysql_query('SELECT ID FROM user WHERE ID = ? AND Deleted = 0', [userId], (err1, result1, fields1) => {
+        if(err1) throw err1;
+        if(result1.length === 0) {
+            return res.status(404).send("User does not exist.");
+        }
+        if(result1[0].ID !== req.id) {
+            return res.status(403).send("No authorization.");
+        }
+        mysql_query('UPDATE user SET Deleted = 1 WHERE ID = ?', [userId], (err2, result2, fields2) => {
+            if(err2) throw err2;
+            return res.status(200).send("User has been deleted.");
+        });
+    });
+};

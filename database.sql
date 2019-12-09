@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Erstellungszeit: 05. Dez 2019 um 18:33
+-- Erstellungszeit: 09. Dez 2019 um 12:15
 -- Server-Version: 10.4.8-MariaDB
 -- PHP-Version: 7.1.33
 
@@ -32,7 +32,8 @@ CREATE TABLE `comments` (
   `ID` int(11) NOT NULL,
   `Text` varchar(500) NOT NULL,
   `Autor` int(11) NOT NULL,
-  `Image` int(11) NOT NULL
+  `Image` int(11) NOT NULL,
+  `Deleted` tinyint(4) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 -- --------------------------------------------------------
@@ -60,7 +61,8 @@ CREATE TABLE `images` (
   `Uploader` int(11) NOT NULL,
   `Tags` varchar(100) NOT NULL,
   `Private` tinyint(4) NOT NULL,
-  `Anonymous` tinyint(4) NOT NULL
+  `Anonymous` tinyint(4) NOT NULL,
+  `Deleted` tinyint(4) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 -- --------------------------------------------------------
@@ -85,7 +87,8 @@ CREATE TABLE `user` (
   `ID` int(11) NOT NULL,
   `Username` varchar(15) NOT NULL,
   `Password` varchar(100) NOT NULL,
-  `EMail` varchar(100) DEFAULT NULL
+  `EMail` varchar(100) DEFAULT NULL,
+  `Deleted` tinyint(4) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 --
@@ -136,7 +139,7 @@ ALTER TABLE `images`
 -- AUTO_INCREMENT für Tabelle `user`
 --
 ALTER TABLE `user`
-  MODIFY `ID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+  MODIFY `ID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;

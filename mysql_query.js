@@ -8,10 +8,10 @@ const dbConfig = require('./dbConfig');
 var sqlConnection = function sqlConnection(sql, values, next) {
 
     // It means that the values have not been passed.
-    if (arguments.length === 2) {
+    /*if (arguments.length === 2) {
         next = values;
         values = null;
-    }
+    }*/
 
     var connection = mysql.createConnection({
         host: dbConfig.host,
@@ -36,7 +36,8 @@ var sqlConnection = function sqlConnection(sql, values, next) {
         }
 
         // Execute the callback.
-        next.apply(this, arguments);
+        if (next !== undefined)
+            next.apply(this, arguments);
     });
 }
 

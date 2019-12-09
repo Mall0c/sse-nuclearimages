@@ -8,7 +8,7 @@ const crypto = require('crypto');
 exports.frontpage = (req, res, next) => {
     const limit = parseInt(req.params.count, 10);
     const offset = parseInt(req.params.offset, 10);
-    mysql_query("SELECT ID, Image FROM images ORDER BY Upload_Time DESC LIMIT ? OFFSET ?", [limit, offset], (err, result, fields) => {
+    mysql_query("SELECT ID, Image FROM images WHERE Private = 0 AND Deleted = 0 ORDER BY Upload_Time DESC LIMIT ? OFFSET ?", [limit, offset], (err, result, fields) => {
         if(err) {
             console.log(err);
             throw err;
@@ -27,30 +27,76 @@ exports.frontpage = (req, res, next) => {
 // Returns an image by ID.
 exports.oneImage = (req, res, next) => {
     const imageId = parseInt(req.params.imageId, 10);
-    mysql_query("SELECT Image FROM images WHERE ID = ?", imageId, (err, result, fields) => {
+    mysql_query("SELECT COALESCE(SUM(Rating_Value),0) as Rating, Private, Anonymous, Image, user.Username\
+    FROM images\
+    LEFT JOIN images_ratings ON images.ID = images_ratings.Image_ID\
+    INNER JOIN user ON Uploader = user.ID\
+    WHERE images.ID = ? AND Deleted = 0\
+    GROUP BY images.ID", imageId, (err, result, fields) => {
         if(err) {
             console.log(err);
             throw err;
         }
+
+        // Image is set to private, meaning it will only be delivered if the owner queries it.
+        if(result[0].Private === 1 && req.username === undefined || result[0].Username !== req.username) {
+            return res.status(403).send("No authorization");
+        }
+
+        if(result[0].Anonymous === 1) {
+            result[0].Username = undefined
+        }
+
         var imageData = fs.readFileSync('./image_upload/' + result[0].Image);
         // Split file name to get the file's suffix (e.g. jpg or png).
         var splitFileName = result[0].Image.split(".");
-        return res.status(200).send(splitFileName[1] + ":" + base64_encode(imageData));
+        return res.status(200).send(result[0].Username + ":" + result[0].Rating + ":" + splitFileName[1] + ":" + base64_encode(imageData));
     });
 };
+
+exports.imagesOfOneUser = (req, res, next) => {
+    const limit = parseInt(req.params.count, 10);
+    const offset = parseInt(req.params.offset, 10);
+    if(req.id === undefined) {
+        return res.status(403).send("Not logged in");
+    }
+    mysql_query("SELECT ID, Image FROM images WHERE Deleted = 0 AND Uploader = ? ORDER BY Upload_Time DESC LIMIT ? OFFSET ?", [req.id, limit, offset], (err, result, fields) => {
+        if(err) {
+            console.log(err);
+            throw err;
+        }
+        var response = [];
+        result.forEach(element => {
+            var imageData = fs.readFileSync('./image_upload/' + "thumbnail_" + element.Image);
+            // Split file name to get the file's suffix (e.g. jpg or png).
+            var splitFileName = element.Image.split(".");
+            response.push(element.ID + ":" + splitFileName[1] + ":" + base64_encode(imageData))
+        });
+        res.status(200).send(response);
+    });
+}
 
 exports.upload = (req, res, next) => {
     // Split file name to get the file's suffix (e.g. jpg or png).
     var splitFileName = req.files.file.name.split(".");
     // Image's name is a random string concatenated with the file ending.
     var imageName = crypto.randomBytes(16).toString('hex') + "." + splitFileName[splitFileName.length - 1];
+    // Check if tags have been provided
+    var tags = "";
+    if(req.body.tags !== undefined) {
+        tags = req.body.tags;
+    }
+    // Check if image is supposed to be private
+    var private = parseInt(req.body.private);
+    var anonymous = parseInt(req.body.anonymous);
     fs.writeFile('./image_upload/' + imageName, req.files.file.data, (err) => {
         if(err) {
             console.log(err);
             throw err;
         }
         const timestamp = Date.now();
-        mysql_query('INSERT INTO images (Image, Upload_Time, Uploader) VALUES (?, ?, ?)', [imageName, timestamp, 1], (err, result, fields) => {
+        mysql_query('INSERT INTO images (Image, Upload_Time, Uploader, Tags, Private, Anonymous) VALUES (?, ?, ?, ?, ? ,?)', 
+        [imageName, timestamp, req.id, tags, private, anonymous], (err, result, fields) => {
             if(err) {
                 console.log(err);
             }
@@ -70,7 +116,7 @@ exports.searchForTags = (req, res, next) => {
     const limit = parseInt(req.params.count, 10);
     const offset = parseInt(req.params.offset, 10);
     const tag = req.params.tag;
-    mysql_query('SELECT ID, Image FROM images WHERE Tags LIKE \'%' + req.params.tag + '%\' ORDER BY Upload_Time DESC LIMIT ? OFFSET ?', [limit, offset], (err, result, fields) => {
+    mysql_query('SELECT ID, Image FROM images WHERE Tags LIKE \'%' + req.params.tag + '%\' AND Deleted = 0 ORDER BY Upload_Time DESC LIMIT ? OFFSET ?', [limit, offset], (err, result, fields) => {
         if(err) {
             console.log(err);
             throw err;
@@ -89,8 +135,11 @@ exports.searchForTags = (req, res, next) => {
 exports.rateImage = (req, res, next) => {
     const imageId = parseInt(req.params.imageId);
     const ratingValue = parseInt(req.body.ratingValue);
-    mysql_query('SELECT ID FROM images WHERE ID = ?', [imageId], (err1, result1, fields1) => {
+    mysql_query('SELECT ID FROM images WHERE ID = ? AND Deleted = 0', [imageId], (err1, result1, fields1) => {
         if(err1) throw err1;
+        if(req.username === undefined) {
+            return res.status(401).send("Not logged in.");
+        }
         if(result1.length === 0) {
             return res.status(404).send("Image does not exist.");
         }
@@ -103,6 +152,26 @@ exports.rateImage = (req, res, next) => {
                 if(err3) throw err3;
                 return res.status(200).send("Upvote successful.");
             });
+        });
+    });
+};
+
+exports.deleteImage = (req, res, next) => {
+    const imageId = parseInt(req.params.imageId);
+    if(req.username === undefined) {
+        return res.status(401).send("Not logged in");
+    }
+    mysql_query('SELECT Uploader FROM images WHERE ID = ? AND Deleted = 0', [imageId], (err1, result1, fields1) => {
+        if(err1) throw err1;
+        if(result1.length === 0) {
+            return res.status(404).send("Image does not exist.");
+        }
+        if(result1[0].Uploader !== req.id) {
+            return res.status(403).send("No authorization.");
+        }
+        mysql_query('UPDATE images SET Deleted = 1 WHERE ID = ?', [imageId], (err2, result2, fields2) => {
+            if(err2) throw err2;
+            return res.status(200).send("Image has been deleted.");
         });
     });
 };

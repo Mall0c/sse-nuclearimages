@@ -1,7 +1,12 @@
 const mysql_query = require('../mysql_query');
 
 exports.allComments = (req, res, next) => {
-    mysql_query('SELECT comments.Text, user.Username FROM user, comments WHERE user.ID = comments.Autor AND comments.Image = ?', 
+    mysql_query('SELECT COALESCE(SUM(Rating_Value),0) as Rating, comments.Text, Username\
+    FROM comments\
+    LEFT JOIN comments_ratings ON comments.ID = comments_ratings.Comment_ID\
+    INNER JOIN user ON comments.Autor = user.ID\
+    WHERE Image = ? AND comments.Deleted = 0\
+    GROUP BY comments.ID', 
         [req.params.imageId], (err, result, fields) => {
             if(err) {
                 console.log(err);
@@ -13,7 +18,7 @@ exports.allComments = (req, res, next) => {
 
 exports.writeComment = (req, res, next) => {
     if(req.username === undefined) {
-        return res.status(403).send("Not logged in");
+        return res.status(401).send("Not logged in");
     }
     mysql_query('INSERT INTO comments (Text, Autor, Image) VALUES (?, ?, ?)',
         [req.body.comment, req.id, parseInt(req.params.imageId)], (err, result, fields) => {
@@ -23,13 +28,16 @@ exports.writeComment = (req, res, next) => {
             }
             return res.status(200).send();
         })
-    return res.send("xd");
+    return res.status(200).send("Comment has been posted.");
 };
 
 exports.editComment = (req, res, next) => {
     const commentId = parseInt(req.params.commentId)
-    mysql_query('SELECT Id, Autor FROM comments WHERE Id = ?', [commentId], (err1, result1, fields1) => {
+    mysql_query('SELECT ID, Autor FROM comments WHERE ID = ? AND Deleted = 0', [commentId], (err1, result1, fields1) => {
         if(err1) throw err1;
+        if(req.username === undefined) {
+            return res.status(401).send("Not logged in.");
+        }
         if(result1.length === 0) {
             return res.status(404).send("Comment does not exist.");
         }
@@ -37,17 +45,20 @@ exports.editComment = (req, res, next) => {
             return res.status(403).send("No permission to edit comment.");
         }
 
-        mysql_query('UPDATE comments SET Text = ? WHERE Id = ?', [req.body.text, commentId], (err2, result2, fields2) => {
+        mysql_query('UPDATE comments SET Text = ? WHERE ID = ?', [req.body.text, commentId], (err2, result2, fields2) => {
             if(err2) throw err2;
-            return res.status(200).send("Changed text");
+            return res.status(200).send("Changed comment.");
         });
     });
 };
 
 exports.deleteComment = (req, res, next) => {
-    const commentId = parseInt(req.params.commentId)
-    mysql_query('SELECT ID, Autor FROM comments WHERE ID = ?', [commentId], (err1, result1, fields1) => {
+    const commentId = parseInt(req.params.commentId);
+    mysql_query('SELECT ID, Autor FROM comments WHERE ID = ? AND Deleted = 0', [commentId], (err1, result1, fields1) => {
         if(err1) throw err1;
+        if(req.username === undefined) {
+            return res.status(401).send("Not logged in.");
+        }
         if(result1.length === 0) {
             return res.status(404).send("Comment does not exist.");
         }
@@ -55,7 +66,7 @@ exports.deleteComment = (req, res, next) => {
             return res.status(403).send("No permission to delete comment.");
         }
 
-        mysql_query('DELETE FROM comments WHERE ID = ?', [commentId], (err2, result2, fields2) => {
+        mysql_query('UPDATE comments SET Deleted = 1 WHERE ID = ?', [commentId], (err2, result2, fields2) => {
             if(err2) throw err2;
             return res.status(200).send("Comment deleted.");
         });
@@ -65,8 +76,11 @@ exports.deleteComment = (req, res, next) => {
 exports.rateComment = (req, res, next) => {
     const commentId = parseInt(req.params.commentId);
     const ratingValue = parseInt(req.body.ratingValue);
-    mysql_query('SELECT ID FROM comments WHERE ID = ?', [commentId], (err1, result1, fields1) => {
+    mysql_query('SELECT ID FROM comments WHERE ID = ? AND Deleted = 0', [commentId], (err1, result1, fields1) => {
         if(err1) throw err1;
+        if(req.username === undefined) {
+            return res.status(401).send("Not logged in.");
+        }
         if(result1.length === 0) {
             return res.status(404).send("Comment does not exist.");
         }

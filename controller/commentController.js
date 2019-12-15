@@ -96,3 +96,21 @@ exports.rateComment = (req, res, next) => {
         });
     });
 };
+
+exports.reportComment = (req, res, next) => {
+    const commentId = parseInt(req.params.commentId);
+    const text = req.body.text;
+    if(req.username === undefined) {
+        return res.status(401).send("Not logged in.");
+    }
+    mysql_query('SELECT * FROM comments_reports WHERE UserID = ? AND CommentID = ?', [req.id, commentId], (err1, result1, fields1) => {
+        if(err1) throw err1;
+        if(result1.length !== 0) {
+            return res.status(400).send("You have already reported this comment.");
+        }
+        mysql_query('INSERT INTO comments_reports (UserID, CommentID, Text) VALUES (?, ?, ?)', [req.id, commentId, text], (err2, result2, fields2) => {
+            if(err2) throw err2;
+            return res.status(200).send("Comment has been reported.")
+        });
+    });
+};

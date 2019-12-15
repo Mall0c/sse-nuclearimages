@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Erstellungszeit: 09. Dez 2019 um 12:15
+-- Erstellungszeit: 15. Dez 2019 um 16:58
 -- Server-Version: 10.4.8-MariaDB
 -- PHP-Version: 7.1.33
 
@@ -51,6 +51,19 @@ CREATE TABLE `comments_ratings` (
 -- --------------------------------------------------------
 
 --
+-- Tabellenstruktur für Tabelle `comments_reports`
+--
+
+CREATE TABLE `comments_reports` (
+  `ID` int(11) NOT NULL,
+  `CommentID` int(11) NOT NULL,
+  `UserID` int(11) NOT NULL,
+  `Text` varchar(300) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+-- --------------------------------------------------------
+
+--
 -- Tabellenstruktur für Tabelle `images`
 --
 
@@ -80,6 +93,19 @@ CREATE TABLE `images_ratings` (
 -- --------------------------------------------------------
 
 --
+-- Tabellenstruktur für Tabelle `images_reports`
+--
+
+CREATE TABLE `images_reports` (
+  `ID` int(11) NOT NULL,
+  `UserID` int(11) NOT NULL,
+  `ImagesID` int(11) NOT NULL,
+  `Text` varchar(300) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+-- --------------------------------------------------------
+
+--
 -- Tabellenstruktur für Tabelle `user`
 --
 
@@ -88,7 +114,8 @@ CREATE TABLE `user` (
   `Username` varchar(15) NOT NULL,
   `Password` varchar(100) NOT NULL,
   `EMail` varchar(100) DEFAULT NULL,
-  `Deleted` tinyint(4) DEFAULT NULL
+  `Deleted` tinyint(4) DEFAULT NULL,
+  `isAdmin` tinyint(4) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 --
@@ -108,9 +135,21 @@ ALTER TABLE `comments_ratings`
   ADD PRIMARY KEY (`Comment_ID`,`User_ID`);
 
 --
+-- Indizes für die Tabelle `comments_reports`
+--
+ALTER TABLE `comments_reports`
+  ADD PRIMARY KEY (`ID`);
+
+--
 -- Indizes für die Tabelle `images`
 --
 ALTER TABLE `images`
+  ADD PRIMARY KEY (`ID`);
+
+--
+-- Indizes für die Tabelle `images_reports`
+--
+ALTER TABLE `images_reports`
   ADD PRIMARY KEY (`ID`);
 
 --
@@ -130,10 +169,22 @@ ALTER TABLE `comments`
   MODIFY `ID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
 
 --
+-- AUTO_INCREMENT für Tabelle `comments_reports`
+--
+ALTER TABLE `comments_reports`
+  MODIFY `ID` int(11) NOT NULL AUTO_INCREMENT;
+
+--
 -- AUTO_INCREMENT für Tabelle `images`
 --
 ALTER TABLE `images`
   MODIFY `ID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+
+--
+-- AUTO_INCREMENT für Tabelle `images_reports`
+--
+ALTER TABLE `images_reports`
+  MODIFY `ID` int(11) NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT für Tabelle `user`

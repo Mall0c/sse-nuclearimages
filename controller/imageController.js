@@ -74,7 +74,7 @@ exports.imagesOfOneUser = (req, res, next) => {
         });
         res.status(200).send(response);
     });
-}
+};
 
 exports.upload = (req, res, next) => {
     // Split file name to get the file's suffix (e.g. jpg or png).
@@ -176,7 +176,25 @@ exports.deleteImage = (req, res, next) => {
     });
 };
 
+exports.reportImage = (req, res, next) => {
+    const imageId = parseInt(req.params.imageId);
+    const text = req.body.text;
+    if(req.username === undefined) {
+        return res.status(401).send("Not logged in");
+    }
+    mysql_query('SELECT * FROM images_reports WHERE UserID = ? AND ImageID = ?', [req.id, imageId], (err1, result1, fields1) => {
+        if(err1) throw err1;
+        if(result1.length !== 0) {
+            return res.status(400).send("You have already reported this image.");
+        }
+        mysql_query('INSERT INTO images_reports (UserID, ImageID, Text) VALUES (?, ?, ?)', [req.id, imageId, text], (err2, result2, fields2) => {
+            if(err2) throw err2;
+            return res.status(200).send("Image has been reported.")
+        });
+    });
+};
+
 // function to encode file data to base64 encoded string
 function base64_encode(data) {
     return Buffer.from(data).toString('base64');
-}
+};

@@ -23,7 +23,6 @@ function verifyToken(req, res, next) {
                     throw err;
                 }
                 req.id = result[0].ID;
-                console.log(req.id);
                 next();
             });
         });

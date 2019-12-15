@@ -24,16 +24,19 @@ router.post('/upload', verifyToken, imageController.upload);
 router.delete('/image/:imageId', verifyToken, imageController.deleteImage);
 
 // Einloggen.
-router.post('/login', userController.login);
+router.post('/login', verifyToken, userController.login);
 
 // Registrieren.
-router.post('/register', userController.register);
+router.post('/register', verifyToken, userController.register);
+
+// Benutzerdaten ändern.
+router.put('/user', verifyToken, userController.changeData);
 
 // Einen User löschen.
 router.delete('/user/:userId', verifyToken, userController.deleteUser);
 
 // Kommentare zu einem Bild bekommen.
-router.get('/comments/:imageId', commentController.allComments);
+router.get('/comments/:imageId', verifyToken, commentController.allComments);
 
 // Kommentar zu einem Bild schreiben.
 router.post('/comments/:imageId', verifyToken, commentController.writeComment);
@@ -48,11 +51,15 @@ router.delete('/comments/:commentId', verifyToken, commentController.deleteComme
 router.put('/voteComment/:commentId', verifyToken, commentController.rateComment);
 
 // Bilder nach einem Tag suchen.
-router.get('/search/:count/:offset/:tag', imageController.searchForTags);
+router.get('/search/:count/:offset/:tag', verifyToken, imageController.searchForTags);
+
+// Bild melden.
+router.put('/image/report/:imageId', verifyToken, imageController.reportImage);
+
+// Kommentar melden.
+router.put('/comment/report/:commentId', verifyToken, commentController.reportComment);
 
 // TODO:
 router.get('/logout');
-
-router.put('/user/:properties');
 
 module.exports = router;

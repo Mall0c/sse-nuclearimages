@@ -31,7 +31,7 @@ exports.oneImage = (req, res, next) => {
     FROM images\
     LEFT JOIN images_ratings ON images.ID = images_ratings.Image_ID\
     INNER JOIN user ON Uploader = user.ID\
-    WHERE images.ID = ? AND Deleted = 0\
+    WHERE images.ID = ? AND images.Deleted = 0\
     GROUP BY images.ID", imageId, (err, result, fields) => {
         if(err) {
             console.log(err);

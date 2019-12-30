@@ -6,16 +6,20 @@ var loggedIn;
 var uploadModal = document.getElementById("uploadModal");
 var loginRegisterModal = document.getElementById("loginRegisterModal");
 var imageViewModal = document.getElementById("imageViewModal");
+var settingsModal = document.getElementById("settingsModal");
 var logoutButton = document.getElementById("logout");
 
 // Get the button that opens the modal
 var uploadBtn = document.getElementById("uploadButton");
 var loginBtn = document.getElementById("loginButton");
+var settingsBtn = document.getElementById("settingsIcon");
 
 // Get the <span> element that closes the modal
 var uploadSpan = document.getElementsByClassName("closeUpload")[0];
 var loginSpan = document.getElementsByClassName("closeLogin")[0];
 var imageViewSpan = document.getElementsByClassName("closeImageView")[0];
+var settingsSpan = document.getElementsByClassName("closeSettings")[0];
+
 
 logoutButton.onclick = function() {
   logOut();
@@ -31,6 +35,10 @@ loginBtn.onclick = function() {
   loginRegisterModal.style.display = "block";
 };
 
+settingsBtn.onclick = function() {
+  settingsModal.style.display = "block";
+};
+
 // When the user clicks on <span> (x), close the modal
 uploadSpan.onclick = function() {
   uploadModal.style.display = "none";
@@ -44,6 +52,10 @@ imageViewSpan.onclick = function() {
   imageViewModal.style.display = "none";
 };
 
+settingsSpan.onclick = function() {
+  settingsModal.style.display = "none";
+};
+
 // When the user clicks anywhere outside of the modal, close it
 window.onclick = function(event) {
   if (event.target == uploadModal) uploadModal.style.display = "none";
@@ -51,6 +63,8 @@ window.onclick = function(event) {
     loginRegisterModal.style.display = "none";
   else if (event.target == imageViewModal)
     imageViewModal.style.display = "none";
+  else if (event.target == this.settingsModal)
+    settingsModal.style.display = "none";
 };
 
 window.onload = function() {
@@ -171,6 +185,32 @@ window.onscroll = function(ev) {
     getImages(20, offset);
   }
 };
+
+$(document).ready(function() {
+  $("#changeSettings").submit(function(e) {
+    //Stops submit button from refreshing page.
+    e.preventDefault();
+
+    var form_data = new FormData(this);
+
+    $.ajax({
+      url: "/user", //location of where you want to send image
+      beforeSend: sendToken,
+      cache: false,
+      contentType: false,
+      processData: false,
+      data: form_data,
+      type: "put",
+      success: function(data, textStatus, jQxhr) {
+        console.log(data);
+        location.reload();
+      },
+      error: function(jqXhr, textStatus, errorThrown) {
+        console.log(errorThrown);
+      }
+    });
+  });
+});
 
 $(document).ready(function() {
   $("#uploadFile").submit(function(e) {

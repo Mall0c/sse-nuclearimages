@@ -4,11 +4,32 @@
 <head>
     <title>Nuclear Images</title>
     <link rel="stylesheet" href="css/style.css">
-    <script class="jsbin" src="https://ajax.googleapis.com/ajax/libs/jquery/1/jquery.min.js"></script>
-    <script src="https://unpkg.com/infinite-scroll@3/dist/infinite-scroll.pkgd.min.js"></script>
+    <script class="jsbin" src="/js/jquery.min.js"></script>
+    <script src="/js/infinite-scroll.pkgd.min.js"></script>
 </head>
 
 <body>
+
+    <!-- The Modal -->
+    <div id="settingsModal" class="settings-modal">
+        <!-- Modal content -->
+        <div class="settings-modal-content">
+            <span class="closeSettings">&times;</span>
+            <h1>Change account info</h1>
+            <form id="changeSettings">
+                New E-Mail:<br>
+                <input type="text" name="email">
+                <br>
+                Current password:<br>
+                <input type="text" name="currentPassword"><br>
+                New password:<br>
+                <input type="text" name="newPassword">
+                <br><br>
+                <input type="submit" value="Change E-Mail & Password">
+              </form> 
+              
+        </div>
+    </div>
 
     <!-- The Modal -->
     <div id="imageViewModal" class="image-modal">

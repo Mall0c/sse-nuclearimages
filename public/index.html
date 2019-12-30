@@ -21,13 +21,13 @@
                 <input type="text" name="email">
                 <br>
                 Current password:<br>
-                <input type="text" name="currentPassword"><br>
+                <input type="password" name="currentPassword"><br>
                 New password:<br>
-                <input type="text" name="newPassword">
+                <input type="password" name="newPassword">
                 <br><br>
                 <input type="submit" value="Change E-Mail & Password">
-              </form> 
-              
+            </form>
+
         </div>
     </div>
 
@@ -37,6 +37,31 @@
         <div class="image-modal-content">
             <span class="closeImageView">&times;</span>
             <img id="imageForModal" style="width: 100%; height: 100%;">
+            <form id="usrform">
+                <a href="#">uploadername</a>
+                <a href="#">rating</a>
+                <a href="#">rate image</a>
+                <a href="#">report image</a>
+                <a href="#">bild löschen</a>
+                <br>
+                Comment: <br>
+                <input type="text" name="usrname"><br>
+
+                <input type="submit" value="Submit Comment">
+                <!--List all comments-->
+                <div class="commentArea">
+                    <div class="comment"> 
+                        <a href="#">commentorname</a>
+                        <a href="#">commentRating</a>
+                        <a href="#">rate Comment</a>
+                        <a href="#">comment Text</a>
+                        <a href="#">edit Comment</a>
+                        <a href="#">delete Comment</a>
+                        <a href="#">report comment</a>
+                    </div>
+                </div>
+            </form>
+            <br>
         </div>
     </div>
 
@@ -156,7 +181,7 @@
                 <input class="inputField" type="text" placeholder="Search...">
             </li>
             <li>
-                <a href=""><img src="img/searchIcon.svg"
+                <a href="#"><img src="img/searchIcon.svg"
                         style="width: 20px;height: auto;filter: brightness(0) invert(1);">
                 </a>
             </li>
@@ -165,16 +190,13 @@
                         style="width: 20px;height: auto;filter: brightness(0) invert(1);">
                 </a>
             </li>
-            <li>
-                <a id="docCok"></a>
-            </li>
             <li class="right" id="logoutIcon" style="visibility: hidden;">
-                <a href="#about" id="logout"><img src="img/logout.png"
+                <a href="#" id="logout"><img src="img/logout.png"
                         style="width: 20px;height: auto;filter: brightness(0) invert(1);">
                 </a>
             </li>
             <li class="right" id="settingsIcon" style="visibility: hidden;">
-                <a href="#about"><img src="img/cogwheel.svg"
+                <a href="#"><img src="img/cogwheel.svg"
                         style="width: 20px;height: auto;filter: brightness(0) invert(1);">
                 </a>
             </li>

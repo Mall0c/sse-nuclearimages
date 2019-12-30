@@ -8,6 +8,21 @@ body {
   font-family: Arial;
   background-color: #161618;
 }
+.commentArea {
+  width: 100%; /* Set a width if you like */
+}
+
+.commentArea .comment {
+  color: white; /* Black text color */
+  display: block; /* Make the links appear below each other */
+  padding: 12px; /* Add some padding */
+  text-decoration: none; /* Remove underline from links */
+  border-color: white;
+  border-style: solid;
+  border-width: 1px;
+  margin-bottom: 5px;
+}
+
 .progress {
   display: none;
 }
@@ -149,6 +164,7 @@ li a:hover {
 .image-modal-content {
   background-color: #161618;
   margin: auto;
+  color: white;
   padding: 20px;
   width: 50%;
 }

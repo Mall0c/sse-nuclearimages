@@ -68,16 +68,6 @@ window.onclick = function(event) {
 };
 
 window.onload = function() {
-  if (!this.document.cookie) {
-    document.getElementById("docCok").innerText = "noXtoken";
-    //document.cookie = "name=;";
-    //document.cookie = "token=;";
-    //document.cookie = "loggedIn=0";
-  } else
-    document.getElementById("docCok").innerText = document.cookie
-      .replace(/(?:(?:^|.*;\s*)token\s*\=\s*([^;]*).*$)|^.*$/, "$1")
-      .slice(0, 50);
-
   if (
     document.cookie.split(";").filter(item => item.includes("loggedIn=1"))
       .length

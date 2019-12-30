@@ -41,14 +41,14 @@
                     </div>
 
 
-                    <input type="text" name="tags">
+                    <input type="text" name="tags" value="exampleTag">
 
                     <input type="hidden" name="anonymous" value="0" />
-                    <input type="checkbox" name="anonymous" value="1" /> 
+                    <input type="checkbox" name="anonymous" value="1" /> anonymous?
 
                     
                     <input type="hidden" name="private" value="0" />
-                    <input type="checkbox" name="private" value="1" /> 
+                    <input type="checkbox" name="private" value="1" /> private?
 
                     <div class="file-upload-content">
                         <img class="file-upload-image" src="#" alt="your image" />
@@ -148,12 +148,12 @@
             <li>
                 <a id="docCok" style="text-overflow:ellipsis;"></a>
             </li>
-            <li class="right">
+            <li class="right" id="settingsIcon" style="visibility: hidden;">
                 <a href="#about"><img src="img/cogwheel.svg"
                         style="width: 20px;height: auto;filter: brightness(0) invert(1);"></img>
                 </a>
             </li>
-            <li id="loginButton" class="right"><a href="#signin">sign in</a></li>
+            <li id="loginButton" class="right"><a id="usernameArea" href="#signin"></a></li>
         </ul>
     </div>
 

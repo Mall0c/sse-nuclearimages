@@ -135,6 +135,10 @@ function getImages(count, offset) {
               success: function(data, textStatus, jQxhr) {
                 //console.log(data);
                 var base64String = data.split(":");
+
+                document.getElementById("uploaderName").innerText = "Uploaded by " +base64String[0];
+                document.getElementById("imageRating").innerText = "Rating: " +base64String[1];
+
                 var elem = document.getElementById("imageForModal");
                 elem.src =
                   "data:image/" +

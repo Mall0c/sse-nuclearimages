@@ -141,7 +141,7 @@ li a:hover {
 .image-modal {
   display: none;
   /* Hidden by default */
-  position: absolute;
+  position: fixed;
   /* Stay in place */
   z-index: 1;
   /* Sit on top */

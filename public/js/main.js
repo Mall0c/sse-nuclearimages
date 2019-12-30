@@ -1,4 +1,5 @@
 var offset = 0;
+var imagesPerPage = 20;
 var columnsMax = 4;
 var loggedIn;
 
@@ -79,7 +80,7 @@ window.onload = function() {
 
   console.log(document.cookie);
 
-  getImages(20, 0);
+  getImages(imagesPerPage, 0);
 
   if (this.loggedIn === true) {
     this.document.getElementById("settingsIcon").style.visibility = "visible";
@@ -115,7 +116,9 @@ function getImages(count, offset) {
     type: "GET",
     beforeSend: sendToken,
     success: function(data, textStatus, jQxhr) {
-      //console.log(data);
+      if(data.length == 0) 
+         return;
+      console.log("yeeeeeeeeee")
       if (data !== null) {
         var currentColumn = 0;
         for (let i = 0; i < data.length; i++) {
@@ -175,8 +178,8 @@ function logOut() {
 
 window.onscroll = function(ev) {
   if (window.innerHeight + window.scrollY >= document.body.offsetHeight) {
-    offset = offset + 20;
-    getImages(20, offset);
+    offset = offset + imagesPerPage;
+    getImages(imagesPerPage, offset);
   }
 };
 

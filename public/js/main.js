@@ -2,37 +2,103 @@ var offset = 0;
 var columnsMax = 4;
 var loggedIn;
 
-window.onload = function(){  
+// Get the modal
+var uploadModal = document.getElementById("uploadModal");
+var loginRegisterModal = document.getElementById("loginRegisterModal");
+var imageViewModal = document.getElementById("imageViewModal");
+var logoutButton = document.getElementById("logout");
+
+// Get the button that opens the modal
+var uploadBtn = document.getElementById("uploadButton");
+var loginBtn = document.getElementById("loginButton");
+
+// Get the <span> element that closes the modal
+var uploadSpan = document.getElementsByClassName("closeUpload")[0];
+var loginSpan = document.getElementsByClassName("closeLogin")[0];
+var imageViewSpan = document.getElementsByClassName("closeImageView")[0];
+
+logoutButton.onclick = function() {
+  logOut();
+  location.reload();
+};
+
+// When the user clicks the button, open the modal
+uploadBtn.onclick = function() {
+  uploadModal.style.display = "block";
+};
+
+loginBtn.onclick = function() {
+  loginRegisterModal.style.display = "block";
+};
+
+// When the user clicks on <span> (x), close the modal
+uploadSpan.onclick = function() {
+  uploadModal.style.display = "none";
+};
+
+loginSpan.onclick = function() {
+  loginRegisterModal.style.display = "none";
+};
+
+imageViewSpan.onclick = function() {
+  imageViewModal.style.display = "none";
+};
+
+// When the user clicks anywhere outside of the modal, close it
+window.onclick = function(event) {
+  if (event.target == uploadModal) uploadModal.style.display = "none";
+  else if (event.target == loginRegisterModal)
+    loginRegisterModal.style.display = "none";
+  else if (event.target == imageViewModal)
+    imageViewModal.style.display = "none";
+};
+
+window.onload = function() {
   if (!this.document.cookie) {
     document.getElementById("docCok").innerText = "noXtoken";
     //document.cookie = "name=;";
     //document.cookie = "token=;";
     //document.cookie = "loggedIn=0";
-  } else 
-      document.getElementById("docCok").innerText = (document.cookie.replace(/(?:(?:^|.*;\s*)token\s*\=\s*([^;]*).*$)|^.*$/, "$1")).slice(0, 50);
+  } else
+    document.getElementById("docCok").innerText = document.cookie
+      .replace(/(?:(?:^|.*;\s*)token\s*\=\s*([^;]*).*$)|^.*$/, "$1")
+      .slice(0, 50);
 
-  
-  if (document.cookie.split(';').filter((item) => item.includes('loggedIn=1')).length) {
+  if (
+    document.cookie.split(";").filter(item => item.includes("loggedIn=1"))
+      .length
+  ) {
     this.loggedIn = true;
   } else {
     this.loggedIn = false;
   }
-    
-    console.log(document.cookie);
 
-    getImages(20, 0);
+  console.log(document.cookie);
 
-    if(this.loggedIn === true) {
-      this.document.getElementById("settingsIcon").style.visibility = "visible";
-      this.document.getElementById("usernameArea").innerText = document.cookie.replace(/(?:(?:^|.*;\s*)name\s*\=\s*([^;]*).*$)|^.*$/, "$1");
-    } else {
-      this.document.getElementById("usernameArea").innerText ="sign in";
-    }
-  	
+  getImages(20, 0);
+
+  if (this.loggedIn === true) {
+    this.document.getElementById("settingsIcon").style.visibility = "visible";
+    this.document.getElementById("logoutIcon").style.visibility = "visible";
+    this.document.getElementById(
+      "usernameArea"
+    ).innerText = document.cookie.replace(
+      /(?:(?:^|.*;\s*)name\s*\=\s*([^;]*).*$)|^.*$/,
+      "$1"
+    );
+  } else {
+    this.document.getElementById("usernameArea").innerText = "sign in";
+  }
 };
 
 function sendToken(xhr) {
-  xhr.setRequestHeader("x-access-token", document.cookie.replace(/(?:(?:^|.*;\s*)token\s*\=\s*([^;]*).*$)|^.*$/, "$1"));
+  xhr.setRequestHeader(
+    "x-access-token",
+    document.cookie.replace(
+      /(?:(?:^|.*;\s*)token\s*\=\s*([^;]*).*$)|^.*$/,
+      "$1"
+    )
+  );
 }
 
 function getImages(count, offset) {
@@ -56,7 +122,7 @@ function getImages(count, offset) {
           elem.imgID = base64String[0];
           elem.onclick = function() {
             $.ajax({
-              url: "/frontpage/"+this.imgID, //location of where you want to send image
+              url: "/frontpage/" + this.imgID, //location of where you want to send image
               beforeSend: sendToken,
               cache: false,
               contentType: false,
@@ -67,7 +133,10 @@ function getImages(count, offset) {
                 var base64String = data.split(":");
                 var elem = document.getElementById("imageForModal");
                 elem.src =
-                    "data:image/" + base64String[2] + ";base64," + base64String[3];
+                  "data:image/" +
+                  base64String[2] +
+                  ";base64," +
+                  base64String[3];
                 imageViewModal.style.display = "block";
               },
               error: function(jqXhr, textStatus, errorThrown) {
@@ -91,9 +160,9 @@ function getImages(count, offset) {
 }
 
 function logOut() {
-    document.cookie = "name=;";
-    document.cookie = "token=;";
-    document.cookie = "loggedIn=0";
+  document.cookie = "name=;";
+  document.cookie = "token=;";
+  document.cookie = "loggedIn=0";
 }
 
 window.onscroll = function(ev) {
@@ -136,7 +205,7 @@ $(document).ready(function() {
 
     var form_data = new FormData(this);
     //console.log(document.cookie);
-  
+
     $.ajax({
       url: "/login", //location of where you want to send image
       dataType: "json",
@@ -149,10 +218,10 @@ $(document).ready(function() {
       success: function(data, textStatus, jQxhr) {
         //console.log(form_data);
         if (data["auth"] == true) {
-          document.cookie = "name="+form_data.get("username");
-          document.cookie = "token="+data["token"];
+          document.cookie = "name=" + form_data.get("username");
+          document.cookie = "token=" + data["token"];
           document.cookie = "loggedIn=1";
-          location.reload(); 
+          location.reload();
         }
       },
       error: function(jqXhr, textStatus, errorThrown) {
@@ -181,10 +250,10 @@ $(document).ready(function() {
       success: function(data, textStatus, jQxhr) {
         console.log(data);
         if (data["auth"] == true) {
-          document.cookie = "name="+form_data.get("username");
-          document.cookie = "token="+data["token"];
+          document.cookie = "name=" + form_data.get("username");
+          document.cookie = "token=" + data["token"];
           document.cookie = "loggedIn=1";
-          location.reload(); 
+          location.reload();
         }
       },
       error: function(jqXhr, textStatus, errorThrown) {

@@ -316,7 +316,7 @@ li a:hover {
 /* Add padding to containers */
 .container {
   padding: 16px;
-  background-color: white;  
+  background-color: white;
   width: 50%;
 }
 
@@ -335,7 +335,7 @@ li a:hover {
   background: #f1f1f1;
 }
 
-.loginRegisterField:focus{
+.loginRegisterField:focus {
   background-color: #ddd;
   outline: none;
 }
@@ -374,6 +374,6 @@ a {
 }
 
 .vl {
-    border-left: 2px solid grey;
-    height: 500px;
-  }
+  border-left: 2px solid grey;
+  height: 500px;
+}

@@ -95,8 +95,8 @@ exports.upload = (req, res, next) => {
             throw err;
         }
         const timestamp = Date.now();
-        mysql_query('INSERT INTO images (Image, Upload_Time, Uploader, Tags, Private, Anonymous) VALUES (?, ?, ?, ?, ? ,?)', 
-        [imageName, timestamp, req.id, tags, private, anonymous], (err, result, fields) => {
+        mysql_query('INSERT INTO images (Image, Upload_Time, Uploader, Tags, Private, Anonymous, Deleted) VALUES (?, ?, ?, ?, ? ,?, ?)', 
+        [imageName, timestamp, req.id, tags, private, anonymous, 0], (err, result, fields) => {
             if(err) {
                 console.log(err);
             }

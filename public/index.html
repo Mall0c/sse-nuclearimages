@@ -39,6 +39,17 @@
                             <h3>Drag and drop a file or select add Image</h3>
                         </div>
                     </div>
+
+
+                    <input type="text" name="tags">
+
+                    <input type="hidden" name="anonymous" value="0" />
+                    <input type="checkbox" name="anonymous" value="1" /> 
+
+                    
+                    <input type="hidden" name="private" value="0" />
+                    <input type="checkbox" name="private" value="1" /> 
+
                     <div class="file-upload-content">
                         <img class="file-upload-image" src="#" alt="your image" />
                         <div class="image-title-wrap">
@@ -133,6 +144,9 @@
                 <a href="#" id="uploadButton"><img src="img/upload.svg"
                         style="width: 20px;height: auto;filter: brightness(0) invert(1);"></img>
                 </a>
+            </li>
+            <li>
+                <a id="docCok" style="text-overflow:ellipsis;"></a>
             </li>
             <li class="right">
                 <a href="#about"><img src="img/cogwheel.svg"

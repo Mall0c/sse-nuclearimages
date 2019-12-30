@@ -1,6 +1,17 @@
 var offset = 0;
 var columnsMax = 4;
 
+window.onload = function(){  
+  if (!this.document.cookie)
+    document.getElementById("docCok").innerText = "noXtoken";
+  else
+    document.getElementById("docCok").innerText = document.cookie.slice(0, 50);
+
+  //this.console.log(document.cookie);
+
+};
+
+
 function sendToken(xhr) {
   xhr.setRequestHeader("x-access-token", document.cookie);
 }
@@ -15,7 +26,7 @@ function getImages(count, offset) {
     type: "GET",
     beforeSend: sendToken,
     success: function(data, textStatus, jQxhr) {
-      //console.log(data);
+      console.log(data);
       if (data !== null) {
         var currentColumn = 0;
         for (let i = 0; i < data.length; i++) {
@@ -33,10 +44,11 @@ function getImages(count, offset) {
               processData: false,
               type: "GET",
               success: function(data, textStatus, jQxhr) {
+                //console.log(data);
                 var base64String = data.split(":");
                 var elem = document.getElementById("imageForModal");
                 elem.src =
-                    "data:image/" + base64String[0] + ";base64," + base64String[1];
+                    "data:image/" + base64String[1] + ";base64," + base64String[2];
                 imageViewModal.style.display = "block";
               },
               error: function(jqXhr, textStatus, errorThrown) {
@@ -77,7 +89,6 @@ $(document).ready(function() {
 
     $.ajax({
       url: "/upload", //location of where you want to send image
-      dataType: "json",
       beforeSend: sendToken,
       cache: false,
       contentType: false,
@@ -100,7 +111,9 @@ $(document).ready(function() {
     e.preventDefault();
 
     var form_data = new FormData(this);
-
+    //document.cookie = form_data.get("username");
+    //console.log(document.cookie);
+  
     $.ajax({
       url: "/login", //location of where you want to send image
       dataType: "json",
@@ -111,7 +124,7 @@ $(document).ready(function() {
       data: form_data,
       type: "post",
       success: function(data, textStatus, jQxhr) {
-        console.log(data);
+        //console.log(form_data);
         if (data["auth"] == true) document.cookie = data["token"];
       },
       error: function(jqXhr, textStatus, errorThrown) {

@@ -58,22 +58,34 @@ settingsSpan.onclick = function() {
 };
 
 document.getElementById("reportImage").onclick = function() {
-  $.ajax({
-    url: "/image/report/"+(document.getElementById("imageForModal").imgID), //location of where you want to send image
-    beforeSend: sendToken,
-    cache: false,
-    contentType: false,
-    processData: false,
-    data: "test",
-    type: "PUT",
-    success: function(data, textStatus, jQxhr) {
-      location.reload();
-    },
-    error: function(jqXhr, textStatus, errorThrown) {
-      console.log(errorThrown);
-    }
-  });
+  document.getElementById("reportArea").style.visibility = "visible";
 };
+
+$(document).ready(function() {
+  $("#reportForm").submit(function(e) {
+    //Stops submit button from refreshing page.
+    e.preventDefault();
+
+    var form_data = new FormData(this);
+
+    $.ajax({
+      url: "/image/report/"+(document.getElementById("imageForModal").imgID), //location of where you want to send image
+      beforeSend: sendToken,
+      cache: false,
+      contentType: false,
+      processData: false,
+      data: form_data,
+      type: "PUT",
+      success: function(data, textStatus, jQxhr) {
+        //location.reload();
+      
+      },
+      error: function(jqXhr, textStatus, errorThrown) {
+        console.log(errorThrown);
+      }
+    });
+  });
+});
 
 document.getElementById("deleteImage").onclick = function() {
   $.ajax({

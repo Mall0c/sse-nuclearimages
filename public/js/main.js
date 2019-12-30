@@ -67,7 +67,7 @@ function getImages(count, offset) {
                 var base64String = data.split(":");
                 var elem = document.getElementById("imageForModal");
                 elem.src =
-                    "data:image/" + base64String[1] + ";base64," + base64String[2];
+                    "data:image/" + base64String[2] + ";base64," + base64String[3];
                 imageViewModal.style.display = "block";
               },
               error: function(jqXhr, textStatus, errorThrown) {
@@ -88,6 +88,12 @@ function getImages(count, offset) {
       console.log(errorThrown);
     }
   });
+}
+
+function logOut() {
+    document.cookie = "name=;";
+    document.cookie = "token=;";
+    document.cookie = "loggedIn=0";
 }
 
 window.onscroll = function(ev) {

@@ -40,8 +40,9 @@
                         </div>
                     </div>
 
+                    <br>
 
-                    <input type="text" name="tags" value="exampleTag">
+                    Tags: <input type="text" name="tags" value="exampleTag">
 
                     <input type="hidden" name="anonymous" value="0" />
                     <input type="checkbox" name="anonymous" value="1" /> anonymous?
@@ -86,13 +87,14 @@
                         <input class="loginRegisterField" type="text" placeholder="Enter Username" name="username"
                             required>
 
+                        <label for="username"><b>E-mail</b></label>
+                        <input class="loginRegisterField" type="text" placeholder="Enter E-mail" name="email"
+                            required>
+
                         <label for="psw"><b>Password</b></label>
                         <input class="loginRegisterField" type="password" placeholder="Enter Password" name="password"
                             required>
 
-                        <label for="psw-repeat"><b>Repeat Password</b></label>
-                        <input class="loginRegisterField" type="password" placeholder="Repeat Password"
-                            name="psw-repeat" required>
                         <hr>
                         <p>By creating an account you agree to our <a href="#">Terms & Privacy</a>.</p>
 
@@ -128,7 +130,7 @@
     <div class="header topnav" id="myTopnav">
         <ul>
             <li>
-                <a href="index.html"><img style="width: 35px;height: 25px;" src="img/nuclear.png"></img>
+                <a href="index.html"><img style="width: 35px;height: 25px;" src="img/nuclear.png">
                 </a>
             </li>
             <li><a href="index.html">browse</a></li>
@@ -137,12 +139,12 @@
             </li>
             <li>
                 <a href=""><img src="img/searchIcon.svg"
-                        style="width: 20px;height: auto;filter: brightness(0) invert(1);"></img>
+                        style="width: 20px;height: auto;filter: brightness(0) invert(1);">
                 </a>
             </li>
             <li>
                 <a href="#" id="uploadButton"><img src="img/upload.svg"
-                        style="width: 20px;height: auto;filter: brightness(0) invert(1);"></img>
+                        style="width: 20px;height: auto;filter: brightness(0) invert(1);">
                 </a>
             </li>
             <li>
@@ -150,7 +152,7 @@
             </li>
             <li class="right" id="settingsIcon" style="visibility: hidden;">
                 <a href="#about"><img src="img/cogwheel.svg"
-                        style="width: 20px;height: auto;filter: brightness(0) invert(1);"></img>
+                        style="width: 20px;height: auto;filter: brightness(0) invert(1);">
                 </a>
             </li>
             <li id="loginButton" class="right"><a id="usernameArea" href="#signin"></a></li>

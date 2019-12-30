@@ -57,6 +57,41 @@ settingsSpan.onclick = function() {
   settingsModal.style.display = "none";
 };
 
+document.getElementById("reportImage").onclick = function() {
+  $.ajax({
+    url: "/image/report/"+(document.getElementById("imageForModal").imgID), //location of where you want to send image
+    beforeSend: sendToken,
+    cache: false,
+    contentType: false,
+    processData: false,
+    data: "test",
+    type: "PUT",
+    success: function(data, textStatus, jQxhr) {
+      location.reload();
+    },
+    error: function(jqXhr, textStatus, errorThrown) {
+      console.log(errorThrown);
+    }
+  });
+};
+
+document.getElementById("deleteImage").onclick = function() {
+  $.ajax({
+    url: "/image/"+(document.getElementById("imageForModal").imgID), //location of where you want to send image
+    beforeSend: sendToken,
+    cache: false,
+    contentType: false,
+    processData: false,
+    type: "DELETE",
+    success: function(data, textStatus, jQxhr) {
+      location.reload();
+    },
+    error: function(jqXhr, textStatus, errorThrown) {
+      console.log(errorThrown);
+    }
+  });
+};
+
 // When the user clicks anywhere outside of the modal, close it
 window.onclick = function(event) {
   if (event.target == uploadModal) uploadModal.style.display = "none";
@@ -118,7 +153,6 @@ function getImages(count, offset) {
     success: function(data, textStatus, jQxhr) {
       if(data.length == 0) 
          return;
-      console.log("yeeeeeeeeee")
       if (data !== null) {
         var currentColumn = 0;
         for (let i = 0; i < data.length; i++) {
@@ -127,8 +161,10 @@ function getImages(count, offset) {
           var base64String = data[i].split(":");
           elem.style = "cursor: pointer;";
           elem.imgID = base64String[0];
+
           elem.onclick = function() {
             $.ajax({
+              imageID: this.imgID,
               url: "/frontpage/" + this.imgID, //location of where you want to send image
               beforeSend: sendToken,
               cache: false,
@@ -143,6 +179,7 @@ function getImages(count, offset) {
                 document.getElementById("imageRating").innerText = "Rating: " +base64String[1];
 
                 var elem = document.getElementById("imageForModal");
+                elem.imgID = this.imageID;
                 elem.src =
                   "data:image/" +
                   base64String[2] +

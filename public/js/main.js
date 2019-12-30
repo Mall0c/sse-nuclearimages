@@ -1,19 +1,38 @@
 var offset = 0;
 var columnsMax = 4;
+var loggedIn;
 
 window.onload = function(){  
-  if (!this.document.cookie)
+  if (!this.document.cookie) {
     document.getElementById("docCok").innerText = "noXtoken";
-  else
-    document.getElementById("docCok").innerText = document.cookie.slice(0, 50);
+    //document.cookie = "name=;";
+    //document.cookie = "token=;";
+    //document.cookie = "loggedIn=0";
+  } else 
+      document.getElementById("docCok").innerText = (document.cookie.replace(/(?:(?:^|.*;\s*)token\s*\=\s*([^;]*).*$)|^.*$/, "$1")).slice(0, 50);
 
-  //this.console.log(document.cookie);
+  
+  if (document.cookie.split(';').filter((item) => item.includes('loggedIn=1')).length) {
+    this.loggedIn = true;
+  } else {
+    this.loggedIn = false;
+  }
+    
+    console.log(document.cookie);
 
+    getImages(20, 0);
+
+    if(this.loggedIn === true) {
+      this.document.getElementById("settingsIcon").style.visibility = "visible";
+      this.document.getElementById("usernameArea").innerText = document.cookie.replace(/(?:(?:^|.*;\s*)name\s*\=\s*([^;]*).*$)|^.*$/, "$1");
+    } else {
+      this.document.getElementById("usernameArea").innerText ="sign in";
+    }
+  	
 };
 
-
 function sendToken(xhr) {
-  xhr.setRequestHeader("x-access-token", document.cookie);
+  xhr.setRequestHeader("x-access-token", document.cookie.replace(/(?:(?:^|.*;\s*)token\s*\=\s*([^;]*).*$)|^.*$/, "$1"));
 }
 
 function getImages(count, offset) {
@@ -26,7 +45,7 @@ function getImages(count, offset) {
     type: "GET",
     beforeSend: sendToken,
     success: function(data, textStatus, jQxhr) {
-      console.log(data);
+      //console.log(data);
       if (data !== null) {
         var currentColumn = 0;
         for (let i = 0; i < data.length; i++) {
@@ -48,7 +67,7 @@ function getImages(count, offset) {
                 var base64String = data.split(":");
                 var elem = document.getElementById("imageForModal");
                 elem.src =
-                    "data:image/" + base64String[1] + ";base64," + base64String[2];
+                    "data:image/" + base64String[2] + ";base64," + base64String[3];
                 imageViewModal.style.display = "block";
               },
               error: function(jqXhr, textStatus, errorThrown) {
@@ -71,7 +90,11 @@ function getImages(count, offset) {
   });
 }
 
-getImages(20, 0);
+function logOut() {
+    document.cookie = "name=;";
+    document.cookie = "token=;";
+    document.cookie = "loggedIn=0";
+}
 
 window.onscroll = function(ev) {
   if (window.innerHeight + window.scrollY >= document.body.offsetHeight) {
@@ -97,6 +120,7 @@ $(document).ready(function() {
       type: "post",
       success: function(data, textStatus, jQxhr) {
         console.log(data);
+        location.reload();
       },
       error: function(jqXhr, textStatus, errorThrown) {
         console.log(errorThrown);
@@ -111,7 +135,6 @@ $(document).ready(function() {
     e.preventDefault();
 
     var form_data = new FormData(this);
-    //document.cookie = form_data.get("username");
     //console.log(document.cookie);
   
     $.ajax({
@@ -125,7 +148,12 @@ $(document).ready(function() {
       type: "post",
       success: function(data, textStatus, jQxhr) {
         //console.log(form_data);
-        if (data["auth"] == true) document.cookie = data["token"];
+        if (data["auth"] == true) {
+          document.cookie = "name="+form_data.get("username");
+          document.cookie = "token="+data["token"];
+          document.cookie = "loggedIn=1";
+          location.reload(); 
+        }
       },
       error: function(jqXhr, textStatus, errorThrown) {
         console.log(errorThrown);
@@ -152,7 +180,12 @@ $(document).ready(function() {
       type: "post",
       success: function(data, textStatus, jQxhr) {
         console.log(data);
-        if (data["auth"] == true) document.cookie = data["token"];
+        if (data["auth"] == true) {
+          document.cookie = "name="+form_data.get("username");
+          document.cookie = "token="+data["token"];
+          document.cookie = "loggedIn=1";
+          location.reload(); 
+        }
       },
       error: function(jqXhr, textStatus, errorThrown) {
         console.log(errorThrown);

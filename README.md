@@ -6,4 +6,5 @@
 3) Import the .sql file in phpMyAdmin (in XAMPP)
 4) Run `npm install` in root folder
 5) Put dbConfig.js into the root folder. Adjust your database settings. https://pastebin.com/raw/9Pb5xRQg
-6) Run `node index.js`
+6) Create the directory "image_upload" in the root directory.
+7) Run `node index.js`

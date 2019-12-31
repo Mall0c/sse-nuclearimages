@@ -376,7 +376,54 @@ function loadComments(){
           });
         };
 
+        // Rate positive comment button
+        var editElem = document.createElement("button");
+        var textElem = document.createElement("input");
+        var saveElem = document.createElement("button");
 
+        textElem.id = "textElem"+data[i].ID; 
+        textElem.type = "text";
+        textElem.style.display = "none";
+
+        saveElem.id = "saveElem"+data[i].ID; 
+        saveElem.commentID = data[i].ID;
+        saveElem.innerText = "save";
+        saveElem.style.display = "none";
+        saveElem.onclick = function(){
+
+          $.ajax({
+            url: "/comments/" + this.commentID, 
+            beforeSend: sendToken,
+            type: "PUT",
+            data: {text: document.getElementById("textElem"+this.commentID).value},
+            success: function(data, textStatus, jQxhr) {
+              loadComments();
+            },
+            error: function(jqXhr, textStatus, errorThrown) {
+              console.log(errorThrown);
+            }
+          });
+
+          document.getElementById("textElem"+this.commentID).style.display = "none";
+          document.getElementById("saveElem"+this.commentID).style.display = "none";
+          document.getElementById("editElem"+this.commentID).style.display = "block";
+        };
+
+        editElem.innerText = "Edit"
+        editElem.id = "editElem"+data[i].ID;
+        editElem.commentID = data[i].ID; 
+        editElem.comment = data[i].Text;
+        editElem.onclick = function(){
+          document.getElementById("textElem"+this.commentID).style.display = "block";
+          document.getElementById("textElem"+this.commentID).value = this.comment;
+          document.getElementById("saveElem"+this.commentID).style.display = "block";
+          this.style.display = "none";
+        };
+
+       commentElem.appendChild(textElem);
+       commentElem.appendChild(saveElem);
+
+        commentElem.appendChild(editElem);
         commentElem.appendChild(rateNegativeElem);
         commentElem.appendChild(ratePositiveElem);
         commentElem.appendChild(deleteElem);

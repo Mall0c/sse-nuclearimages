@@ -273,32 +273,7 @@ function getImages(count, offset, tag) {
 
                 // comments
                 //document.getElementById("commentArea").appendChild();
-                $.ajax({
-                  url: "/comments/" +document.getElementById("imageForModal").imgID, //location of where you want to send image
-                  beforeSend: sendToken,
-                  cache: false,
-                  contentType: false,
-                  processData: false,
-                  type: "GET",
-                  success: function(data, textStatus, jQxhr) {
-                    const commentArea = document.getElementById("commentArea");
-                    while (commentArea.firstChild) {
-                      commentArea.removeChild(commentArea.firstChild);
-                    }
-                    
-                    for (let i = 0; i < data.length; i++) {
-                      var commentElem = document.createElement("div"); 
-                      commentElem.classList = "comment";
-                      commentElem.innerHTML = "CommentID:" +data[i].ID + " Username: " +data[i].Username + " Rating: " +data[i].Rating + "<br>"+"Comment:"+"<br>" +data[i].Text; 
-                      
-                      document.getElementById("commentArea").appendChild(commentElem);
-                    }
-                  },
-                  error: function(jqXhr, textStatus, errorThrown) {
-                    console.log(errorThrown);
-                  }
-                });
-
+                loadComments();
 
               },
               error: function(jqXhr, textStatus, errorThrown) {
@@ -313,6 +288,34 @@ function getImages(count, offset, tag) {
             .appendChild(elem);
           currentColumn++;
         }
+      }
+    },
+    error: function(jqXhr, textStatus, errorThrown) {
+      console.log(errorThrown);
+    }
+  });
+}
+
+function loadComments(){
+  $.ajax({
+    url: "/comments/" +document.getElementById("imageForModal").imgID, //location of where you want to send image
+    beforeSend: sendToken,
+    cache: false,
+    contentType: false,
+    processData: false,
+    type: "GET",
+    success: function(data, textStatus, jQxhr) {
+      const commentArea = document.getElementById("commentArea");
+      while (commentArea.firstChild) {
+        commentArea.removeChild(commentArea.firstChild);
+      }
+      
+      for (let i = 0; i < data.length; i++) {
+        var commentElem = document.createElement("div"); 
+        commentElem.classList = "comment";
+        commentElem.innerHTML = "CommentID:" +data[i].ID + " Username: " +data[i].Username + " Rating: " +data[i].Rating + "<br>"+"Comment:"+"<br>" +data[i].Text; 
+        
+        document.getElementById("commentArea").appendChild(commentElem);
       }
     },
     error: function(jqXhr, textStatus, errorThrown) {
@@ -337,7 +340,7 @@ $(document).ready(function() {
     data: form_data,
     type: "POST",
     success: function(data, textStatus, jQxhr) {
-      console.log("comment posted, no refresh yet");
+      loadComments();
     },
     error: function(jqXhr, textStatus, errorThrown) {
       console.log(errorThrown);

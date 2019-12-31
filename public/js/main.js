@@ -376,7 +376,7 @@ function loadComments() {
           });
         };
 
-        // Rate positive comment button
+        // Rate negative comment button
         var rateNegativeElem = document.createElement("button");
         rateNegativeElem.innerText = "-1";
         rateNegativeElem.commentID = data[i].ID;
@@ -395,7 +395,7 @@ function loadComments() {
           });
         };
 
-        // Rate positive comment button
+        // Edit comment button
         var editElem = document.createElement("button");
         var textElem = document.createElement("input");
         var saveElem = document.createElement("button");
@@ -406,7 +406,7 @@ function loadComments() {
 
         saveElem.id = "saveElem" + data[i].ID;
         saveElem.commentID = data[i].ID;
-        saveElem.innerText = "save";
+        saveElem.innerText = "Save Text";
         saveElem.style.display = "none";
         saveElem.onclick = function() {
           $.ajax({
@@ -447,9 +447,61 @@ function loadComments() {
           this.style.display = "none";
         };
 
+          // Report comment button
+          var reportElem = document.createElement("button");
+          var reportTextElem = document.createElement("input");
+          var sendReportElem = document.createElement("button");
+  
+          reportTextElem.id = "reportTextElem" + data[i].ID;
+          reportTextElem.type = "text";
+          reportTextElem.style.display = "none";
+  
+          sendReportElem.id = "sendReportElem" + data[i].ID;
+          sendReportElem.commentID = data[i].ID;
+          sendReportElem.innerText = "Send Report";
+          sendReportElem.style.display = "none";
+          sendReportElem.onclick = function() {
+            $.ajax({
+              url: "/comment/report/" + this.commentID,
+              beforeSend: sendToken,
+              type: "PUT",
+              data: {
+                text: document.getElementById("reportTextElem" + this.commentID).value
+              },
+              success: function(data, textStatus, jQxhr) {
+                console.log(data);
+                console.log("reported");
+              },
+              error: function(jqXhr, textStatus, errorThrown) {
+                console.log(errorThrown);
+              }
+            });
+  
+            document.getElementById("reportTextElem" + this.commentID).style.display =
+              "none";
+            document.getElementById("sendReportElem" + this.commentID).style.display =
+              "none";
+            document.getElementById("reportElem" + this.commentID).style.display =
+              "block";
+          };
+  
+          reportElem.innerText = "Report Image";
+          reportElem.id = "reportElem" + data[i].ID;
+          reportElem.commentID = data[i].ID;
+          reportElem.comment = data[i].Text;
+          reportElem.onclick = function() {
+            document.getElementById("reportTextElem" + this.commentID).style.display =
+              "block";
+            document.getElementById("sendReportElem" + this.commentID).style.display =
+              "block";
+            this.style.display = "none";
+          };
+
+        commentElem.appendChild(sendReportElem);
+        commentElem.appendChild(reportTextElem);
+        commentElem.appendChild(reportElem);
         commentElem.appendChild(textElem);
         commentElem.appendChild(saveElem);
-
         commentElem.appendChild(editElem);
         commentElem.appendChild(rateNegativeElem);
         commentElem.appendChild(ratePositiveElem);

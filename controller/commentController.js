@@ -1,7 +1,7 @@
 const mysql_query = require('../mysql_query');
 
 exports.allComments = (req, res, next) => {
-    mysql_query('SELECT COALESCE(SUM(Rating_Value),0) as Rating, comments.Text, Username\
+    mysql_query('SELECT comments.ID, COALESCE(SUM(Rating_Value),0) as Rating, comments.Text, Username\
     FROM comments\
     LEFT JOIN comments_ratings ON comments.ID = comments_ratings.Comment_ID\
     INNER JOIN user ON comments.Autor = user.ID\
@@ -20,8 +20,8 @@ exports.writeComment = (req, res, next) => {
     if(req.username === undefined) {
         return res.status(401).send("Not logged in");
     }
-    mysql_query('INSERT INTO comments (Text, Autor, Image) VALUES (?, ?, ?)',
-        [req.body.comment, req.id, parseInt(req.params.imageId)], (err, result, fields) => {
+    mysql_query('INSERT INTO comments (Text, Autor, Image, Deleted) VALUES (?, ?, ?, ?)',
+        [req.body.comment, req.id, parseInt(req.params.imageId), 0], (err, result, fields) => {
             if(err) {
                 console.log(err);
                 throw err;

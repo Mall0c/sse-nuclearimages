@@ -67,9 +67,15 @@ imageViewSpan.onclick = function() {
 settingsSpan.onclick = function() {
   settingsModal.style.display = "none";
 };
-
+var reportTrigger = false;
 document.getElementById("reportImage").onclick = function() {
-  document.getElementById("reportArea").style.visibility = "visible";
+  if(!reportTrigger) {
+    document.getElementById("reportArea").style.display = "block";
+    reportTrigger = true;
+  } else {
+    document.getElementById("reportArea").style.display = "none";
+    reportTrigger = false;
+  }
 };
 
 $(document).ready(function() {
@@ -311,10 +317,27 @@ function loadComments(){
       }
       
       for (let i = 0; i < data.length; i++) {
-        var commentElem = document.createElement("div"); 
+        var commentElem = document.createElement("div");
         commentElem.classList = "comment";
-        commentElem.innerHTML = "CommentID:" +data[i].ID + " Username: " +data[i].Username + " Rating: " +data[i].Rating + "<br>"+"Comment:"+"<br>" +data[i].Text; 
+        commentElem.innerHTML = "CommentID:" +data[i].ID + " Username: " +data[i].Username + " Rating: " +data[i].Rating + "<br>"+"Comment:"+"<br>" +data[i].Text +"<br>"; 
         
+        var deleteElem = document.createElement("button");
+        deleteElem.innerText = "remove comment"
+        deleteElem.commentID = data[i].ID; 
+        deleteElem.onclick = function(){
+          $.ajax({
+            url: "/comments/" + this.commentID, //location of where you want to send image
+            beforeSend: sendToken,
+            type: "DELETE",
+            success: function(data, textStatus, jQxhr) {
+              loadComments();
+            },
+            error: function(jqXhr, textStatus, errorThrown) {
+              console.log(errorThrown);
+            }
+          });
+        };
+        commentElem.appendChild(deleteElem);
         document.getElementById("commentArea").appendChild(commentElem);
       }
     },

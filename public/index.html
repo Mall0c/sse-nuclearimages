@@ -4,7 +4,7 @@
 <head>
     <title>Nuclear Images</title>
     <link rel="stylesheet" href="css/style.css">
-    <script class="jsbin" src="/js/jquery.min.js"></script>
+    <script class="jsbin" src="js/jquery.min.js"></script>
 </head>
 
 <body>
@@ -65,20 +65,18 @@
 
                 <a id="deleteImage" style="cursor: pointer;">[delete image]</a>
                 <br>
+                <form id="sendCommentForm">
                 Comment: <br>
-                <input type="text" name="usrname"><br>
+                <input id="commentTextField" type="text" name="comment"><br>
 
-                <input type="submit" value="Submit Comment">
+                <input type="submit" value="Submit Comment"></form>
                 <!--List all comments-->
-                <div class="commentArea">
+                <div id="commentArea" class="commentArea">
                     <div class="comment"> 
-                        <a>commentorname#</a>
-                        <a>commentRating#</a>
-                        <a>rate Comment#</a>
-                        <a>comment Text#</a>
-                        <a>edit Comment#</a>
-                        <a>delete Comment#</a>
-                        <a>report comment#</a>
+                        <a>rate Comment#</a> <br>
+                        <a>edit Comment#</a><br>
+                        <a>delete Comment#</a><br>
+                        <a>report comment#</a><br>
                     </div>
                 </div>
             <br>

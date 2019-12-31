@@ -270,6 +270,36 @@ function getImages(count, offset, tag) {
                   ";base64," +
                   base64String[3];
                 imageViewModal.style.display = "block";
+
+                // comments
+                //document.getElementById("commentArea").appendChild();
+                $.ajax({
+                  url: "/comments/" +document.getElementById("imageForModal").imgID, //location of where you want to send image
+                  beforeSend: sendToken,
+                  cache: false,
+                  contentType: false,
+                  processData: false,
+                  type: "GET",
+                  success: function(data, textStatus, jQxhr) {
+                    const commentArea = document.getElementById("commentArea");
+                    while (commentArea.firstChild) {
+                      commentArea.removeChild(commentArea.firstChild);
+                    }
+                    
+                    for (let i = 0; i < data.length; i++) {
+                      var commentElem = document.createElement("div"); 
+                      commentElem.classList = "comment";
+                      commentElem.innerHTML = "CommentID:" +data[i].ID + " Username: " +data[i].Username + " Rating: " +data[i].Rating + "<br>"+"Comment:"+"<br>" +data[i].Text; 
+                      
+                      document.getElementById("commentArea").appendChild(commentElem);
+                    }
+                  },
+                  error: function(jqXhr, textStatus, errorThrown) {
+                    console.log(errorThrown);
+                  }
+                });
+
+
               },
               error: function(jqXhr, textStatus, errorThrown) {
                 console.log(errorThrown);
@@ -290,6 +320,31 @@ function getImages(count, offset, tag) {
     }
   });
 }
+
+
+$(document).ready(function() {
+  $("#sendCommentForm").submit(function(e) {
+    //Stops submit button from refreshing page.
+    e.preventDefault();
+  var form_data = new FormData(this);
+
+  $.ajax({
+    url: "/comments/" +document.getElementById("imageForModal").imgID, //location of where you want to send image
+    beforeSend: sendToken,
+    cache: false,
+    contentType: false,
+    processData: false,
+    data: form_data,
+    type: "POST",
+    success: function(data, textStatus, jQxhr) {
+      console.log("comment posted, no refresh yet");
+    },
+    error: function(jqXhr, textStatus, errorThrown) {
+      console.log(errorThrown);
+    }
+  });
+});
+});
 
 function logOut() {
   document.cookie = "name=;";

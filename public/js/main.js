@@ -42,6 +42,11 @@ loginBtn.onclick = function() {
   }
 };
 
+function searchUsingTag() {
+  clearURL();
+  location.href = URL_add_parameter(location.href,"loadTaggedImages", document.getElementById("searchTagField").value);
+}
+
 settingsBtn.onclick = function() {
   settingsModal.style.display = "block";
 };
@@ -210,10 +215,12 @@ function sendToken(xhr) {
   );
 }
 
-function getImages(count, offset) {
+function getImages(count, offset, tag) {
   var destURL;
   if (getURLParamter("loadMyProfileImages") == "1")
     destURL = "/user/images/" + count + "/" + offset;
+  else if (getURLParamter("loadTaggedImages"))
+    destURL = "/search/" + count + "/" + offset + "/" + getURLParamter("loadTaggedImages");
   else 
     destURL = "/frontpage/" + count + "/" + offset;
 
@@ -446,6 +453,7 @@ $(".image-upload-wrap").bind("dragleave", function() {
 });
 
 function URL_add_parameter(url, param, value) {
+  clearURL();
   var hash = {};
   var parser = document.createElement("a");
 
@@ -469,6 +477,10 @@ function URL_add_parameter(url, param, value) {
 
   parser.search = "?" + list.join("&");
   return parser.href;
+}
+
+function clearURL(){
+  window.history.replaceState({}, document.title, "/" + "index.html");
 }
 
 function getURLParamter(paramName) {

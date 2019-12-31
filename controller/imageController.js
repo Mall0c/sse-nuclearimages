@@ -86,6 +86,9 @@ exports.upload = (req, res, next) => {
     if(req.body.tags !== undefined) {
         tags = req.body.tags;
     }
+    if(req.id === undefined) {
+        return res.status(403).send("Not logged in");
+    }
     // Check if image is supposed to be private
     var private = parseInt(req.body.private);
     var anonymous = parseInt(req.body.anonymous);

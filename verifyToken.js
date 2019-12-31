@@ -15,7 +15,7 @@ function verifyToken(req, res, next) {
         jwt.verify(token, dbConfig.secret, function(err, decoded) {
             if (err)
                 return res.status(403).send({ auth: false, message: 'Failed to authenticate token.' });
-            // If everything good, save to request for use in other routes.
+            // If everything is fine, save to request for use in other routes.
             req.username = decoded.username;
             mysql_query('SELECT ID FROM user WHERE Username = ?', [req.username], (err, result, fields) => {
                 if (err) {

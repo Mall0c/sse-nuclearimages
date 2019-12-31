@@ -86,7 +86,7 @@ $(document).ready(function() {
     var form_data = new FormData(this);
 
     $.ajax({
-      url: "/voteImage/" + document.getElementById("imageForModal").imgID, //location of where you want to send image
+      url: "/voteImage/" + document.getElementById("imageForModal").imgID,
       beforeSend: sendToken,
       cache: false,
       contentType: false,
@@ -113,7 +113,7 @@ $(document).ready(function() {
 
 function deleteMyAccount() {
   $.ajax({
-    url: "/user/0", //location of where you want to send image
+    url: "/user/0",
     beforeSend: sendToken,
     cache: false,
     contentType: false,
@@ -138,7 +138,7 @@ $(document).ready(function() {
     var form_data = new FormData(this);
 
     $.ajax({
-      url: "/image/report/" + document.getElementById("imageForModal").imgID, //location of where you want to send image
+      url: "/image/report/" + document.getElementById("imageForModal").imgID, 
       beforeSend: sendToken,
       cache: false,
       contentType: false,
@@ -157,7 +157,7 @@ $(document).ready(function() {
 
 document.getElementById("deleteImage").onclick = function() {
   $.ajax({
-    url: "/image/" + document.getElementById("imageForModal").imgID, //location of where you want to send image
+    url: "/image/" + document.getElementById("imageForModal").imgID,
     beforeSend: sendToken,
     cache: false,
     contentType: false,
@@ -252,7 +252,7 @@ function getImages(count, offset, tag) {
           elem.onclick = function() {
             $.ajax({
               imageID: this.imgID,
-              url: "/frontpage/" + this.imgID, //location of where you want to send image
+              url: "/frontpage/" + this.imgID, 
               beforeSend: sendToken,
               cache: false,
               contentType: false,
@@ -278,7 +278,6 @@ function getImages(count, offset, tag) {
                 imageViewModal.style.display = "block";
 
                 // comments
-                //document.getElementById("commentArea").appendChild();
                 loadComments();
 
               },
@@ -304,7 +303,7 @@ function getImages(count, offset, tag) {
 
 function loadComments(){
   $.ajax({
-    url: "/comments/" +document.getElementById("imageForModal").imgID, //location of where you want to send image
+    url: "/comments/" +document.getElementById("imageForModal").imgID, 
     beforeSend: sendToken,
     cache: false,
     contentType: false,
@@ -321,12 +320,13 @@ function loadComments(){
         commentElem.classList = "comment";
         commentElem.innerHTML = "CommentID:" +data[i].ID + " Username: " +data[i].Username + " Rating: " +data[i].Rating + "<br>"+"Comment:"+"<br>" +data[i].Text +"<br>"; 
         
+        // Delete comment button
         var deleteElem = document.createElement("button");
         deleteElem.innerText = "remove comment"
         deleteElem.commentID = data[i].ID; 
         deleteElem.onclick = function(){
           $.ajax({
-            url: "/comments/" + this.commentID, //location of where you want to send image
+            url: "/comments/" + this.commentID, 
             beforeSend: sendToken,
             type: "DELETE",
             success: function(data, textStatus, jQxhr) {
@@ -337,6 +337,48 @@ function loadComments(){
             }
           });
         };
+
+        // Rate positive comment button
+        var ratePositiveElem = document.createElement("button");
+        ratePositiveElem.innerText = "+1"
+        ratePositiveElem.commentID = data[i].ID; 
+        ratePositiveElem.onclick = function(){
+          $.ajax({
+            url: "/voteComment/" + this.commentID, 
+            beforeSend: sendToken,
+            type: "PUT",
+            data: {ratingValue:"+1"},
+            success: function(data, textStatus, jQxhr) {
+              loadComments();
+            },
+            error: function(jqXhr, textStatus, errorThrown) {
+              console.log(errorThrown);
+            }
+          });
+        };
+
+        // Rate positive comment button
+        var rateNegativeElem = document.createElement("button");
+        rateNegativeElem.innerText = "-1"
+        rateNegativeElem.commentID = data[i].ID; 
+        rateNegativeElem.onclick = function(){
+          $.ajax({
+            url: "/voteComment/" + this.commentID, 
+            beforeSend: sendToken,
+            type: "PUT",
+            data: {ratingValue:"-1"},
+            success: function(data, textStatus, jQxhr) {
+              loadComments();
+            },
+            error: function(jqXhr, textStatus, errorThrown) {
+              console.log(errorThrown);
+            }
+          });
+        };
+
+
+        commentElem.appendChild(rateNegativeElem);
+        commentElem.appendChild(ratePositiveElem);
         commentElem.appendChild(deleteElem);
         document.getElementById("commentArea").appendChild(commentElem);
       }
@@ -355,7 +397,7 @@ $(document).ready(function() {
   var form_data = new FormData(this);
 
   $.ajax({
-    url: "/comments/" +document.getElementById("imageForModal").imgID, //location of where you want to send image
+    url: "/comments/" +document.getElementById("imageForModal").imgID,
     beforeSend: sendToken,
     cache: false,
     contentType: false,
@@ -393,7 +435,7 @@ $(document).ready(function() {
     var form_data = new FormData(this);
 
     $.ajax({
-      url: "/user", //location of where you want to send image
+      url: "/user", 
       beforeSend: sendToken,
       cache: false,
       contentType: false,
@@ -419,7 +461,7 @@ $(document).ready(function() {
     var form_data = new FormData(this);
 
     $.ajax({
-      url: "/upload", //location of where you want to send image
+      url: "/upload",
       beforeSend: sendToken,
       cache: false,
       contentType: false,
@@ -446,7 +488,7 @@ $(document).ready(function() {
     //console.log(document.cookie);
 
     $.ajax({
-      url: "/login", //location of where you want to send image
+      url: "/login", 
       dataType: "json",
       beforeSend: sendToken,
       cache: false,
@@ -478,8 +520,8 @@ $(document).ready(function() {
     var form_data = new FormData(this);
 
     $.ajax({
-      url: "/register", //location of where you want to send image
-      dataType: "json", // what to expect back from the PHP script, if anything
+      url: "/register", 
+      dataType: "json", 
       cache: false,
       contentType: false,
       beforeSend: sendToken,

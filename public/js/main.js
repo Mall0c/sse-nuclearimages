@@ -62,6 +62,35 @@ document.getElementById("reportImage").onclick = function() {
 };
 
 $(document).ready(function() {
+  $("#rateImage").submit(function(e) {
+    //Stops submit button from refreshing page.
+    e.preventDefault();
+
+    var form_data = new FormData(this);
+
+    $.ajax({
+      url: "/voteImage/"+(document.getElementById("imageForModal").imgID), //location of where you want to send image
+      beforeSend: sendToken,
+      cache: false,
+      contentType: false,
+      processData: false,
+      data: form_data,
+      type: "PUT",
+      success: function(data, textStatus, jQxhr) {
+        //location.reload();
+        if(form_data.get("ratingValue") == "+1")
+        document.getElementById("imageRating").innerText = "Rating: " +(Number(document.getElementById("imageForModal").rating)+1);
+        else
+        document.getElementById("imageRating").innerText = "Rating: " +(Number(document.getElementById("imageForModal").rating)-1);
+      },
+      error: function(jqXhr, textStatus, errorThrown) {
+        console.log(errorThrown);
+      }
+    });
+  });
+});
+
+$(document).ready(function() {
   $("#reportForm").submit(function(e) {
     //Stops submit button from refreshing page.
     e.preventDefault();
@@ -78,7 +107,6 @@ $(document).ready(function() {
       type: "PUT",
       success: function(data, textStatus, jQxhr) {
         //location.reload();
-      
       },
       error: function(jqXhr, textStatus, errorThrown) {
         console.log(errorThrown);
@@ -192,6 +220,7 @@ function getImages(count, offset) {
 
                 var elem = document.getElementById("imageForModal");
                 elem.imgID = this.imageID;
+                elem.rating = base64String[1];
                 elem.src =
                   "data:image/" +
                   base64String[2] +

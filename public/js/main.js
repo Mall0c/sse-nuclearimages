@@ -44,7 +44,11 @@ loginBtn.onclick = function() {
 
 function searchUsingTag() {
   clearURL();
-  location.href = URL_add_parameter(location.href,"loadTaggedImages", document.getElementById("searchTagField").value);
+  location.href = URL_add_parameter(
+    location.href,
+    "loadTaggedImages",
+    document.getElementById("searchTagField").value
+  );
 }
 
 settingsBtn.onclick = function() {
@@ -69,7 +73,7 @@ settingsSpan.onclick = function() {
 };
 var reportTrigger = false;
 document.getElementById("reportImage").onclick = function() {
-  if(!reportTrigger) {
+  if (!reportTrigger) {
     document.getElementById("reportArea").style.display = "block";
     reportTrigger = true;
   } else {
@@ -138,7 +142,7 @@ $(document).ready(function() {
     var form_data = new FormData(this);
 
     $.ajax({
-      url: "/image/report/" + document.getElementById("imageForModal").imgID, 
+      url: "/image/report/" + document.getElementById("imageForModal").imgID,
       beforeSend: sendToken,
       cache: false,
       contentType: false,
@@ -226,9 +230,14 @@ function getImages(count, offset, tag) {
   if (getURLParamter("loadMyProfileImages") == "1")
     destURL = "/user/images/" + count + "/" + offset;
   else if (getURLParamter("loadTaggedImages"))
-    destURL = "/search/" + count + "/" + offset + "/" + getURLParamter("loadTaggedImages");
-  else 
-    destURL = "/frontpage/" + count + "/" + offset;
+    destURL =
+      "/search/" +
+      count +
+      "/" +
+      offset +
+      "/" +
+      getURLParamter("loadTaggedImages");
+  else destURL = "/frontpage/" + count + "/" + offset;
 
   $.ajax({
     url: destURL,
@@ -252,7 +261,7 @@ function getImages(count, offset, tag) {
           elem.onclick = function() {
             $.ajax({
               imageID: this.imgID,
-              url: "/frontpage/" + this.imgID, 
+              url: "/frontpage/" + this.imgID,
               beforeSend: sendToken,
               cache: false,
               contentType: false,
@@ -279,7 +288,6 @@ function getImages(count, offset, tag) {
 
                 // comments
                 loadComments();
-
               },
               error: function(jqXhr, textStatus, errorThrown) {
                 console.log(errorThrown);
@@ -301,9 +309,9 @@ function getImages(count, offset, tag) {
   });
 }
 
-function loadComments(){
+function loadComments() {
   $.ajax({
-    url: "/comments/" +document.getElementById("imageForModal").imgID, 
+    url: "/comments/" + document.getElementById("imageForModal").imgID,
     beforeSend: sendToken,
     cache: false,
     contentType: false,
@@ -314,19 +322,30 @@ function loadComments(){
       while (commentArea.firstChild) {
         commentArea.removeChild(commentArea.firstChild);
       }
-      
+
       for (let i = 0; i < data.length; i++) {
         var commentElem = document.createElement("div");
         commentElem.classList = "comment";
-        commentElem.innerHTML = "CommentID:" +data[i].ID + " Username: " +data[i].Username + " Rating: " +data[i].Rating + "<br>"+"Comment:"+"<br>" +data[i].Text +"<br>"; 
-        
+        commentElem.innerHTML =
+          "CommentID:" +
+          data[i].ID +
+          " Username: " +
+          data[i].Username +
+          " Rating: " +
+          data[i].Rating +
+          "<br>" +
+          "Comment:" +
+          "<br>" +
+          data[i].Text +
+          "<br>";
+
         // Delete comment button
         var deleteElem = document.createElement("button");
-        deleteElem.innerText = "remove comment"
-        deleteElem.commentID = data[i].ID; 
-        deleteElem.onclick = function(){
+        deleteElem.innerText = "remove comment";
+        deleteElem.commentID = data[i].ID;
+        deleteElem.onclick = function() {
           $.ajax({
-            url: "/comments/" + this.commentID, 
+            url: "/comments/" + this.commentID,
             beforeSend: sendToken,
             type: "DELETE",
             success: function(data, textStatus, jQxhr) {
@@ -340,14 +359,14 @@ function loadComments(){
 
         // Rate positive comment button
         var ratePositiveElem = document.createElement("button");
-        ratePositiveElem.innerText = "+1"
-        ratePositiveElem.commentID = data[i].ID; 
-        ratePositiveElem.onclick = function(){
+        ratePositiveElem.innerText = "+1";
+        ratePositiveElem.commentID = data[i].ID;
+        ratePositiveElem.onclick = function() {
           $.ajax({
-            url: "/voteComment/" + this.commentID, 
+            url: "/voteComment/" + this.commentID,
             beforeSend: sendToken,
             type: "PUT",
-            data: {ratingValue:"+1"},
+            data: { ratingValue: "+1" },
             success: function(data, textStatus, jQxhr) {
               loadComments();
             },
@@ -359,14 +378,14 @@ function loadComments(){
 
         // Rate positive comment button
         var rateNegativeElem = document.createElement("button");
-        rateNegativeElem.innerText = "-1"
-        rateNegativeElem.commentID = data[i].ID; 
-        rateNegativeElem.onclick = function(){
+        rateNegativeElem.innerText = "-1";
+        rateNegativeElem.commentID = data[i].ID;
+        rateNegativeElem.onclick = function() {
           $.ajax({
-            url: "/voteComment/" + this.commentID, 
+            url: "/voteComment/" + this.commentID,
             beforeSend: sendToken,
             type: "PUT",
-            data: {ratingValue:"-1"},
+            data: { ratingValue: "-1" },
             success: function(data, textStatus, jQxhr) {
               loadComments();
             },
@@ -381,21 +400,22 @@ function loadComments(){
         var textElem = document.createElement("input");
         var saveElem = document.createElement("button");
 
-        textElem.id = "textElem"+data[i].ID; 
+        textElem.id = "textElem" + data[i].ID;
         textElem.type = "text";
         textElem.style.display = "none";
 
-        saveElem.id = "saveElem"+data[i].ID; 
+        saveElem.id = "saveElem" + data[i].ID;
         saveElem.commentID = data[i].ID;
         saveElem.innerText = "save";
         saveElem.style.display = "none";
-        saveElem.onclick = function(){
-
+        saveElem.onclick = function() {
           $.ajax({
-            url: "/comments/" + this.commentID, 
+            url: "/comments/" + this.commentID,
             beforeSend: sendToken,
             type: "PUT",
-            data: {text: document.getElementById("textElem"+this.commentID).value},
+            data: {
+              text: document.getElementById("textElem" + this.commentID).value
+            },
             success: function(data, textStatus, jQxhr) {
               loadComments();
             },
@@ -404,24 +424,31 @@ function loadComments(){
             }
           });
 
-          document.getElementById("textElem"+this.commentID).style.display = "none";
-          document.getElementById("saveElem"+this.commentID).style.display = "none";
-          document.getElementById("editElem"+this.commentID).style.display = "block";
+          document.getElementById("textElem" + this.commentID).style.display =
+            "none";
+          document.getElementById("saveElem" + this.commentID).style.display =
+            "none";
+          document.getElementById("editElem" + this.commentID).style.display =
+            "block";
         };
 
-        editElem.innerText = "Edit"
-        editElem.id = "editElem"+data[i].ID;
-        editElem.commentID = data[i].ID; 
+        editElem.innerText = "Edit";
+        editElem.id = "editElem" + data[i].ID;
+        editElem.commentID = data[i].ID;
         editElem.comment = data[i].Text;
-        editElem.onclick = function(){
-          document.getElementById("textElem"+this.commentID).style.display = "block";
-          document.getElementById("textElem"+this.commentID).value = this.comment;
-          document.getElementById("saveElem"+this.commentID).style.display = "block";
+        editElem.onclick = function() {
+          document.getElementById("textElem" + this.commentID).style.display =
+            "block";
+          document.getElementById(
+            "textElem" + this.commentID
+          ).value = this.comment;
+          document.getElementById("saveElem" + this.commentID).style.display =
+            "block";
           this.style.display = "none";
         };
 
-       commentElem.appendChild(textElem);
-       commentElem.appendChild(saveElem);
+        commentElem.appendChild(textElem);
+        commentElem.appendChild(saveElem);
 
         commentElem.appendChild(editElem);
         commentElem.appendChild(rateNegativeElem);
@@ -436,29 +463,28 @@ function loadComments(){
   });
 }
 
-
 $(document).ready(function() {
   $("#sendCommentForm").submit(function(e) {
     //Stops submit button from refreshing page.
     e.preventDefault();
-  var form_data = new FormData(this);
+    var form_data = new FormData(this);
 
-  $.ajax({
-    url: "/comments/" +document.getElementById("imageForModal").imgID,
-    beforeSend: sendToken,
-    cache: false,
-    contentType: false,
-    processData: false,
-    data: form_data,
-    type: "POST",
-    success: function(data, textStatus, jQxhr) {
-      loadComments();
-    },
-    error: function(jqXhr, textStatus, errorThrown) {
-      console.log(errorThrown);
-    }
+    $.ajax({
+      url: "/comments/" + document.getElementById("imageForModal").imgID,
+      beforeSend: sendToken,
+      cache: false,
+      contentType: false,
+      processData: false,
+      data: form_data,
+      type: "POST",
+      success: function(data, textStatus, jQxhr) {
+        loadComments();
+      },
+      error: function(jqXhr, textStatus, errorThrown) {
+        console.log(errorThrown);
+      }
+    });
   });
-});
 });
 
 function logOut() {
@@ -482,7 +508,7 @@ $(document).ready(function() {
     var form_data = new FormData(this);
 
     $.ajax({
-      url: "/user", 
+      url: "/user",
       beforeSend: sendToken,
       cache: false,
       contentType: false,
@@ -535,7 +561,7 @@ $(document).ready(function() {
     //console.log(document.cookie);
 
     $.ajax({
-      url: "/login", 
+      url: "/login",
       dataType: "json",
       beforeSend: sendToken,
       cache: false,
@@ -567,8 +593,8 @@ $(document).ready(function() {
     var form_data = new FormData(this);
 
     $.ajax({
-      url: "/register", 
-      dataType: "json", 
+      url: "/register",
+      dataType: "json",
       cache: false,
       contentType: false,
       beforeSend: sendToken,
@@ -649,7 +675,7 @@ function URL_add_parameter(url, param, value) {
   return parser.href;
 }
 
-function clearURL(){
+function clearURL() {
   window.history.replaceState({}, document.title, "/" + "index.html");
 }
 

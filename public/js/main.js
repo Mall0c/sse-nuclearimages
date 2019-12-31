@@ -21,7 +21,6 @@ var loginSpan = document.getElementsByClassName("closeLogin")[0];
 var imageViewSpan = document.getElementsByClassName("closeImageView")[0];
 var settingsSpan = document.getElementsByClassName("closeSettings")[0];
 
-
 logoutButton.onclick = function() {
   logOut();
   location.reload();
@@ -33,7 +32,14 @@ uploadBtn.onclick = function() {
 };
 
 loginBtn.onclick = function() {
-  loginRegisterModal.style.display = "block";
+  if (!loggedIn) loginRegisterModal.style.display = "block";
+  else {
+    location.href = URL_add_parameter(
+      location.href,
+      "loadMyProfileImages",
+      "1"
+    );
+  }
 };
 
 settingsBtn.onclick = function() {
@@ -69,7 +75,7 @@ $(document).ready(function() {
     var form_data = new FormData(this);
 
     $.ajax({
-      url: "/voteImage/"+(document.getElementById("imageForModal").imgID), //location of where you want to send image
+      url: "/voteImage/" + document.getElementById("imageForModal").imgID, //location of where you want to send image
       beforeSend: sendToken,
       cache: false,
       contentType: false,
@@ -78,10 +84,14 @@ $(document).ready(function() {
       type: "PUT",
       success: function(data, textStatus, jQxhr) {
         //location.reload();
-        if(form_data.get("ratingValue") == "+1")
-        document.getElementById("imageRating").innerText = "Rating: " +(Number(document.getElementById("imageForModal").rating)+1);
+        if (form_data.get("ratingValue") == "+1")
+          document.getElementById("imageRating").innerText =
+            "Rating: " +
+            (Number(document.getElementById("imageForModal").rating) + 1);
         else
-        document.getElementById("imageRating").innerText = "Rating: " +(Number(document.getElementById("imageForModal").rating)-1);
+          document.getElementById("imageRating").innerText =
+            "Rating: " +
+            (Number(document.getElementById("imageForModal").rating) - 1);
       },
       error: function(jqXhr, textStatus, errorThrown) {
         console.log(errorThrown);
@@ -89,6 +99,25 @@ $(document).ready(function() {
     });
   });
 });
+
+function deleteMyAccount() {
+  $.ajax({
+    url: "/user/0", //location of where you want to send image
+    beforeSend: sendToken,
+    cache: false,
+    contentType: false,
+    processData: false,
+    type: "DELETE",
+    success: function(data, textStatus, jQxhr) {
+      //location.reload();
+      console.log("not fully implemented yet. no way to get user id right now");
+    },
+    error: function(jqXhr, textStatus, errorThrown) {
+      console.log(errorThrown);
+      console.log("not fully implemented yet. no way to get user id right now");
+    }
+  });
+}
 
 $(document).ready(function() {
   $("#reportForm").submit(function(e) {
@@ -98,7 +127,7 @@ $(document).ready(function() {
     var form_data = new FormData(this);
 
     $.ajax({
-      url: "/image/report/"+(document.getElementById("imageForModal").imgID), //location of where you want to send image
+      url: "/image/report/" + document.getElementById("imageForModal").imgID, //location of where you want to send image
       beforeSend: sendToken,
       cache: false,
       contentType: false,
@@ -117,7 +146,7 @@ $(document).ready(function() {
 
 document.getElementById("deleteImage").onclick = function() {
   $.ajax({
-    url: "/image/"+(document.getElementById("imageForModal").imgID), //location of where you want to send image
+    url: "/image/" + document.getElementById("imageForModal").imgID, //location of where you want to send image
     beforeSend: sendToken,
     cache: false,
     contentType: false,
@@ -182,8 +211,14 @@ function sendToken(xhr) {
 }
 
 function getImages(count, offset) {
+  var destURL;
+  if (getURLParamter("loadMyProfileImages") == "1")
+    destURL = "/user/images/" + count + "/" + offset;
+  else 
+    destURL = "/frontpage/" + count + "/" + offset;
+
   $.ajax({
-    url: "/frontpage/" + count + "/" + offset,
+    url: destURL,
     dataType: "json", // what to expect back from the PHP script, if anything
     cache: false,
     contentType: false,
@@ -191,8 +226,7 @@ function getImages(count, offset) {
     type: "GET",
     beforeSend: sendToken,
     success: function(data, textStatus, jQxhr) {
-      if(data.length == 0) 
-         return;
+      if (data.length == 0) return;
       if (data !== null) {
         var currentColumn = 0;
         for (let i = 0; i < data.length; i++) {
@@ -215,8 +249,10 @@ function getImages(count, offset) {
                 //console.log(data);
                 var base64String = data.split(":");
 
-                document.getElementById("uploaderName").innerText = "Uploaded by " +base64String[0];
-                document.getElementById("imageRating").innerText = "Rating: " +base64String[1];
+                document.getElementById("uploaderName").innerText =
+                  "Uploaded by " + base64String[0];
+                document.getElementById("imageRating").innerText =
+                  "Rating: " + base64String[1];
 
                 var elem = document.getElementById("imageForModal");
                 elem.imgID = this.imageID;
@@ -408,3 +444,35 @@ $(".image-upload-wrap").bind("dragover", function() {
 $(".image-upload-wrap").bind("dragleave", function() {
   $(".image-upload-wrap").removeClass("image-dropping");
 });
+
+function URL_add_parameter(url, param, value) {
+  var hash = {};
+  var parser = document.createElement("a");
+
+  parser.href = url;
+
+  var parameters = parser.search.split(/\?|&/);
+
+  for (var i = 0; i < parameters.length; i++) {
+    if (!parameters[i]) continue;
+
+    var ary = parameters[i].split("=");
+    hash[ary[0]] = ary[1];
+  }
+
+  hash[param] = value;
+
+  var list = [];
+  Object.keys(hash).forEach(function(key) {
+    list.push(key + "=" + hash[key]);
+  });
+
+  parser.search = "?" + list.join("&");
+  return parser.href;
+}
+
+function getURLParamter(paramName) {
+  var url_string = window.location.href;
+  var url = new URL(url_string);
+  return url.searchParams.get(paramName);
+}

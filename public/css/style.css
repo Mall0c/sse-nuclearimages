@@ -8,6 +8,21 @@ body {
   font-family: Arial;
   background-color: #161618;
 }
+.commentArea {
+  width: 100%; /* Set a width if you like */
+}
+
+.commentArea .comment {
+  color: white; /* Black text color */
+  display: block; /* Make the links appear below each other */
+  padding: 12px; /* Add some padding */
+  text-decoration: none; /* Remove underline from links */
+  border-color: white;
+  border-style: solid;
+  border-width: 1px;
+  margin-bottom: 5px;
+}
+
 .progress {
   display: none;
 }
@@ -126,7 +141,7 @@ li a:hover {
 .image-modal {
   display: none;
   /* Hidden by default */
-  position: relative;
+  position: fixed;
   /* Stay in place */
   z-index: 1;
   /* Sit on top */
@@ -149,8 +164,40 @@ li a:hover {
 .image-modal-content {
   background-color: #161618;
   margin: auto;
+  color: white;
   padding: 20px;
   width: 50%;
+}
+/* The Modal (background) */
+.settings-modal {
+  display: none;
+  /* Hidden by default */
+  position: fixed;
+  /* Stay in place */
+  z-index: 1;
+  /* Sit on top */
+  padding-top: 100px;
+  /* Location of the box */
+  left: 0;
+  top: 0;
+  width: 100%;
+  /* Full width */
+  height: 100%;
+  /* Full height */
+  overflow: auto;
+  /* Enable scroll if needed */
+  background-color: rgb(0, 0, 0);
+  /* Fallback color */
+  background-color: rgba(0, 0, 0, 0.4);
+  /* Black w/ opacity */
+}
+/* Modal Content */
+.settings-modal-content {
+  background-color: #fefefe;
+  margin: auto;
+  padding: 20px;
+  border: 1px solid #888;
+  width: 40%;
 }
 /* The Close Button */
 .closeUpload {
@@ -187,6 +234,19 @@ li a:hover {
 }
 .closeLogin:hover,
 .closeLogin:focus {
+  color: #000;
+  text-decoration: none;
+  cursor: pointer;
+}
+/* The Close Button */
+.closeSettings {
+  color: #aaaaaa;
+  float: right;
+  font-size: 28px;
+  font-weight: bold;
+}
+.closeSettings:hover,
+.closeSettings:focus {
   color: #000;
   text-decoration: none;
   cursor: pointer;
@@ -316,7 +376,7 @@ li a:hover {
 /* Add padding to containers */
 .container {
   padding: 16px;
-  background-color: white;  
+  background-color: white;
   width: 50%;
 }
 
@@ -335,7 +395,7 @@ li a:hover {
   background: #f1f1f1;
 }
 
-.loginRegisterField:focus{
+.loginRegisterField:focus {
   background-color: #ddd;
   outline: none;
 }
@@ -374,6 +434,6 @@ a {
 }
 
 .vl {
-    border-left: 2px solid grey;
-    height: 500px;
-  }
+  border-left: 2px solid grey;
+  height: 500px;
+}

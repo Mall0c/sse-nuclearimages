@@ -99,7 +99,7 @@ CREATE TABLE `images_ratings` (
 CREATE TABLE `images_reports` (
   `ID` int(11) NOT NULL,
   `UserID` int(11) NOT NULL,
-  `ImagesID` int(11) NOT NULL,
+  `ImageID` int(11) NOT NULL,
   `Text` varchar(300) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 

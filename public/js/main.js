@@ -1,4 +1,4 @@
-var offset = 0;
+var pblOffset = 0;
 var imagesPerPage = 20;
 var columnsMax = 4;
 var loggedIn;
@@ -224,7 +224,6 @@ function sendToken(xhr) {
     )
   );
 }
-
 function getImages(count, offset, tag) {
   var destURL;
   if (getURLParamter("loadMyProfileImages") == "1")
@@ -238,7 +237,7 @@ function getImages(count, offset, tag) {
       "/" +
       getURLParamter("loadTaggedImages");
   else destURL = "/frontpage/" + count + "/" + offset;
-
+  
   $.ajax({
     url: destURL,
     dataType: "json", // what to expect back from the PHP script, if anything
@@ -248,7 +247,18 @@ function getImages(count, offset, tag) {
     type: "GET",
     beforeSend: sendToken,
     success: function(data, textStatus, jQxhr) {
-      if (data.length == 0) return;
+      console.log(pblOffset);
+      if(data.length == 0) {
+        pblOffset -= imagesPerPage;
+        return;
+      }
+
+      if (offset != 0) {
+        pblOffset -= imagesPerPage;
+        pblOffset += data.length;
+      }
+        
+      
       if (data !== null) {
         var currentColumn = 0;
         for (let i = 0; i < data.length; i++) {
@@ -545,12 +555,44 @@ function logOut() {
   document.cookie = "loggedIn=0";
 }
 
+var _throttleTimer = null;
+var _throttleDelay = 100;
+var $window = $(window);
+var $document = $(document);
+
+$document.ready(function () {
+
+    $window
+        .off('scroll', ScrollHandler)
+        .on('scroll', ScrollHandler);
+
+});
+
+function ScrollHandler(e) {
+    //throttle event:
+    clearTimeout(_throttleTimer);
+    _throttleTimer = setTimeout(function () {
+        console.log('scroll');
+
+        //do work
+        if ($window.scrollTop() + $window.height() > $document.height() - 100) {
+          if (window.innerHeight + window.scrollY >= document.body.offsetHeight) {
+            pblOffset += imagesPerPage;
+            getImages(imagesPerPage, pblOffset);
+          }
+        }
+
+    }, _throttleDelay);
+}
+
+/*
 window.onscroll = function(ev) {
   if (window.innerHeight + window.scrollY >= document.body.offsetHeight) {
-    offset = offset + imagesPerPage;
-    getImages(imagesPerPage, offset);
+    pblOffset += imagesPerPage;
+    getImages(imagesPerPage, pblOffset);
   }
 };
+*/
 
 $(document).ready(function() {
   $("#changeSettings").submit(function(e) {

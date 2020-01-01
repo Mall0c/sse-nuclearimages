@@ -314,6 +314,7 @@ function getImages(count, offset, tag) {
       }
     },
     error: function(jqXhr, textStatus, errorThrown) {
+      pblOffset -= imagesPerPage;
       console.log(errorThrown);
     }
   });
@@ -640,7 +641,17 @@ $(document).ready(function() {
         location.reload();
       },
       error: function(jqXhr, textStatus, errorThrown) {
-        console.log(errorThrown);
+        if(jqXhr.status == 403) {
+            iziToast.show({
+              title: "Error: " +jqXhr.responseText,
+              message: 'Please log in to upload images.'
+          });
+        } else {
+          iziToast.show({
+            title: "Upload failed",
+            message: 'Please try again later.'
+        });
+        }
       }
     });
   });
@@ -673,7 +684,10 @@ $(document).ready(function() {
         }
       },
       error: function(jqXhr, textStatus, errorThrown) {
-        console.log(errorThrown);
+        iziToast.show({
+          title: "Error",
+          message: 'Wrong username or password.'
+      });
       }
     });
   });

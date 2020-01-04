@@ -111,3 +111,6 @@ public/richard_test/
 
 # image_upload
 image_upload/*
+
+# logs
+logs/

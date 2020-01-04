@@ -1,8 +1,8 @@
-
 const mysql_query = require('../mysql_query');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const dbConfig = require('../dbConfig');
+const validator = require('email-validator');
 
 exports.login = (req, res, next) => {
     const username = req.body.username;
@@ -30,15 +30,29 @@ exports.register = (req, res, next) => {
     const username = req.body.username;
     const plainTextPassword = req.body.password;
     const email = req.body.email;
-    bcrypt
-        .genSalt(10)
-        .then(salt => { return bcrypt.hash(plainTextPassword, salt); })
-        .then(hash => { mysql_query('INSERT INTO user (Username, Password, EMail, Deleted, IsAdmin) VALUES (?, ?, ?, 0, 0)', [username, hash, email]) })
-        .catch(err => console.error(err.message))
-    var token = jwt.sign({ username: username }, dbConfig.secret, {
-        expiresIn: 86400*31 // expires in 31 days
+    const isValidEMail = validator.validate(email);
+    if(!isValidEMail) {
+        return res.status(400).send("Invalid email.");
+    }
+    // Returns the ID of the users whom the email or the username belongs to.
+    // Done for duplicate check.
+    mysql_query('SELECT ID FROM user WHERE username = ? OR email = ?', [username, email], (err1, result1, fields1) => {
+        if(err1) {
+            return res.status(500).send("Something went wrong.");
+        }
+        if(result1.length > 0) {
+            return res.status(400).send("User already exists.");
+        }
+        bcrypt
+            .genSalt(10)
+            .then(salt => { return bcrypt.hash(plainTextPassword, salt); })
+            .then(hash => { mysql_query('INSERT INTO user (Username, Password, EMail, Deleted, IsAdmin) VALUES (?, ?, ?, 0, 0)', [username, hash, email]) })
+            .catch(err => console.error(err.message))
+        var token = jwt.sign({ username: username }, dbConfig.secret, {
+            expiresIn: 86400*31 // expires in 31 days
+        });
+        return res.status(200).send({ auth: true, token: token });
     });
-    return res.status(200).send({ auth: true, token: token });
 };
 
 exports.deleteUser = (req, res, next) => {
@@ -47,7 +61,9 @@ exports.deleteUser = (req, res, next) => {
         return res.status(401).send("Not logged in.");
     }
     mysql_query('SELECT ID FROM user WHERE ID = ? AND Deleted = 0', [userId], (err1, result1, fields1) => {
-        if(err1) throw err1;
+        if(err1) {
+            return res.status(500).send("Something went wrong.");
+        }
         if(result1.length === 0) {
             return res.status(404).send("User does not exist.");
         }
@@ -55,7 +71,9 @@ exports.deleteUser = (req, res, next) => {
             return res.status(403).send("No authorization.");
         }
         mysql_query('UPDATE user SET Deleted = 1 WHERE ID = ?', [userId], (err2, result2, fields2) => {
-            if(err2) throw err2;
+            if(err2) {
+                return res.status(500).send("Something went wrong.");
+            }
             return res.status(200).send("User has been deleted.");
         });
     });
@@ -68,6 +86,12 @@ exports.changeData = (req, res, next) => {
     const email = req.body.email;
     const currentPassword = req.body.currentPassword;
     const newPassword = req.body.newPassword;
+    if(email !== undefined) {
+        const isValidEMail = validator.validate(email);
+        if(!isValidEMail) {
+            return res.status(400).send("Invalid email.");
+        }
+    }
     if(email === undefined && newPassword === undefined) {
         return res.status(400).send("No information to change provided.");
     }
@@ -75,7 +99,9 @@ exports.changeData = (req, res, next) => {
         return res.status(400).send("Old password has not been provided.")
     }
     mysql_query('SELECT Password FROM user WHERE Username = ? AND Deleted = 0', req.username, (err1, result1, fields1) => {
-        if(err1) throw err1;
+        if(err1) {
+            return res.status(500).send("Something went wrong.");
+        }
         const hashedPassword = result1[0].Password;
         bcrypt
         .compare(currentPassword, hashedPassword)
@@ -83,20 +109,26 @@ exports.changeData = (req, res, next) => {
             if(result) {
                 if(email !== undefined && newPassword === undefined) {
                     mysql_query('UPDATE user SET EMail = ? WHERE ID = ?', [email, req.id], (err2, result2, fields2) => {
-                        if(err2) throw err2;
+                        if(err2) {
+                            return res.status(500).send("Something went wrong.");
+                        }
                         return res.status(200).send("Information has been changed.")
                     });
                 } else if(email === undefined && newPassword !== undefined) {
                     bcrypt.genSalt(10).then(salt => { return bcrypt.hash(newPassword, salt); }).then(hash => {
                         mysql_query('UPDATE user SET Password = ? WHERE ID = ?', [hash, req.id], (err2, result2, fields2) => {
-                            if(err2) throw err2;
+                            if(err2) {
+                                return res.status(500).send("Something went wrong.");
+                            }
                             return res.status(200).send("Information has been changed.")
                         });  
                     });
                 } else {
                     bcrypt.genSalt(10).then(salt => { return bcrypt.hash(newPassword, salt); }).then(hash => {
                         mysql_query('UPDATE user SET Password = ?, Email = ? WHERE ID = ?', [hash, email, req.id], (err2, result2, fields2) => {
-                            if(err2) throw err2;
+                            if(err2) {
+                                return res.status(500).send("Something went wrong.");
+                            }
                             return res.status(200).send("Information has been changed.")
                         });  
                     });

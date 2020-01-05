@@ -1,7 +1,7 @@
 # NuclearImage's project for SSE
 
 ## Run it
-1) Install node.js and XAMPP (any other SQL-database might work as well). Be sure to put a tick during installation on something with Microsoft/C++ whatever, otherwise the website won't start
+1) Install node.js and XAMPP (any other SQL-database might work as well). Be sure to put a tick during node.js installation on something with Microsoft/C++ whatever, otherwise the website won't start
 2) Run MySQL service in XAMPP
 3) Import the .sql file in phpMyAdmin (in XAMPP)
 4) Run `npm install` in root folder

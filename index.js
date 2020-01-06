@@ -10,7 +10,7 @@ const https = require("https");
 var httpApp = express();
 
 httpApp.get("*", function(req, res) {
-  res.redirect("https://127.0.0.1:443");
+  res.redirect("https://127.0.0.1:88");
 });
 
 httpApp.listen(3000, function() {
@@ -32,7 +32,7 @@ https
     },
     app
   )
-  .listen(443);
+  .listen(88);
 
 // close destroys the server.
 exports.close = function() {

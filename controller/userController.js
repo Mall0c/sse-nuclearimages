@@ -54,7 +54,7 @@ exports.register = (req, res, next) => {
     }
     // Returns the ID of the users whom the email or the username belongs to.
     // This is done for duplicate check.
-    mysql_query('SELECT ID FROM user WHERE username = ? OR email = ?', [username, email], (err1, result1, fields1) => {
+    mysql_query('SELECT ID FROM user WHERE username = ? OR (email = ? AND Deleted = 0)', [username, email], (err1, result1, fields1) => {
         if(err1) {
             logger.info({level: 'info', message: 'UserController.Register.3'});
             return res.status(500).send("Something went wrong.");

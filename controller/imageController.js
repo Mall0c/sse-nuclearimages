@@ -79,7 +79,7 @@ exports.upload = (req, res, next) => {
         return res.status(403).send("Not logged in");
     }
     const timestamp = Date.now();
-    mysql_query('SELECT ID FROM images WHERE Uploader = ? AND Upload_Time + 5000 > ?', [req.id, timestamp], (err0, result0, fields0) => {
+    mysql_query('SELECT ID FROM images WHERE Uploader = ? AND Upload_Time + 30000 > ?', [req.id, timestamp], (err0, result0, fields0) => {
         if(err0) {
             return res.status(500).send("Something went wrong.");
         }

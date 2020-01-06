@@ -2,6 +2,7 @@ const fs = require('fs');
 const mysql_query = require('../mysql_query');
 const jimp = require('jimp');
 const crypto = require('crypto');
+const logger = require('../logger');
 
 // Return the last <count> images' thumbnails with <offset>.
 // Initial query would be with offset = 0.
@@ -10,8 +11,7 @@ exports.frontpage = (req, res, next) => {
     const offset = parseInt(req.params.offset, 10);
     mysql_query("SELECT ID, Image FROM images WHERE Private = 0 AND Deleted = 0 ORDER BY Upload_Time DESC LIMIT ? OFFSET ?", [limit, offset], (err, result, fields) => {
         if(err) {
-            console.log(err);
-            throw err;
+            return res.status(500).send("Something went wrong.");
         }
         var response = [];
         result.forEach(element => {
@@ -20,7 +20,7 @@ exports.frontpage = (req, res, next) => {
             var splitFileName = element.Image.split(".");
             response.push(element.ID + ":" + splitFileName[1] + ":" + base64_encode(imageData))
         });
-        res.status(200).send(response);
+        return res.status(200).send(response);
     });
 };
 
@@ -34,8 +34,7 @@ exports.oneImage = (req, res, next) => {
     WHERE images.ID = ? AND images.Deleted = 0\
     GROUP BY images.ID", imageId, (err, result, fields) => {
         if(err) {
-            console.log(err);
-            throw err;
+            return res.status(500).send("Something went wrong.");
         }
 
         // Image is set to private, meaning it will only be delivered if the owner queries it.
@@ -44,7 +43,7 @@ exports.oneImage = (req, res, next) => {
         }
 
         if(result[0].Anonymous === 1) {
-            result[0].Username = undefined
+            result[0].Username = undefined;
         }
 
         var imageData = fs.readFileSync('./image_upload/' + result[0].Image);
@@ -62,8 +61,7 @@ exports.imagesOfOneUser = (req, res, next) => {
     }
     mysql_query("SELECT ID, Image FROM images WHERE Deleted = 0 AND Uploader = ? ORDER BY Upload_Time DESC LIMIT ? OFFSET ?", [req.id, limit, offset], (err, result, fields) => {
         if(err) {
-            console.log(err);
-            throw err;
+            return res.status(500).send("Something went wrong.");
         }
         var response = [];
         result.forEach(element => {
@@ -72,7 +70,7 @@ exports.imagesOfOneUser = (req, res, next) => {
             var splitFileName = element.Image.split(".");
             response.push(element.ID + ":" + splitFileName[1] + ":" + base64_encode(imageData))
         });
-        res.status(200).send(response);
+        return res.status(200).send(response);
     });
 };
 
@@ -94,17 +92,18 @@ exports.upload = (req, res, next) => {
     var anonymous = parseInt(req.body.anonymous);
     fs.writeFile('./image_upload/' + imageName, req.files.file.data, (err) => {
         if(err) {
-            console.log(err);
-            throw err;
+            return res.status(500).send("Something went wrong.");
         }
         const timestamp = Date.now();
         mysql_query('INSERT INTO images (Image, Upload_Time, Uploader, Tags, Private, Anonymous, Deleted) VALUES (?, ?, ?, ?, ? ,?, ?)', 
-        [imageName, timestamp, req.id, tags, private, anonymous, 0], (err, result, fields) => {
-            if(err) {
-                console.log(err);
+        [imageName, timestamp, req.id, tags, private, anonymous, 0], (err1, result, fields) => {
+            if(err1) {
+                return res.status(500).send("Something went wrong.");
             }
-            jimp.read('./image_upload/' + imageName, (err, img) => {
-                if(err) throw err;
+            jimp.read('./image_upload/' + imageName, (err2, img) => {
+                if(err2) {
+                    return res.status(500).send("Something went wrong.");
+                }
                 img
                     .scale(0.5)
                     .write('./image_upload/' + "thumbnail_" + imageName);
@@ -121,8 +120,7 @@ exports.searchForTags = (req, res, next) => {
     const tag = req.params.tag;
     mysql_query('SELECT ID, Image FROM images WHERE Tags LIKE \'%' + req.params.tag + '%\' AND Deleted = 0 ORDER BY Upload_Time DESC LIMIT ? OFFSET ?', [limit, offset], (err, result, fields) => {
         if(err) {
-            console.log(err);
-            throw err;
+            return res.status(500).send("Something went wrong.");
         }
         var response = [];
         result.forEach(element => {
@@ -131,7 +129,7 @@ exports.searchForTags = (req, res, next) => {
             var splitFileName = element.Image.split(".");
             response.push(element.ID + ":" + splitFileName[1] + ":" + base64_encode(imageData))
         });
-        res.status(200).send(response);
+        return res.status(200).send(response);
     });
 };
 
@@ -139,7 +137,9 @@ exports.rateImage = (req, res, next) => {
     const imageId = parseInt(req.params.imageId);
     const ratingValue = parseInt(req.body.ratingValue);
     mysql_query('SELECT ID FROM images WHERE ID = ? AND Deleted = 0', [imageId], (err1, result1, fields1) => {
-        if(err1) throw err1;
+        if(err1) {
+            return res.status(500).send("Something went wrong.");
+        }
         if(req.username === undefined) {
             return res.status(401).send("Not logged in.");
         }
@@ -147,12 +147,16 @@ exports.rateImage = (req, res, next) => {
             return res.status(404).send("Image does not exist.");
         }
         mysql_query('SELECT Image_ID FROM images_ratings WHERE Image_ID = ? AND User_ID = ?', [imageId, req.id], (err2, result2, fields2) => {
-            if(err2) throw err2;
+            if(err2) {
+                return res.status(500).send("Something went wrong.");
+            }
             if(result2.length !== 0) {
                 return res.status(403).send("Already voted this image.");
             }
             mysql_query('INSERT INTO images_ratings (Image_ID, User_ID, Rating_Value) VALUES (?, ?, ?)', [imageId, req.id, ratingValue], (err3, result3, fields3) => {
-                if(err3) throw err3;
+                if(err3) {
+                    return res.status(500).send("Something went wrong.");
+                }
                 return res.status(200).send("Upvote successful.");
             });
         });
@@ -165,7 +169,9 @@ exports.deleteImage = (req, res, next) => {
         return res.status(401).send("Not logged in");
     }
     mysql_query('SELECT Uploader FROM images WHERE ID = ? AND Deleted = 0', [imageId], (err1, result1, fields1) => {
-        if(err1) throw err1;
+        if(err1) {
+            return res.status(500).send("Something went wrong.");
+        }
         if(result1.length === 0) {
             return res.status(404).send("Image does not exist.");
         }
@@ -173,7 +179,9 @@ exports.deleteImage = (req, res, next) => {
             return res.status(403).send("No authorization.");
         }
         mysql_query('UPDATE images SET Deleted = 1 WHERE ID = ?', [imageId], (err2, result2, fields2) => {
-            if(err2) throw err2;
+            if(err2) {
+                return res.status(500).send("Something went wrong.");
+            }
             return res.status(200).send("Image has been deleted.");
         });
     });
@@ -186,12 +194,16 @@ exports.reportImage = (req, res, next) => {
         return res.status(401).send("Not logged in");
     }
     mysql_query('SELECT * FROM images_reports WHERE UserID = ? AND ImageID = ?', [req.id, imageId], (err1, result1, fields1) => {
-        if(err1) throw err1;
+        if(err1) {
+            return res.status(500).send("Something went wrong.");
+        }
         if(result1.length !== 0) {
             return res.status(400).send("You have already reported this image.");
         }
         mysql_query('INSERT INTO images_reports (UserID, ImageID, Text) VALUES (?, ?, ?)', [req.id, imageId, text], (err2, result2, fields2) => {
-            if(err2) throw err2;
+            if(err2) {
+                return res.status(500).send("Something went wrong.");
+            }
             return res.status(200).send("Image has been reported.")
         });
     });

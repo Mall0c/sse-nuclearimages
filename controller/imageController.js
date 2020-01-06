@@ -31,12 +31,11 @@ exports.oneImage = (req, res, next) => {
     FROM images\
     LEFT JOIN images_ratings ON images.ID = images_ratings.Image_ID\
     INNER JOIN user ON Uploader = user.ID\
-    WHERE images.ID = ? AND images.Deleted = 0\
-    GROUP BY images.ID", imageId, (err, result, fields) => {
+    WHERE images.Deleted = 0 AND images.ID = ?\
+    GROUP BY images.ID", [imageId], (err, result, fields) => {
         if(err) {
             return res.status(500).send("Something went wrong.");
         }
-
         // Image is set to private, meaning it will only be delivered if the owner queries it.
         if(result[0].Private === 1 && (req.username === undefined || result[0].Username !== req.username)) {
             return res.status(403).send("No authorization");

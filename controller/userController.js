@@ -66,7 +66,7 @@ exports.register = (req, res, next) => {
         bcrypt
             .genSalt(10)
             .then(salt => { return bcrypt.hash(plainTextPassword, salt); })
-            .then(hash => { mysql_query('INSERT INTO user (Username, Password, EMail, Deleted, IsAdmin) VALUES (?, ?, ?, 0, 0)', [username, hash, email]) })
+            .then(hash => { mysql_query('INSERT INTO user (Username, Password, EMail, Deleted, IsAdmin) VALUES (?, ?, ?, 0, 0)', [username, hash, email]); })
             .catch(err => { 
                 logger.info({level: 'error', message: err.stack + " UserController.Register.5" });
                 return res.status(500).send("Something went wrong.");

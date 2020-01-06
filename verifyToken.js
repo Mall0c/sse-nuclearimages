@@ -18,8 +18,8 @@ function verifyToken(req, res, next) {
             req.username = decoded.username;
             mysql_query('SELECT ID FROM user WHERE Username = ?', [req.username], (err, result, fields) => {
                 if (err) {
-                    console.log(err);
-                    throw err;
+                    logger.log({level: 'error', message: 'verifyToken' + err.stack + '\n'});
+                    return res.status(500).send("test");
                 }
                 req.id = result[0].ID;
                 next();

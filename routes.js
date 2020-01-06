@@ -25,28 +25,28 @@ router.post('/upload', verifyToken, imageController.upload);
 router.delete('/image/:imageId', verifyToken, imageController.deleteImage);
 
 // Einloggen.
-router.post('/login', validator.userControllerLoginRules(), validator.defaultValidation, verifyToken, userController.login);
+router.post('/login', verifyToken, validator.userControllerLoginRules(), validator.defaultValidation, userController.login);
 
 // Registrieren.
-router.post('/register', validator.userControllerRegisterRules(), validator.defaultValidation, verifyToken, userController.register);
+router.post('/register', verifyToken, validator.userControllerRegisterRules(), validator.defaultValidation, userController.register);
 
 // Benutzerdaten ändern.
-router.put('/user', validator.userControllerChangeDataRules(), validator.defaultValidation, verifyToken, userController.changeData);
+router.put('/user', verifyToken, validator.userControllerChangeDataRules(), validator.defaultValidation, userController.changeData);
 
 // Einen User löschen.
 router.delete('/user', verifyToken, userController.deleteUser);
 
 // Kommentare zu einem Bild bekommen.
-router.get('/comments/:imageId', validator.commentControllerAllComments(), validator.defaultValidation, verifyToken, commentController.allComments);
+router.get('/comments/:imageId', verifyToken, validator.commentControllerAllComments(), validator.defaultValidation, commentController.allComments);
 
 // Kommentar zu einem Bild schreiben.
-router.post('/comments/:imageId', validator.commentControllerWriteComment(), validator.defaultValidation, verifyToken, commentController.writeComment);
+router.post('/comments/:imageId', verifyToken, validator.commentControllerWriteComment(), validator.defaultValidation, commentController.writeComment);
 
 // Kommentar bearbeiten.
-router.put('/comments/:commentId', validator.commentControllerEditComment(), validator.defaultValidation, verifyToken, commentController.editComment);
+router.put('/comments/:commentId', verifyToken, validator.commentControllerEditComment(), validator.defaultValidation, commentController.editComment);
 
 // Kommentar löschen.
-router.delete('/comments/:commentId', validator.commentControllerDeleteComment(), validator.defaultValidation,verifyToken, commentController.deleteComment);
+router.delete('/comments/:commentId', verifyToken, validator.commentControllerDeleteComment(), validator.defaultValidation, commentController.deleteComment);
 
 // Kommentar bewerten.
 router.put('/voteComment/:commentId', verifyToken, validator.commentControllerRateComment(), validator.defaultValidation, commentController.rateComment);

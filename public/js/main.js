@@ -2,6 +2,7 @@ var pblOffset = 0;
 var imagesPerPage = 20;
 var columnsMax = 4;
 var loggedIn;
+var isAdmin;
 
 // Get the modal
 var uploadModal = document.getElementById("uploadModal");
@@ -212,6 +213,15 @@ window.onload = function() {
     this.loggedIn = true;
   } else {
     this.loggedIn = false;
+  }
+
+  if (
+    document.cookie.split(";").filter(item => item.includes("isAdmin=1"))
+      .length
+  ) {
+    this.isAdmin = true;
+  } else {
+    this.isAdmin = false;
   }
 
   console.log(document.cookie);
@@ -576,6 +586,7 @@ $(document).ready(function() {
 function logOut() {
   document.cookie = "name=;";
   document.cookie = "token=;";
+  document.cookie = "isAdmin=0;";
   document.cookie = "loggedIn=0";
 }
 
@@ -702,6 +713,7 @@ $(document).ready(function() {
         if (data["auth"] == true) {
           document.cookie = "name=" + form_data.get("username");
           document.cookie = "token=" + data["token"];
+          document.cookie = "isAdmin=" + data["isAdmin"];
           document.cookie = "loggedIn=1";
           location.reload();
         }
@@ -738,6 +750,7 @@ $(document).ready(function() {
             logOut();
             document.cookie = "name=" + form_data.get("username");
             document.cookie = "token=" + data["token"];
+            document.cookie = "isAdmin=" + data["isAdmin"];
             document.cookie = "loggedIn=1";
             location.reload();
           }

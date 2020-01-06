@@ -3,16 +3,64 @@ const logger = require('./logger');
 
 exports.userControllerLoginRules = () => {
     return [
-        check('username').exists().isAlphanumeric(),
-        check('password').exists()
+        check('username').exists().isLength({min: 3, max: 15}).withMessage("Username does not fit the required length.").isAlphanumeric().withMessage("Username is not alphanumeric."),
+        check('password').exists().isLength({ min: 8, max: 16}).withMessage("Password does not match required length.")
     ]
 }
 
 exports.userControllerRegisterRules = () => {
     return [
-        check('username').exists().isAlphanumeric(),
-        check('email').isEmail().normalizeEmail().matches(/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/, 'g').withMessage("email"),
-        check('password').isLength({ min: 8 })
+        check('username').exists().isLength({min: 3, max: 15}).withMessage("Username does not fit the required length.").isAlphanumeric().withMessage("Username is not alphanumeric."),
+        check('email').isEmail().normalizeEmail().isLength({ max: 254 }).withMessage("E-Mail is too long.").matches(/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/, 'g').withMessage("Does not match RegEx."),
+        check('password').isLength({ min: 8, max: 16 }).withMessage("Password does not match required length.")
+    ]
+}
+
+exports.userControllerChangeDataRules = () => {
+    return [
+        check('email').isEmail().normalizeEmail().isLength({ max: 254 }).withMessage("E-Mail is too long.").matches(/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/, 'g').withMessage("Does not match RegEx.").optional(),
+        check('newPassword').isLength({ min: 8, max: 16 }).withMessage("Password does not match required length.").optional(),
+        check('currentPassword').isLength({ min: 8, max: 16 }).withMessage("Password does not match required length.")
+    ]
+}
+
+exports.commentControllerAllComments = () => {
+    return [
+        check('imageId').isNumeric().withMessage("ImageID is not numeric.")
+    ]
+}
+
+exports.commentControllerWriteComment = () => {
+    return [
+        check('comment').escape().isLength({ min: 1, max: 140 }).withMessage("Comment does not match length requirements."),
+        check('imageId').isNumeric().withMessage("ImageID is not numeric.")
+    ]
+}
+
+exports.commentControllerEditComment = () => {
+    return [
+        check('text').escape().isLength({ min: 1, max: 140 }).withMessage("Comment does not match length requirements."),
+        check('commentId').isNumeric().withMessage("CommentID is not numeric.")
+    ]
+}
+
+exports.commentControllerDeleteComment = () => {
+    return [
+        check('commentId').isNumeric().withMessage("CommentID is not numeric.")
+    ]
+}
+
+exports.commentControllerRateComment = () => {
+    return [
+        check('commentId').isNumeric().withMessage("CommentID is not numeric."),
+        check('ratingValue').isNumeric().withMessage("Rating value is not numeric.")
+    ]
+}
+
+exports.commentControllerReportComment = () => {
+    return [
+        check('commentId').isNumeric().withMessage("CommentID is not numeric."),
+        check('text').escape().isLength({ min: 1, max: 140 }).withMessage("Report does not match length requirements."),
     ]
 }
 
@@ -22,7 +70,8 @@ exports.defaultValidation = (req, res, next) => {
         return next();
     }
     const extractedErrors = []
+    const userId = req.id === undefined ? "undefined" : req.id;
     errors.array().map(err => extractedErrors.push({ [err.param]: err.msg }));
-    logger.info({level: 'info', message: req.method + req.originalUrl + "::" + JSON.stringify(extractedErrors)});
+    logger.info({user: userId, level: 'info', message: req.method + req.originalUrl + "::" + JSON.stringify(extractedErrors)});
     return res.status(400).send("Bad request.");
 }

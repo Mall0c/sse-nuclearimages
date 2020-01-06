@@ -1,4 +1,5 @@
 const mysql_query = require('../mysql_query');
+const logger = require('../logger');
 
 exports.allComments = (req, res, next) => {
     mysql_query('SELECT comments.ID, COALESCE(SUM(Rating_Value),0) as Rating, comments.Text, Username\
@@ -81,6 +82,11 @@ exports.deleteComment = (req, res, next) => {
 exports.rateComment = (req, res, next) => {
     const commentId = parseInt(req.params.commentId);
     const ratingValue = parseInt(req.body.ratingValue);
+    console.log(ratingValue, commentId);
+    if(1 - Math.abs(ratingValue) !== 0) {
+        logger.info({level: 'info', message: 'Invalid rating value. CommentController.RateComment.1'});
+        return res.status(400).send("Invalid rating value.");
+    }
     mysql_query('SELECT ID FROM comments WHERE ID = ? AND Deleted = 0', [commentId], (err1, result1, fields1) => {
         if(err1) {
             return res.status(500).send("Something went wrong.");

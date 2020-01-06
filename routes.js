@@ -31,25 +31,25 @@ router.post('/login', validator.userControllerLoginRules(), validator.defaultVal
 router.post('/register', validator.userControllerRegisterRules(), validator.defaultValidation, verifyToken, userController.register);
 
 // Benutzerdaten ändern.
-router.put('/user', verifyToken, userController.changeData);
+router.put('/user', validator.userControllerChangeDataRules(), validator.defaultValidation, verifyToken, userController.changeData);
 
 // Einen User löschen.
 router.delete('/user', verifyToken, userController.deleteUser);
 
 // Kommentare zu einem Bild bekommen.
-router.get('/comments/:imageId', verifyToken, commentController.allComments);
+router.get('/comments/:imageId', validator.commentControllerAllComments(), validator.defaultValidation, verifyToken, commentController.allComments);
 
 // Kommentar zu einem Bild schreiben.
-router.post('/comments/:imageId', verifyToken, commentController.writeComment);
+router.post('/comments/:imageId', validator.commentControllerWriteComment(), validator.defaultValidation, verifyToken, commentController.writeComment);
 
 // Kommentar bearbeiten.
-router.put('/comments/:commentId', verifyToken, commentController.editComment);
+router.put('/comments/:commentId', validator.commentControllerEditComment(), validator.defaultValidation, verifyToken, commentController.editComment);
 
 // Kommentar löschen.
-router.delete('/comments/:commentId', verifyToken, commentController.deleteComment);
+router.delete('/comments/:commentId', validator.commentControllerDeleteComment(), validator.defaultValidation,verifyToken, commentController.deleteComment);
 
 // Kommentar bewerten.
-router.put('/voteComment/:commentId', verifyToken, commentController.rateComment);
+router.put('/voteComment/:commentId', verifyToken, validator.commentControllerRateComment(), validator.defaultValidation, commentController.rateComment);
 
 // Bilder nach einem Tag suchen.
 router.get('/search/:count/:offset/:tag', verifyToken, imageController.searchForTags);

@@ -113,13 +113,6 @@ exports.changeData = (req, res, next) => {
     const email = req.body.email;
     const currentPassword = req.body.currentPassword;
     const newPassword = req.body.newPassword;
-    if(email !== undefined) {
-        const isValidEMail = validator.validate(email);
-        if(!isValidEMail) {
-            logger.info({level: 'info', message: 'Invalid email. UserController.ChangeData.2'});
-            return res.status(400).send("Invalid email.");
-        }
-    }
     if(email === undefined && newPassword === undefined) {
         logger.info({level: 'info', message: 'No information to change provided. UserController.ChangeData.3'});
         return res.status(400).send("No information to change provided.");

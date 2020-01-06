@@ -157,7 +157,10 @@ $(document).ready(function() {
       data: form_data,
       type: "PUT",
       success: function(data, textStatus, jQxhr) {
-        //location.reload();
+        iziToast.show({
+          title: "Sucess",
+          message: "Image has been reported."
+        });
       },
       error: function(jqXhr, textStatus, errorThrown) {
         console.log(errorThrown);
@@ -175,10 +178,17 @@ document.getElementById("deleteImage").onclick = function() {
     processData: false,
     type: "DELETE",
     success: function(data, textStatus, jQxhr) {
+      iziToast.show({
+        title: "Sucess",
+        message: "Image has been deleted."
+      });
       location.reload();
     },
     error: function(jqXhr, textStatus, errorThrown) {
-      console.log(errorThrown);
+      iziToast.show({
+        title: "Error",
+        message: "You're not authorized to delete this image."
+      });
     }
   });
 };
@@ -487,8 +497,10 @@ function loadComments() {
                 .value
             },
             success: function(data, textStatus, jQxhr) {
-              console.log(data);
-              console.log("reported");
+              iziToast.show({
+                title: "Sucess",
+                message: "Comment has been reported."
+              });
             },
             error: function(jqXhr, textStatus, errorThrown) {
               console.log(errorThrown);
@@ -627,10 +639,14 @@ $(document).ready(function() {
   });
 });
 
+var waitUploadFinish = false;
 $(document).ready(function() {
   $("#uploadFile").submit(function(e) {
-    //Stops submit button from refreshing page.
+    if(waitUploadFinish)
+      return;
+      
     e.preventDefault();
+    waitUploadFinish = true;
 
     var form_data = new FormData(this);
 
@@ -643,10 +659,11 @@ $(document).ready(function() {
       data: form_data,
       type: "post",
       success: function(data, textStatus, jQxhr) {
-        console.log(data);
+        waitUploadFinish = false;
         location.reload();
       },
       error: function(jqXhr, textStatus, errorThrown) {
+        waitUploadFinish = false;
         if (jqXhr.status == 403) {
           iziToast.show({
             title: "Error: " + jqXhr.responseText,

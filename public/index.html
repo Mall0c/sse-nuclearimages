@@ -18,15 +18,15 @@
             <span class="closeSettings">&times;</span>
             <h1>Change account info</h1>
             <form id="changeSettings">
+                *Current password:<br>
+                <input type="password" name="currentPassword"><br>
                 New E-Mail:<br>
                 <input type="text" name="email">
                 <br>
-                Current password:<br>
-                <input type="password" name="currentPassword"><br>
                 New password:<br>
                 <input type="password" name="newPassword">
-                <br><br>
-                <input type="submit" value="Change E-Mail & Password">
+                <br>*necessary fields<br>
+                <input type="submit" value="Change my data">
             </form>
             <br>
             <button style="background-color: #f44336;" onclick="deleteMyAccount()">DELTE MY ACCOUNT</button>
@@ -117,8 +117,7 @@
                         </div>
                         <div class="image-title-wrap">
                             Send <span class="image-title">Uploaded Image</span> <br>
-                            <input type="submit" class="send-image">
-
+                            <input type="submit" class="send-image" value="Upload">
                         </div>
                     </div>
                 </form>

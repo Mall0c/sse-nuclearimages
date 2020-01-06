@@ -2,6 +2,8 @@ var pblOffset = 0;
 var imagesPerPage = 20;
 var columnsMax = 4;
 var loggedIn;
+var isAdmin;
+var cookieUsername;
 
 // Get the modal
 var uploadModal = document.getElementById("uploadModal");
@@ -214,19 +216,29 @@ window.onload = function() {
     this.loggedIn = false;
   }
 
+  if (
+    document.cookie.split(";").filter(item => item.includes("isAdmin=1"))
+      .length
+  ) {
+    this.isAdmin = true;
+  } else {
+    this.isAdmin = false;
+  }
+
   console.log(document.cookie);
 
   getImages(imagesPerPage, 0);
+  cookieUsername = document.cookie.replace(
+    /(?:(?:^|.*;\s*)name\s*\=\s*([^;]*).*$)|^.*$/,
+    "$1"
+  );
 
   if (this.loggedIn === true) {
     this.document.getElementById("settingsIcon").style.visibility = "visible";
     this.document.getElementById("logoutIcon").style.visibility = "visible";
     this.document.getElementById(
       "usernameArea"
-    ).innerText = document.cookie.replace(
-      /(?:(?:^|.*;\s*)name\s*\=\s*([^;]*).*$)|^.*$/,
-      "$1"
-    );
+    ).innerText = cookieUsername;
   } else {
     this.document.getElementById("usernameArea").innerText = "sign in";
   }
@@ -298,7 +310,7 @@ function getImages(count, offset, tag) {
                 var base64String = data.split(":");
 
                 document.getElementById("uploaderName").innerText =
-                  "Uploaded by " + base64String[0];
+                  "Uploaded by " + (base64String[0] == "undefined" ? "anonymous person" :base64String[0]);
                 document.getElementById("imageRating").innerText =
                   "Rating: " + base64String[1];
 
@@ -311,6 +323,11 @@ function getImages(count, offset, tag) {
                   ";base64," +
                   base64String[3];
                 imageViewModal.style.display = "block";
+                
+                if (isAdmin || cookieUsername == base64String[0])
+                  document.getElementById("deleteImage").style.display = "block";
+                else 
+                  document.getElementById("deleteImage").style.display = "none";
 
                 // comments
                 loadComments();
@@ -320,6 +337,7 @@ function getImages(count, offset, tag) {
               }
             });
           };
+
           elem.src =
             "data:image/" + base64String[1] + ";base64," + base64String[2];
           document
@@ -536,10 +554,12 @@ function loadComments() {
         commentElem.appendChild(reportElem);
         commentElem.appendChild(textElem);
         commentElem.appendChild(saveElem);
-        commentElem.appendChild(editElem);
-        commentElem.appendChild(rateNegativeElem);
         commentElem.appendChild(ratePositiveElem);
-        commentElem.appendChild(deleteElem);
+        commentElem.appendChild(rateNegativeElem);
+        if(isAdmin == 1 || cookieUsername == data[i].Username) {
+          commentElem.appendChild(editElem);
+          commentElem.appendChild(deleteElem);
+        }
         document.getElementById("commentArea").appendChild(commentElem);
       }
     },
@@ -576,6 +596,7 @@ $(document).ready(function() {
 function logOut() {
   document.cookie = "name=;";
   document.cookie = "token=;";
+  document.cookie = "isAdmin=0;";
   document.cookie = "loggedIn=0";
 }
 
@@ -649,7 +670,8 @@ $(document).ready(function() {
     waitUploadFinish = true;
 
     var form_data = new FormData(this);
-
+    form_data.append("anonymous", (document.getElementById("anonymous").checked? 1 : 0));
+    form_data.append("private", (document.getElementById("private").checked? 1 : 0));
     $.ajax({
       url: "/upload",
       beforeSend: sendToken,
@@ -702,6 +724,7 @@ $(document).ready(function() {
         if (data["auth"] == true) {
           document.cookie = "name=" + form_data.get("username");
           document.cookie = "token=" + data["token"];
+          document.cookie = "isAdmin=" + data["isAdmin"];
           document.cookie = "loggedIn=1";
           location.reload();
         }
@@ -738,6 +761,7 @@ $(document).ready(function() {
             logOut();
             document.cookie = "name=" + form_data.get("username");
             document.cookie = "token=" + data["token"];
+            document.cookie = "isAdmin=" + data["isAdmin"];
             document.cookie = "loggedIn=1";
             location.reload();
           }

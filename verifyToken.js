@@ -11,7 +11,6 @@ function verifyToken(req, res, next) {
         if (token.startsWith('Bearer ')) {
             token = token.slice(7, token.length);
         }
-
         jwt.verify(token, dbConfig.secret, function(err, decoded) {
             if (err)
                 return res.status(403).send({ auth: false, message: 'Failed to authenticate token.' });

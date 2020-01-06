@@ -24,9 +24,8 @@ exports.writeComment = (req, res, next) => {
             if(err) {
                 return res.status(500).send("Something went wrong.");
             }
-            return res.status(200).send();
-        })
-    return res.status(200).send("Comment has been posted.");
+            return res.status(200).send("Comment has been posted.");
+    });
 };
 
 exports.editComment = (req, res, next) => {

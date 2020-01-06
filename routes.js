@@ -4,6 +4,7 @@ const verifyToken = require('./verifyToken');
 const userController = require('./controller/userController');
 const imageController = require('./controller/imageController');
 const commentController = require('./controller/commentController');
+const validator = require('./validator');
 
 // Frontpage laden.
 router.get('/frontpage/:count/:offset', verifyToken, imageController.frontpage);
@@ -27,7 +28,7 @@ router.delete('/image/:imageId', verifyToken, imageController.deleteImage);
 router.post('/login', verifyToken, userController.login);
 
 // Registrieren.
-router.post('/register', verifyToken, userController.register);
+router.post('/register', validator.userControllerRegisterRules(), validator.userControllerRegisterValidation, verifyToken, userController.register);
 
 // Benutzerdaten ändern.
 router.put('/user', verifyToken, userController.changeData);

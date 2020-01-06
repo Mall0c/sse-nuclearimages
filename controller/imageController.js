@@ -76,9 +76,9 @@ exports.imagesOfOneUser = (req, res, next) => {
 
 exports.upload = (req, res, next) => {
     // Split file name to get the file's suffix (e.g. jpg or png).
-    var splitFileName = req.files.file.name.split(".");
+    const splitFileName = req.files.file.name.split(".");
     // Image's name is a random string concatenated with the file ending.
-    var imageName = crypto.randomBytes(16).toString('hex') + "." + splitFileName[splitFileName.length - 1];
+    const imageName = crypto.randomBytes(16).toString('hex') + "." + splitFileName[splitFileName.length - 1];
     // Check if tags have been provided
     var tags = "";
     if(req.body.tags !== undefined) {
@@ -87,27 +87,35 @@ exports.upload = (req, res, next) => {
     if(req.id === undefined) {
         return res.status(403).send("Not logged in");
     }
-    // Check if image is supposed to be private
-    var private = parseInt(req.body.private);
-    var anonymous = parseInt(req.body.anonymous);
-    fs.writeFile('./image_upload/' + imageName, req.files.file.data, (err) => {
-        if(err) {
+    const timestamp = Date.now();
+    mysql_query('SELECT ID FROM images WHERE Uploader = ? AND Upload_Time + 5000 > ?', [req.id, timestamp], (err0, result0, fields0) => {
+        if(err0) {
             return res.status(500).send("Something went wrong.");
         }
-        const timestamp = Date.now();
-        mysql_query('INSERT INTO images (Image, Upload_Time, Uploader, Tags, Private, Anonymous, Deleted) VALUES (?, ?, ?, ?, ? ,?, ?)', 
-        [imageName, timestamp, req.id, tags, private, anonymous, 0], (err1, result, fields) => {
-            if(err1) {
+        if(result0.length !== 0) {
+            return res.status(400).send("Too many uploads.")
+        }
+        // Check if image is supposed to be private
+        const private = parseInt(req.body.private);
+        const anonymous = parseInt(req.body.anonymous);
+        fs.writeFile('./image_upload/' + imageName, req.files.file.data, (err) => {
+            if(err) {
                 return res.status(500).send("Something went wrong.");
             }
-            jimp.read('./image_upload/' + imageName, (err2, img) => {
-                if(err2) {
+            mysql_query('INSERT INTO images (Image, Upload_Time, Uploader, Tags, Private, Anonymous, Deleted) VALUES (?, ?, ?, ?, ? ,?, ?)', 
+            [imageName, timestamp, req.id, tags, private, anonymous, 0], (err1, result, fields) => {
+                if(err1) {
                     return res.status(500).send("Something went wrong.");
                 }
-                img
-                    .scale(0.5)
-                    .write('./image_upload/' + "thumbnail_" + imageName);
-                return res.status(200).send('File upload was successful.');
+                jimp.read('./image_upload/' + imageName, (err2, img) => {
+                    if(err2) {
+                        return res.status(500).send("Something went wrong.");
+                    }
+                    img
+                        .scale(0.5)
+                        .write('./image_upload/' + "thumbnail_" + imageName);
+                    return res.status(200).send('File upload was successful.');
+                });
             });
         });
     });

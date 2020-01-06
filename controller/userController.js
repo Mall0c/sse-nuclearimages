@@ -2,7 +2,6 @@ const mysql_query = require('../mysql_query');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const dbConfig = require('../dbConfig');
-const validator = require('email-validator');
 const logger = require('../logger');
 
 exports.login = (req, res, next) => {
@@ -50,15 +49,6 @@ exports.register = (req, res, next) => {
     if(req.id !== undefined) {
         logger.info({level: 'info', message: 'Insufficient arguments. UserController.Register.6'});
         return res.status(400).send("Already logged in.");
-    }
-    if(username === undefined || plainTextPassword === undefined || email === undefined) {
-        logger.info({level: 'info', message: 'Insufficient arguments. UserController.Register.1'});
-        return res.status(400).send("Insufficient arguments.");
-    }
-    const isValidEMail = validator.validate(email);
-    if(!isValidEMail) {
-        logger.info({level: 'info', message: 'Invalid email. UserController.Register.2'});
-        return res.status(400).send("Invalid email.");
     }
     // Returns the ID of the users whom the email or the username belongs to.
     // This is done for duplicate check.

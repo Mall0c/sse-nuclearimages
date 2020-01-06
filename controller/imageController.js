@@ -38,7 +38,7 @@ exports.oneImage = (req, res, next) => {
         }
 
         // Image is set to private, meaning it will only be delivered if the owner queries it.
-        if(result[0].Private === 1 && req.username === undefined || result[0].Username !== req.username) {
+        if(result[0].Private === 1 && (req.username === undefined || result[0].Username !== req.username)) {
             return res.status(403).send("No authorization");
         }
 

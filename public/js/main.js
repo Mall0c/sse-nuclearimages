@@ -535,7 +535,7 @@ function loadComments() {
             "block";
         };
 
-        reportElem.innerText = "Report Image";
+        reportElem.innerText = "Report Comment";
         reportElem.id = "reportElem" + data[i].ID;
         reportElem.commentID = data[i].ID;
         reportElem.comment = data[i].Text;

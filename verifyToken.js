@@ -16,12 +16,13 @@ function verifyToken(req, res, next) {
                 return res.status(403).send({ auth: false, message: 'Failed to authenticate token.' });
             // If everything is fine, save to request for use in other routes.
             req.username = decoded.username;
-            mysql_query('SELECT ID FROM user WHERE Username = ?', [req.username], (err, result, fields) => {
+            mysql_query('SELECT ID, isAdmin FROM user WHERE Username = ?', [req.username], (err, result, fields) => {
                 if (err) {
                     logger.log({level: 'error', message: 'verifyToken' + err.stack + '\n'});
                     return res.status(500).send("test");
                 }
                 req.id = result[0].ID;
+                req.isAdmin = parseInt(result[0].isAdmin);
                 next();
             });
         });

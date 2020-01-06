@@ -117,7 +117,7 @@ $(document).ready(function() {
 
 function deleteMyAccount() {
   $.ajax({
-    url: "/user",
+    url: "/user/",
     beforeSend: sendToken,
     cache: false,
     contentType: false,
@@ -718,6 +718,7 @@ $(document).ready(function() {
       success: function(data, textStatus, jQxhr) {
         console.log(data);
         if (data["auth"] == true) {
+          logOut();
           document.cookie = "name=" + form_data.get("username");
           document.cookie = "token=" + data["token"];
           document.cookie = "loggedIn=1";
@@ -725,7 +726,17 @@ $(document).ready(function() {
         }
       },
       error: function(jqXhr, textStatus, errorThrown) {
-        console.log(errorThrown);
+        if (jqXhr.status == 400) {
+          iziToast.show({
+            title: "Error: Invalid E-Mail",
+            message: "Please choose a valid E-Mail"
+          });
+        } else {
+          iziToast.show({
+            title: "Registration failed",
+            message: "Please try again later."
+          });
+        }
       }
     });
   });

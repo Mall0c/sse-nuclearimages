@@ -7,6 +7,7 @@ const routes = require("./routes");
 const fs = require("fs");
 const https = require("https");
 
+/*
 var httpApp = express();
 
 httpApp.get("*", function(req, res) {
@@ -16,7 +17,7 @@ httpApp.get("*", function(req, res) {
 httpApp.listen(3000, function() {
   console.log("Example app listening on port 3000!");
 });
-
+*/
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(express.static(path.join(__dirname, "public")));

@@ -3,6 +3,7 @@ var imagesPerPage = 20;
 var columnsMax = 4;
 var loggedIn;
 var isAdmin;
+var cookieUsername;
 
 // Get the modal
 var uploadModal = document.getElementById("uploadModal");
@@ -227,16 +228,17 @@ window.onload = function() {
   console.log(document.cookie);
 
   getImages(imagesPerPage, 0);
+  cookieUsername = document.cookie.replace(
+    /(?:(?:^|.*;\s*)name\s*\=\s*([^;]*).*$)|^.*$/,
+    "$1"
+  );
 
   if (this.loggedIn === true) {
     this.document.getElementById("settingsIcon").style.visibility = "visible";
     this.document.getElementById("logoutIcon").style.visibility = "visible";
     this.document.getElementById(
       "usernameArea"
-    ).innerText = document.cookie.replace(
-      /(?:(?:^|.*;\s*)name\s*\=\s*([^;]*).*$)|^.*$/,
-      "$1"
-    );
+    ).innerText = cookieUsername;
   } else {
     this.document.getElementById("usernameArea").innerText = "sign in";
   }
@@ -321,6 +323,11 @@ function getImages(count, offset, tag) {
                   ";base64," +
                   base64String[3];
                 imageViewModal.style.display = "block";
+                
+                if (isAdmin || cookieUsername == base64String[0])
+                  document.getElementById("deleteImage").style.display = "block";
+                else 
+                  document.getElementById("deleteImage").style.display = "none";
 
                 // comments
                 loadComments();
@@ -330,6 +337,7 @@ function getImages(count, offset, tag) {
               }
             });
           };
+
           elem.src =
             "data:image/" + base64String[1] + ";base64," + base64String[2];
           document
@@ -546,10 +554,12 @@ function loadComments() {
         commentElem.appendChild(reportElem);
         commentElem.appendChild(textElem);
         commentElem.appendChild(saveElem);
-        commentElem.appendChild(editElem);
-        commentElem.appendChild(rateNegativeElem);
         commentElem.appendChild(ratePositiveElem);
-        commentElem.appendChild(deleteElem);
+        commentElem.appendChild(rateNegativeElem);
+        if(isAdmin == 1 || cookieUsername == data[i].Username) {
+          commentElem.appendChild(editElem);
+          commentElem.appendChild(deleteElem);
+        }
         document.getElementById("commentArea").appendChild(commentElem);
       }
     },

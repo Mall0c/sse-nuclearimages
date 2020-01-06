@@ -716,14 +716,15 @@ $(document).ready(function() {
       data: form_data,
       type: "post",
       success: function(data, textStatus, jQxhr) {
-        console.log(data);
-        if (data["auth"] == true) {
-          logOut();
-          document.cookie = "name=" + form_data.get("username");
-          document.cookie = "token=" + data["token"];
-          document.cookie = "loggedIn=1";
-          location.reload();
-        }
+        setTimeout(function() {
+          if (data["auth"] == true) {
+            logOut();
+            document.cookie = "name=" + form_data.get("username");
+            document.cookie = "token=" + data["token"];
+            document.cookie = "loggedIn=1";
+            location.reload();
+          }
+        }, 500);
       },
       error: function(jqXhr, textStatus, errorThrown) {
         if (jqXhr.status == 400) {

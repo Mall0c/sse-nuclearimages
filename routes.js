@@ -33,7 +33,7 @@ router.post('/register', verifyToken, userController.register);
 router.put('/user', verifyToken, userController.changeData);
 
 // Einen User löschen.
-router.delete('/user/:userId', verifyToken, userController.deleteUser);
+router.delete('/user', verifyToken, userController.deleteUser);
 
 // Kommentare zu einem Bild bekommen.
 router.get('/comments/:imageId', verifyToken, commentController.allComments);

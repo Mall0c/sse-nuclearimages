@@ -117,7 +117,7 @@ $(document).ready(function() {
 
 function deleteMyAccount() {
   $.ajax({
-    url: "/user/0",
+    url: "/user",
     beforeSend: sendToken,
     cache: false,
     contentType: false,
@@ -125,11 +125,18 @@ function deleteMyAccount() {
     type: "DELETE",
     success: function(data, textStatus, jQxhr) {
       //location.reload();
-      console.log("not fully implemented yet. no way to get user id right now");
+      iziToast.show({
+        title: "Success",
+        message: "Account deleted."
+      });
+      logOut();
+      location.reload();
     },
     error: function(jqXhr, textStatus, errorThrown) {
-      console.log(errorThrown);
-      console.log("not fully implemented yet. no way to get user id right now");
+      iziToast.show({
+        title: "Error: no authorization",
+        message: "You're not authorized to delete this account."
+      });
     }
   });
 }

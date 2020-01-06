@@ -75,15 +75,6 @@ exports.imagesOfOneUser = (req, res, next) => {
 };
 
 exports.upload = (req, res, next) => {
-    // Split file name to get the file's suffix (e.g. jpg or png).
-    const splitFileName = req.files.file.name.split(".");
-    // Image's name is a random string concatenated with the file ending.
-    const imageName = crypto.randomBytes(16).toString('hex') + "." + splitFileName[splitFileName.length - 1];
-    // Check if tags have been provided
-    var tags = "";
-    if(req.body.tags !== undefined) {
-        tags = req.body.tags;
-    }
     if(req.id === undefined) {
         return res.status(403).send("Not logged in");
     }
@@ -98,6 +89,15 @@ exports.upload = (req, res, next) => {
         // Check if image is supposed to be private
         const private = parseInt(req.body.private);
         const anonymous = parseInt(req.body.anonymous);
+        // Split file name to get the file's suffix (e.g. jpg or png).
+        const splitFileName = req.files.file.name.split(".");
+        // Image's name is a random string concatenated with the file ending.
+        const imageName = crypto.randomBytes(16).toString('hex') + "." + splitFileName[splitFileName.length - 1];
+        // Check if tags have been provided
+        var tags = "";
+        if(req.body.tags !== undefined) {
+            tags = req.body.tags;
+        }
         fs.writeFile('./image_upload/' + imageName, req.files.file.data, (err) => {
             if(err) {
                 return res.status(500).send("Something went wrong.");

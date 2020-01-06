@@ -79,11 +79,11 @@ exports.register = (req, res, next) => {
 };
 
 exports.deleteUser = (req, res, next) => {
-    const userId = parseInt(req.params.userId);
     if(req.username === undefined) {
         logger.info({level: 'info', message: 'Not logged in. UserController.DeleteUser.1'});
         return res.status(401).send("Not logged in.");
     }
+    const userId = req.id;
     mysql_query('SELECT ID FROM user WHERE ID = ? AND Deleted = 0', [userId], (err1, result1, fields1) => {
         if(err1) {
             logger.info({level: 'info', message: 'UserController.DeleteUser.2'});

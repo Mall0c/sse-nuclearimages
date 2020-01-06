@@ -237,7 +237,7 @@ function getImages(count, offset, tag) {
       "/" +
       getURLParamter("loadTaggedImages");
   else destURL = "/frontpage/" + count + "/" + offset;
-  
+
   $.ajax({
     url: destURL,
     dataType: "json", // what to expect back from the PHP script, if anything
@@ -248,7 +248,7 @@ function getImages(count, offset, tag) {
     beforeSend: sendToken,
     success: function(data, textStatus, jQxhr) {
       console.log(pblOffset);
-      if(data.length == 0) {
+      if (data.length == 0) {
         pblOffset -= imagesPerPage;
         return;
       }
@@ -257,8 +257,7 @@ function getImages(count, offset, tag) {
         pblOffset -= imagesPerPage;
         pblOffset += data.length;
       }
-        
-      
+
       if (data !== null) {
         var currentColumn = 0;
         for (let i = 0; i < data.length; i++) {
@@ -458,55 +457,60 @@ function loadComments() {
           this.style.display = "none";
         };
 
-          // Report comment button
-          var reportElem = document.createElement("button");
-          var reportTextElem = document.createElement("input");
-          var sendReportElem = document.createElement("button");
-  
-          reportTextElem.id = "reportTextElem" + data[i].ID;
-          reportTextElem.type = "text";
-          reportTextElem.style.display = "none";
-  
-          sendReportElem.id = "sendReportElem" + data[i].ID;
-          sendReportElem.commentID = data[i].ID;
-          sendReportElem.innerText = "Send Report";
-          sendReportElem.style.display = "none";
-          sendReportElem.onclick = function() {
-            $.ajax({
-              url: "/comment/report/" + this.commentID,
-              beforeSend: sendToken,
-              type: "PUT",
-              data: {
-                text: document.getElementById("reportTextElem" + this.commentID).value
-              },
-              success: function(data, textStatus, jQxhr) {
-                console.log(data);
-                console.log("reported");
-              },
-              error: function(jqXhr, textStatus, errorThrown) {
-                console.log(errorThrown);
-              }
-            });
-  
-            document.getElementById("reportTextElem" + this.commentID).style.display =
-              "none";
-            document.getElementById("sendReportElem" + this.commentID).style.display =
-              "none";
-            document.getElementById("reportElem" + this.commentID).style.display =
-              "block";
-          };
-  
-          reportElem.innerText = "Report Image";
-          reportElem.id = "reportElem" + data[i].ID;
-          reportElem.commentID = data[i].ID;
-          reportElem.comment = data[i].Text;
-          reportElem.onclick = function() {
-            document.getElementById("reportTextElem" + this.commentID).style.display =
-              "block";
-            document.getElementById("sendReportElem" + this.commentID).style.display =
-              "block";
-            this.style.display = "none";
-          };
+        // Report comment button
+        var reportElem = document.createElement("button");
+        var reportTextElem = document.createElement("input");
+        var sendReportElem = document.createElement("button");
+
+        reportTextElem.id = "reportTextElem" + data[i].ID;
+        reportTextElem.type = "text";
+        reportTextElem.style.display = "none";
+
+        sendReportElem.id = "sendReportElem" + data[i].ID;
+        sendReportElem.commentID = data[i].ID;
+        sendReportElem.innerText = "Send Report";
+        sendReportElem.style.display = "none";
+        sendReportElem.onclick = function() {
+          $.ajax({
+            url: "/comment/report/" + this.commentID,
+            beforeSend: sendToken,
+            type: "PUT",
+            data: {
+              text: document.getElementById("reportTextElem" + this.commentID)
+                .value
+            },
+            success: function(data, textStatus, jQxhr) {
+              console.log(data);
+              console.log("reported");
+            },
+            error: function(jqXhr, textStatus, errorThrown) {
+              console.log(errorThrown);
+            }
+          });
+
+          document.getElementById(
+            "reportTextElem" + this.commentID
+          ).style.display = "none";
+          document.getElementById(
+            "sendReportElem" + this.commentID
+          ).style.display = "none";
+          document.getElementById("reportElem" + this.commentID).style.display =
+            "block";
+        };
+
+        reportElem.innerText = "Report Image";
+        reportElem.id = "reportElem" + data[i].ID;
+        reportElem.commentID = data[i].ID;
+        reportElem.comment = data[i].Text;
+        reportElem.onclick = function() {
+          document.getElementById(
+            "reportTextElem" + this.commentID
+          ).style.display = "block";
+          document.getElementById(
+            "sendReportElem" + this.commentID
+          ).style.display = "block";
+          this.style.display = "none";
+        };
 
         commentElem.appendChild(sendReportElem);
         commentElem.appendChild(reportTextElem);
@@ -561,29 +565,24 @@ var _throttleDelay = 100;
 var $window = $(window);
 var $document = $(document);
 
-$document.ready(function () {
-
-    $window
-        .off('scroll', ScrollHandler)
-        .on('scroll', ScrollHandler);
-
+$document.ready(function() {
+  $window.off("scroll", ScrollHandler).on("scroll", ScrollHandler);
 });
 
 function ScrollHandler(e) {
-    //throttle event:
-    clearTimeout(_throttleTimer);
-    _throttleTimer = setTimeout(function () {
-        console.log('scroll');
+  //throttle event:
+  clearTimeout(_throttleTimer);
+  _throttleTimer = setTimeout(function() {
+    console.log("scroll");
 
-        //do work
-        if ($window.scrollTop() + $window.height() > $document.height() - 100) {
-          if (window.innerHeight + window.scrollY >= document.body.offsetHeight) {
-            pblOffset += imagesPerPage;
-            getImages(imagesPerPage, pblOffset);
-          }
-        }
-
-    }, _throttleDelay);
+    //do work
+    if ($window.scrollTop() + $window.height() > $document.height() - 100) {
+      if (window.innerHeight + window.scrollY >= document.body.offsetHeight) {
+        pblOffset += imagesPerPage;
+        getImages(imagesPerPage, pblOffset);
+      }
+    }
+  }, _throttleDelay);
 }
 
 /*
@@ -641,16 +640,16 @@ $(document).ready(function() {
         location.reload();
       },
       error: function(jqXhr, textStatus, errorThrown) {
-        if(jqXhr.status == 403) {
-            iziToast.show({
-              title: "Error: " +jqXhr.responseText,
-              message: 'Please log in to upload images.'
+        if (jqXhr.status == 403) {
+          iziToast.show({
+            title: "Error: " + jqXhr.responseText,
+            message: "Please log in to upload images."
           });
         } else {
           iziToast.show({
             title: "Upload failed",
-            message: 'Please try again later.'
-        });
+            message: "Please try again later."
+          });
         }
       }
     });
@@ -685,9 +684,9 @@ $(document).ready(function() {
       },
       error: function(jqXhr, textStatus, errorThrown) {
         iziToast.show({
-          title: "Error",
-          message: 'Wrong username or password.'
-      });
+          title: "Error ",
+          message: "Wrong username or password."
+        });
       }
     });
   });

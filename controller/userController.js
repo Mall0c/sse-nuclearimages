@@ -97,7 +97,7 @@ exports.deleteUser = (req, res, next) => {
             logger.info({level: 'info', message: 'No authorization. UserController.DeleteUser.4'});
             return res.status(403).send("No authorization.");
         }
-        if(result[0].Deleted === 1) {
+        if(result1[0].Deleted === 1) {
             logger.info({level: 'info', message: 'User has already been deleted. UserController.DeleteUser.6'});
             return res.status(404).send("User does not exist.");
         }

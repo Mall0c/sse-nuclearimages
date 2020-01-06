@@ -60,7 +60,4 @@ router.put('/image/report/:imageId', verifyToken, imageController.reportImage);
 // Kommentar melden.
 router.put('/comment/report/:commentId', verifyToken, commentController.reportComment);
 
-// TODO:
-router.get('/logout');
-
 module.exports = router;

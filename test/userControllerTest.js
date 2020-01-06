@@ -1,7 +1,15 @@
 const assert = require('assert');
 const mysql_query = require('../mysql_query');
+const mysql_query_async = require('../mysql_query_async');
 const app = require('../index');
 const request = require('request');
+
+// #####
+// The tests are written in the following way:
+// 1) Arrange: predefine necessary data in the database.
+// 2) Act: perform the method unter test.
+// 3) Assert: check the output/result against the desired result.
+// #####
 
 describe('Controller tests', () => {
 	describe('User controller tests', () => {
@@ -10,45 +18,61 @@ describe('Controller tests', () => {
 		});
 
 		describe('Register', () => {
-			it('should create a new user', (done) => {
-				clearDatabase(() => {
-					request({
-						url: 'http://localhost:3000/register',
-						method: 'POST',
-						json: {username: 'heydude1', password: 'username', email: 'a1@a.aa'}
-					}, function(error, response, body){
-						if(error) throw error;
-						console.log(body);
-						done();
-					});
+			it('should create a new user', async () => {
+				await clearDatabaseAsync();
+				// There is nothing to arrange. Act.
+				request({
+					url: 'http://localhost:3000/register',
+					method: 'POST',
+					json: {username: 'heydude1', password: 'username', email: 'a1@a.aa'}
+				}, function(error, response, body){
+					if(error) throw error;
+					// Assert.
+					assert.equal(response.statusCode, 200);
+					assert.equal(body.auth, true);
+				});
+			});
+
+			it('should not create a new user, because the email is already used', async () => {
+				await clearDatabaseAsync();
+				// Arrange. Create a user that uses the same username and email.
+				const db = mysql_query_async();
+				try {
+					await db.query('INSERT INTO user (Username, Password, EMail, Deleted, isAdmin) VALUES ("Hello", 123, "HelloHello.de", 0, 0);');
+				} catch(err) {
+					if(err) throw err;
+				} finally {
+					await db.close();
+				}
+				// Act. Do the request.
+				request({
+					url: 'http://localhost:3000/register',
+					method: 'POST',
+					json: {username: 'Hello', password: 'Hello123123', email: 'Hello@Hello.de'}
+				}, function(error, response, body){
+					if(error) throw error;
+					// Assert.
+					assert.equal(response.statusCode, 400);
+					assert.equal(body, "User already exists.")
 				});
 			});
 		});
 	});
 });
 
-const clearDatabase = (next) => {
-	mysql_query('DELETE FROM comments WHERE 1=1', [], (err1, result1, fields1) => {
-		if(err1) throw err1;
-		mysql_query('DELETE FROM comments_ratings WHERE 1=1', [], (err2, result2, fields2) => {
-			if(err2) throw err2;
-			mysql_query('DELETE FROM comments_reports WHERE 1=1', [], (err3, result3, fields3) => {
-				if(err3) throw err3;
-				mysql_query('DELETE FROM images WHERE 1=1', [], (err4, result4, fields4) => {
-					if(err4) throw err4;
-					mysql_query('DELETE FROM images_ratings WHERE 1=1', [], (err5, result5, fields5) => {
-						if(err5) throw err5;
-						mysql_query('DELETE FROM comments_reports WHERE 1=1', [], (err6, result6, fields6) => {
-							if(err6) throw err6;
-							mysql_query('DELETE FROM user WHERE 1=1', [], (err7, result7, fields7) => {
-								if(err7) throw err7;
-								console.log(5);
-								next();
-							});
-						});
-					});
-				});
-			});
-		});
-	});
+const clearDatabaseAsync = async () => {
+	const db = mysql_query_async();
+	try {
+		await db.query('DELETE FROM comments WHERE 1=1');
+		await db.query('DELETE FROM comments_ratings WHERE 1=1');
+		await db.query('DELETE FROM comments_reports WHERE 1=1');
+		await db.query('DELETE FROM images WHERE 1=1');
+		await db.query('DELETE FROM images_ratings WHERE 1=1');
+		await db.query('DELETE FROM comments_reports WHERE 1=1');
+		await db.query('DELETE FROM user WHERE 1=1');
+	} catch(err) {
+		if(err) throw err;
+	} finally {
+		await db.close();
+	}
 };

@@ -308,7 +308,7 @@ function getImages(count, offset, tag) {
                 var base64String = data.split(":");
 
                 document.getElementById("uploaderName").innerText =
-                  "Uploaded by " + base64String[0];
+                  "Uploaded by " + (base64String[0] == "undefined" ? "anonymous person" :base64String[0]);
                 document.getElementById("imageRating").innerText =
                   "Rating: " + base64String[1];
 
@@ -660,7 +660,8 @@ $(document).ready(function() {
     waitUploadFinish = true;
 
     var form_data = new FormData(this);
-
+    form_data.append("anonymous", (document.getElementById("anonymous").checked? 1 : 0));
+    form_data.append("private", (document.getElementById("private").checked? 1 : 0));
     $.ajax({
       url: "/upload",
       beforeSend: sendToken,

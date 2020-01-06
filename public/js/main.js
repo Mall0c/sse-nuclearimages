@@ -768,17 +768,10 @@ $(document).ready(function() {
         }, 500);
       },
       error: function(jqXhr, textStatus, errorThrown) {
-        if (jqXhr.status == 400) {
-          iziToast.show({
-            title: "Error: Invalid E-Mail",
-            message: "Please choose a valid E-Mail"
-          });
-        } else {
           iziToast.show({
             title: "Registration failed",
-            message: "Please try again later."
+            message: "Please try again."
           });
-        }
       }
     });
   });

@@ -25,10 +25,10 @@ router.post('/upload', verifyToken, imageController.upload);
 router.delete('/image/:imageId', verifyToken, imageController.deleteImage);
 
 // Einloggen.
-router.post('/login', verifyToken, userController.login);
+router.post('/login', validator.userControllerLoginRules(), validator.defaultValidation, verifyToken, userController.login);
 
 // Registrieren.
-router.post('/register', validator.userControllerRegisterRules(), validator.userControllerRegisterValidation, verifyToken, userController.register);
+router.post('/register', validator.userControllerRegisterRules(), validator.defaultValidation, verifyToken, userController.register);
 
 // Benutzerdaten ändern.
 router.put('/user', verifyToken, userController.changeData);

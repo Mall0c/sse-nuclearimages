@@ -11,10 +11,6 @@ exports.login = (req, res, next) => {
         logger.info({level: 'info', message: 'Insufficient arguments. UserController.Login.4'});
         return res.status(400).send("Already logged in.");
     }
-    if(username === undefined || plainTextPassword === undefined) {
-        logger.info({level: 'info', message: 'Insufficient arguments. UserController.Login.1'});
-        return res.status(400).send("Insufficient arguments.");
-    }
     mysql_query('SELECT Password FROM user WHERE Username = ? AND Deleted = 0', [username], (err, result, fields) => {
         if(err) {
             logger.info({level: 'info', message: 'UserController.Login.2'});

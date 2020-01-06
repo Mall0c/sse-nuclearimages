@@ -11,7 +11,7 @@ exports.login = (req, res, next) => {
         logger.info({level: 'info', message: 'Insufficient arguments. UserController.Login.4'});
         return res.status(400).send("Already logged in.");
     }
-    mysql_query('SELECT Password FROM user WHERE Username = ? AND Deleted = 0', [username], (err, result, fields) => {
+    mysql_query('SELECT Password, isAdmin FROM user WHERE Username = ? AND Deleted = 0', [username], (err, result, fields) => {
         if(err) {
             logger.info({level: 'info', message: 'UserController.Login.2'});
             return res.status(500).send("Something went wrong.");
@@ -23,14 +23,14 @@ exports.login = (req, res, next) => {
         const hashedPassword = result[0].Password;
         bcrypt
         .compare(plainTextPassword, hashedPassword)
-        .then(result => {
-            if(result) {
+        .then(passwordMatches => {
+            if(passwordMatches) {
                 var token = jwt.sign({ username: username }, dbConfig.secret, {
                     expiresIn: 86400*31 // expires in 31 days
                 });
-                return res.status(200).send({ auth: true, token: token });
+                return res.status(200).send({ auth: true, token: token, isAdmin: result[0].isAdmin });
             } else {
-                return res.status(403).send({ auth: false, token: null });
+                return res.status(403).send({ auth: false, token: null, isAdmin: 0 });
             }
         });
     });
@@ -48,12 +48,12 @@ exports.register = (req, res, next) => {
     }
     // Returns the ID of the users whom the email or the username belongs to.
     // This is done for duplicate check.
-    mysql_query('SELECT ID FROM user WHERE username = ? OR (email = ? AND Deleted = 0)', [username, email], (err1, result1, fields1) => {
-        if(err1) {
+    mysql_query('SELECT ID, isAdmin FROM user WHERE username = ? OR (email = ? AND Deleted = 0)', [username, email], (err, result, fields) => {
+        if(err) {
             logger.info({level: 'info', message: 'UserController.Register.3'});
             return res.status(500).send("Something went wrong.");
         }
-        if(result1.length > 0) {
+        if(result.length > 0) {
             logger.info({level: 'info', message: 'User already exists. UserController.Register.4'});
             return res.status(400).send("User already exists.");
         }
@@ -68,7 +68,7 @@ exports.register = (req, res, next) => {
         var token = jwt.sign({ username: username }, dbConfig.secret, {
             expiresIn: 86400*31 // expires in 31 days
         });
-        return res.status(200).send({ auth: true, token: token });
+        return res.status(200).send({ auth: true, token: token, isAdmin: 0 });
     });
 };
 

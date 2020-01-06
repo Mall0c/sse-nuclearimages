@@ -8,6 +8,10 @@ const logger = require('../logger');
 exports.login = (req, res, next) => {
     const username = req.body.username;
     const plainTextPassword = req.body.password;
+    if(req.id !== undefined) {
+        logger.info({level: 'info', message: 'Insufficient arguments. UserController.Login.4'});
+        return res.status(400).send("Already logged in.");
+    }
     if(username === undefined || plainTextPassword === undefined) {
         logger.info({level: 'info', message: 'Insufficient arguments. UserController.Login.1'});
         return res.status(400).send("Insufficient arguments.");
@@ -43,6 +47,10 @@ exports.register = (req, res, next) => {
     const username = req.body.username;
     const plainTextPassword = req.body.password;
     const email = req.body.email;
+    if(req.id !== undefined) {
+        logger.info({level: 'info', message: 'Insufficient arguments. UserController.Register.6'});
+        return res.status(400).send("Already logged in.");
+    }
     if(username === undefined || plainTextPassword === undefined || email === undefined) {
         logger.info({level: 'info', message: 'Insufficient arguments. UserController.Register.1'});
         return res.status(400).send("Insufficient arguments.");

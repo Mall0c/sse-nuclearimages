@@ -85,9 +85,9 @@ exports.imageControllerImagesOfOneUser = () => {
 
 exports.imageControllerUpload = () => {
     return [
-        check('private').isInt({min: 0, max: 1}).withMessage("Invalid value."),
-        check('anonymous').isInt({min: 0, max: 1}).withMessage("Invalid value."),
-        check('tags').isLength({max: 100}).matches(/^[a-z0-9 ]+$/,"i").withMessage("regex").optional({checkFalsy: true})
+        check('private').isInt({min: 0, max: 1}).withMessage("Private is invalid."),
+        check('anonymous').isInt({min: 0, max: 1}).withMessage("Anonymous is invalid."),
+        check('tags').isLength({max: 100}).withMessage("Too long.").matches(/^[a-zA-Z0-9 ]+$/,"i").withMessage("Only alphanumerical tags, separated by white spaces.").optional({checkFalsy: true})
     ]
 }
 
@@ -95,7 +95,7 @@ exports.imageControllerSearchForTags = () => {
     return [
         check('count').isInt({min: 0, max: 20}).withMessage("Count must be between 0 and 20."),
         check('offset').isInt({min: 0, max: 1000000000}).withMessage("Offset must be between 0 and 1.000.000.000"),
-        check('tag').isAlphanumeric().withMessage("Tags are not alphanumeric.").isLength({min: 2, max: 100})
+        check('tag').matches(/^[a-zA-Z0-9\ \%\=\']+$/,"i").withMessage("Only alphanumerical tags, separated by white spaces.")//isLength
     ]
 }
 

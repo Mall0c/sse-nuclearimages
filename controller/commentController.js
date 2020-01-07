@@ -20,12 +20,21 @@ exports.writeComment = (req, res, next) => {
     if(req.username === undefined) {
         return res.status(401).send("Not logged in");
     }
-    mysql_query('INSERT INTO comments (Text, Autor, Image, Deleted) VALUES (?, ?, ?, ?)',
-        [req.body.comment, req.id, parseInt(req.params.imageId), 0], (err, result, fields) => {
+    const timestamp = Date.now();
+    mysql_query('SELECT ID FROM comments WHERE Autor = ? AND Upload_Time + 5000 > ?', [req.id, timestamp], (err0, result0, fields0) => {
+        if(err0) {
+            return res.status(500).send("Something went wrong.");
+        }
+        if(result0.length !== 0) {
+            return res.status(400).send("Too many uploads.")
+        }
+        mysql_query('INSERT INTO comments (Text, Autor, Image, Deleted, Upload_Time) VALUES (?, ?, ?, ?, ?)',
+        [req.body.comment, req.id, parseInt(req.params.imageId), 0, timestamp], (err, result, fields) => {
             if(err) {
                 return res.status(500).send("Something went wrong.");
             }
             return res.status(200).send("Comment has been posted.");
+        });
     });
 };
 
@@ -66,7 +75,7 @@ exports.deleteComment = (req, res, next) => {
         if(result1.length === 0) {
             return res.status(404).send("Comment does not exist.");
         }
-        if(result1[0].Autor !== req.id) {
+        if(result1[0].Autor !== req.id && req.isAdmin === 0) {
             return res.status(403).send("No permission to delete comment.");
         }
 

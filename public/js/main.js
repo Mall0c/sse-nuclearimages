@@ -333,7 +333,10 @@ function getImages(count, offset, tag) {
                 loadComments();
               },
               error: function(jqXhr, textStatus, errorThrown) {
-                location.reload();
+                iziToast.show({
+                  title: "Error",
+                  message: "Image unavailable."
+                });
               }
             });
           };

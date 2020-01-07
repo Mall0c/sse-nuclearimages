@@ -9,7 +9,7 @@ const logger = require('../logger');
 exports.frontpage = (req, res, next) => {
     const limit = parseInt(req.params.count, 10);
     const offset = parseInt(req.params.offset, 10);
-    mysql_query("SELECT ID, Image FROM images WHERE Private = 0 AND Deleted = 0 ORDER BY Upload_Time DESC LIMIT ? OFFSET ?", [limit, offset], (err, result, fields) => {
+    mysql_query("SELECT ID, Image FROM images WHERE (? = 1 AND Deleted = 0) OR Private = 0 AND Deleted = 0 ORDER BY Upload_Time DESC LIMIT ? OFFSET ?", [req.isAdmin, limit, offset], (err, result, fields) => {
         if(err) {
             return res.status(500).send("Something went wrong.");
         }
@@ -39,19 +39,20 @@ exports.oneImage = (req, res, next) => {
         if(result === undefined || result.length === 0) {
             return res.status(404).send("Image does not exist.");
         }
+
         // Image is set to private, meaning it will only be delivered if the owner queries it.
-        if(result[0].Private === 1 && (req.username === undefined || result[0].Username !== req.username)) {
+        if(req.isAdmin === 0 && result[0].Private === 1 && (req.username === undefined || result[0].Username !== req.username)) {
             return res.status(403).send("No authorization.");
         }
 
-        if(result[0].Anonymous === 1) {
+        if(req.isAdmin === 0 && result[0].Anonymous === 1) {
             result[0].Username = undefined;
         }
-
         var imageData = fs.readFileSync('./image_upload/' + result[0].Image);
         // Split file name to get the file's suffix (e.g. jpg or png).
         var splitFileName = result[0].Image.split(".");
-        return res.status(200).send(result[0].Username + ":" + result[0].Rating + ":" + splitFileName[1] + ":" + base64_encode(imageData));
+        const username = (req.isAdmin === 0 ? result[0].Username : "(anon)"+result[0].Username);
+        return res.status(200).send(username + ":" + result[0].Rating + ":" + splitFileName[1] + ":" + base64_encode(imageData));
     });
 };
 
@@ -210,7 +211,7 @@ exports.deleteImage = (req, res, next) => {
         if(result1.length === 0) {
             return res.status(404).send("Image does not exist.");
         }
-        if(result1[0].Uploader !== req.id) {
+        if(result1[0].Uploader !== req.id && req.isAdmin === 0) {
             return res.status(403).send("No authorization.");
         }
         mysql_query('UPDATE images SET Deleted = 1 WHERE ID = ?', [imageId], (err2, result2, fields2) => {

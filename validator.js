@@ -18,7 +18,7 @@ exports.userControllerRegisterRules = () => {
 
 exports.userControllerChangeDataRules = () => {
     return [
-        check('newPassword').isLength({ min: 8, max: 16 }).withMessage("Password does not match required length.").optional(),
+        check('newPassword').isLength({ min: 8, max: 16 }).withMessage("Password does not match required length."),
         check('currentPassword').isLength({ min: 8, max: 16 }).withMessage("Password does not match required length.")
     ]
 }
@@ -87,7 +87,7 @@ exports.imageControllerUpload = () => {
     return [
         check('private').isInt({min: 0, max: 1}).withMessage("Invalid value."),
         check('anonymous').isInt({min: 0, max: 1}).withMessage("Invalid value."),
-        check('tags').isAlphanumeric().withMessage("Tags are not alphanumeric.").isLength({min: 2, max: 100})
+        check('tags').isLength({max: 100}).matches(/^[a-z0-9 ]+$/,"i").withMessage("regex").optional({checkFalsy: true})
     ]
 }
 

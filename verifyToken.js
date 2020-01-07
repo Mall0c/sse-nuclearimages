@@ -33,6 +33,7 @@ function verifyToken(req, res, next) {
     } else {
         // No token provided. Do nothing.
         //console.log("jwt token missing or too long (verifyToken.js)");
+        req.isAdmin = 0;
         next();
     }
 }

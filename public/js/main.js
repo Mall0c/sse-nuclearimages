@@ -333,7 +333,7 @@ function getImages(count, offset, tag) {
                 loadComments();
               },
               error: function(jqXhr, textStatus, errorThrown) {
-                console.log(errorThrown);
+                location.reload();
               }
             });
           };

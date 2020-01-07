@@ -18,7 +18,6 @@ exports.userControllerRegisterRules = () => {
 
 exports.userControllerChangeDataRules = () => {
     return [
-        check('email').isEmail().normalizeEmail().isLength({ max: 254 }).withMessage("E-Mail is too long.").matches(/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/, 'g').withMessage("Does not match RegEx.").optional(),
         check('newPassword').isLength({ min: 8, max: 16 }).withMessage("Password does not match required length.").optional(),
         check('currentPassword').isLength({ min: 8, max: 16 }).withMessage("Password does not match required length.")
     ]
@@ -61,6 +60,62 @@ exports.commentControllerReportComment = () => {
     return [
         check('commentId').isNumeric().withMessage("CommentID is not numeric."),
         check('text').escape().isLength({ min: 1, max: 140 }).withMessage("Report does not match length requirements."),
+    ]
+}
+
+exports.imageControllerFrontpage = () => {
+    return [
+        check('count').isInt({min: 0, max: 20}).withMessage("Count must be between 0 and 20."),
+        check('offset').isInt({min: 0, max: 1000000000}).withMessage("Offset must be between 0 and 1.000.000.000")
+    ]
+}
+
+exports.imageControllerOneImage = () => {
+    return [
+        check('imageId').isNumeric().withMessage("ImageId is not numeric."),
+    ]
+}
+
+exports.imageControllerImagesOfOneUser = () => {
+    return [
+        check('count').isInt({min: 0, max: 20}).withMessage("Count must be between 0 and 20."),
+        check('offset').isInt({min: 0, max: 1000000000}).withMessage("Offset must be between 0 and 1.000.000.000")
+    ]
+}
+
+exports.imageControllerUpload = () => {
+    return [
+        check('private').isInt({min: 0, max: 1}).withMessage("Invalid value."),
+        check('anonymous').isInt({min: 0, max: 1}).withMessage("Invalid value."),
+        check('tags').isAlphanumeric().withMessage("Tags are not alphanumeric.").isLength({min: 2, max: 100})
+    ]
+}
+
+exports.imageControllerSearchForTags = () => {
+    return [
+        check('count').isInt({min: 0, max: 20}).withMessage("Count must be between 0 and 20."),
+        check('offset').isInt({min: 0, max: 1000000000}).withMessage("Offset must be between 0 and 1.000.000.000"),
+        check('tag').isAlphanumeric().withMessage("Tags are not alphanumeric.").isLength({min: 2, max: 100})
+    ]
+}
+
+exports.imageControllerRateImage = () => {
+    return [
+        check('imageId').isNumeric().withMessage("ImageId is not numeric."),
+        check('ratingValue').isNumeric().withMessage("Rating value is not numeric.")
+    ]
+}
+
+exports.imageControllerDeleteImage = () => {
+    return [
+        check('imageId').isNumeric().withMessage("ImageId is not numeric.")
+    ]
+}
+
+exports.imageControllerReportImage = () => {
+    return [
+        check('imageId').isNumeric().withMessage("ImageId is not numeric."),
+        check('text').escape().isLength({ min: 1, max: 140 }).withMessage("Report does not match length requirements.")
     ]
 }
 

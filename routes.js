@@ -7,22 +7,22 @@ const commentController = require('./controller/commentController');
 const validator = require('./validator');
 
 // Frontpage laden.
-router.get('/frontpage/:count/:offset', verifyToken, imageController.frontpage);
+router.get('/frontpage/:count/:offset', verifyToken, validator.imageControllerFrontpage(), validator.defaultValidation, imageController.frontpage);
 
 // Ein Bild mit Informationen dazu laden.
-router.get('/frontpage/:imageId', verifyToken, imageController.oneImage);
+router.get('/frontpage/:imageId', verifyToken, validator.imageControllerOneImage(), validator.defaultValidation, imageController.oneImage);
 
 // Die Bilder laden, die einem Benutzer angehören. Kann nur der Besitzer der Bilder ausführen.
-router.get('/user/images/:count/:offset', verifyToken, imageController.imagesOfOneUser);
+router.get('/user/images/:count/:offset', verifyToken, validator.imageControllerImagesOfOneUser(), validator.defaultValidation, imageController.imagesOfOneUser);
 
 // Ein Bild bewerten.
-router.put('/voteImage/:imageId', verifyToken, imageController.rateImage);
+router.put('/voteImage/:imageId', verifyToken, validator.imageControllerRateImage(), validator.defaultValidation, imageController.rateImage);
 
 // Ein Bild hochladen.
-router.post('/upload', verifyToken, imageController.upload);
+router.post('/upload', verifyToken, validator.imageControllerUpload(), validator.defaultValidation, imageController.upload);
 
 // Ein Bild löschen.
-router.delete('/image/:imageId', verifyToken, imageController.deleteImage);
+router.delete('/image/:imageId', verifyToken, validator.imageControllerDeleteImage(), validator.defaultValidation, imageController.deleteImage);
 
 // Einloggen.
 router.post('/login', verifyToken, validator.userControllerLoginRules(), validator.defaultValidation, userController.login);
@@ -52,12 +52,12 @@ router.delete('/comments/:commentId', verifyToken, validator.commentControllerDe
 router.put('/voteComment/:commentId', verifyToken, validator.commentControllerRateComment(), validator.defaultValidation, commentController.rateComment);
 
 // Bilder nach einem Tag suchen.
-router.get('/search/:count/:offset/:tag', verifyToken, imageController.searchForTags);
+router.get('/search/:count/:offset/:tag', verifyToken, validator.imageControllerSearchForTags(), validator.defaultValidation, imageController.searchForTags);
 
 // Bild melden.
-router.put('/image/report/:imageId', verifyToken, imageController.reportImage);
+router.put('/image/report/:imageId', verifyToken, validator.imageControllerReportImage(), validator.defaultValidation, imageController.reportImage);
 
 // Kommentar melden.
-router.put('/comment/report/:commentId', verifyToken, commentController.reportComment);
+router.put('/comment/report/:commentId', verifyToken, validator.commentControllerReportComment(), validator.defaultValidation, commentController.reportComment);
 
 module.exports = router;

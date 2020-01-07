@@ -110,10 +110,9 @@ exports.changeData = (req, res, next) => {
         logger.info({level: 'info', message: 'Not logged in. UserController.ChangeData.1'});
         return res.status(401).send("Not logged in.");
     }
-    const email = req.body.email;
     const currentPassword = req.body.currentPassword;
     const newPassword = req.body.newPassword;
-    if(email === undefined && newPassword === undefined) {
+    if(newPassword === undefined) {
         logger.info({level: 'info', message: 'No information to change provided. UserController.ChangeData.3'});
         return res.status(400).send("No information to change provided.");
     }
@@ -135,15 +134,6 @@ exports.changeData = (req, res, next) => {
         .compare(currentPassword, hashedPassword)
         .then(result => {
             if(result) {
-                if(email !== undefined && newPassword === undefined) {
-                    mysql_query('UPDATE user SET EMail = ? WHERE ID = ?', [email, req.id], (err2, result2, fields2) => {
-                        if(err2) {
-                            logger.info({level: 'info', message: 'UserController.ChangeData.7'});
-                            return res.status(500).send("Something went wrong.");
-                        }
-                        return res.status(200).send("Information has been changed.")
-                    });
-                } else if(email === undefined && newPassword !== undefined) {
                     bcrypt.genSalt(10).then(salt => { return bcrypt.hash(newPassword, salt); }).then(hash => {
                         mysql_query('UPDATE user SET Password = ? WHERE ID = ?', [hash, req.id], (err2, result2, fields2) => {
                             if(err2) {
@@ -153,17 +143,6 @@ exports.changeData = (req, res, next) => {
                             return res.status(200).send("Information has been changed.")
                         });  
                     });
-                } else {
-                    bcrypt.genSalt(10).then(salt => { return bcrypt.hash(newPassword, salt); }).then(hash => {
-                        mysql_query('UPDATE user SET Password = ?, Email = ? WHERE ID = ?', [hash, email, req.id], (err2, result2, fields2) => {
-                            if(err2) {
-                                logger.info({level: 'info', message: 'UserController.ChangeData.9'});
-                                return res.status(500).send("Something went wrong.");
-                            }
-                            return res.status(200).send("Information has been changed.")
-                        });  
-                    });
-                }
             } else {
                 logger.info({level: 'info', message: 'Wrong password. UserController.ChangeData.10'});
                 return res.status(403).send("Wrong password.");

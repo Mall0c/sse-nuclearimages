@@ -36,9 +36,12 @@ exports.oneImage = (req, res, next) => {
         if(err) {
             return res.status(500).send("Something went wrong.");
         }
+        if(result === undefined || result.length === 0) {
+            return res.status(404).send("Image does not exist.");
+        }
         // Image is set to private, meaning it will only be delivered if the owner queries it.
         if(result[0].Private === 1 && (req.username === undefined || result[0].Username !== req.username)) {
-            return res.status(403).send("No authorization");
+            return res.status(403).send("No authorization.");
         }
 
         if(result[0].Anonymous === 1) {
@@ -73,12 +76,12 @@ exports.imagesOfOneUser = (req, res, next) => {
     });
 };
 
-exports.upload = (req, res, next) => {
+exports.upload =  (req, res, next) => {
     if(req.id === undefined) {
         return res.status(403).send("Not logged in");
     }
     const timestamp = Date.now();
-    mysql_query('SELECT ID FROM images WHERE Uploader = ? AND Upload_Time + 500 > ?', [req.id, timestamp], (err0, result0, fields0) => {
+    mysql_query('SELECT ID FROM images WHERE Uploader = ? AND Upload_Time + 5000 > ?', [req.id, timestamp], async (err0, result0, fields0) => {
         if(err0) {
             return res.status(500).send("Something went wrong.");
         }
@@ -90,8 +93,33 @@ exports.upload = (req, res, next) => {
         const anonymous = parseInt(req.body.anonymous);
         // Split file name to get the file's suffix (e.g. jpg or png).
         const splitFileName = req.files.file.name.split(".");
+        const fileEnding = splitFileName[splitFileName.length - 1];
+        if(splitFileName.length <= 1) {
+            logger.info({level: 'info', message: 'File has no extension. ImageController.Upload.2'});
+            return res.status(400).send("File has no extension.");
+        }
+        // Check for valid image.
+        if(!(fileEnding === 'png' || fileEnding === 'jpg' || fileEnding === 'jpeg')) {
+            logger.info({level: 'info', message: 'Invalid file format. ImageController.Upload.1'});
+            return res.status(400).send("Invalid file format.");
+        }
+        const b64 = base64_encode(req.files.file.data);
+        const buf = Buffer.from(b64, 'base64');
+        var isImage = true;
+        await jimp.read(buf)
+        .then((img) => {
+            const mimeType = img.getMIME();
+            if(img.bitmap.width < 150 || img.bitmap.height < 150 || mimeType !== "image/png" && mimeType !== "image/jpeg") {
+                isImage = false;
+            }
+        }).catch((err) => {
+            isImage = false;
+        });
+        if(!isImage) {
+            return res.status(400).send("2");
+        }
         // Image's name is a random string concatenated with the file ending.
-        const imageName = crypto.randomBytes(16).toString('hex') + "." + splitFileName[splitFileName.length - 1];
+        const imageName = crypto.randomBytes(16).toString('hex') + "." + fileEnding;
         // Check if tags have been provided
         var tags = "";
         if(req.body.tags !== undefined) {

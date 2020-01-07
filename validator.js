@@ -59,7 +59,7 @@ exports.commentControllerRateComment = () => {
 exports.commentControllerReportComment = () => {
     return [
         check('commentId').isNumeric().withMessage("CommentID is not numeric."),
-        check('text').escape().isLength({ min: 1, max: 140 }).withMessage("Report does not match length requirements."),
+        check('text').escape().isLength({ min: 1, max: 300 }).withMessage("Report does not match length requirements."),
     ]
 }
 
@@ -115,7 +115,7 @@ exports.imageControllerDeleteImage = () => {
 exports.imageControllerReportImage = () => {
     return [
         check('imageId').isNumeric().withMessage("ImageId is not numeric."),
-        check('text').escape().isLength({ min: 1, max: 140 }).withMessage("Report does not match length requirements.")
+        check('text').escape().isLength({ min: 1, max: 300 }).withMessage("Report does not match length requirements.")
     ]
 }
 

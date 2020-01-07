@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Erstellungszeit: 15. Dez 2019 um 16:58
+-- Erstellungszeit: 07. Jan 2020 um 16:42
 -- Server-Version: 10.4.8-MariaDB
 -- PHP-Version: 7.1.33
 
@@ -30,10 +30,11 @@ SET time_zone = "+00:00";
 
 CREATE TABLE `comments` (
   `ID` int(11) NOT NULL,
-  `Text` varchar(500) NOT NULL,
+  `Text` varchar(140) NOT NULL,
   `Autor` int(11) NOT NULL,
   `Image` int(11) NOT NULL,
-  `Deleted` tinyint(4) DEFAULT NULL
+  `Deleted` tinyint(4) DEFAULT NULL,
+  `Upload_Time` bigint(20) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 -- --------------------------------------------------------
@@ -99,7 +100,7 @@ CREATE TABLE `images_ratings` (
 CREATE TABLE `images_reports` (
   `ID` int(11) NOT NULL,
   `UserID` int(11) NOT NULL,
-  `ImageID` int(11) NOT NULL,
+  `ImagesID` int(11) NOT NULL,
   `Text` varchar(300) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
@@ -113,7 +114,7 @@ CREATE TABLE `user` (
   `ID` int(11) NOT NULL,
   `Username` varchar(15) NOT NULL,
   `Password` varchar(100) NOT NULL,
-  `EMail` varchar(100) DEFAULT NULL,
+  `EMail` varchar(254) DEFAULT NULL,
   `Deleted` tinyint(4) DEFAULT NULL,
   `isAdmin` tinyint(4) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
@@ -166,7 +167,7 @@ ALTER TABLE `user`
 -- AUTO_INCREMENT für Tabelle `comments`
 --
 ALTER TABLE `comments`
-  MODIFY `ID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+  MODIFY `ID` int(11) NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT für Tabelle `comments_reports`
@@ -178,7 +179,7 @@ ALTER TABLE `comments_reports`
 -- AUTO_INCREMENT für Tabelle `images`
 --
 ALTER TABLE `images`
-  MODIFY `ID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+  MODIFY `ID` int(11) NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT für Tabelle `images_reports`
@@ -190,7 +191,7 @@ ALTER TABLE `images_reports`
 -- AUTO_INCREMENT für Tabelle `user`
 --
 ALTER TABLE `user`
-  MODIFY `ID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
+  MODIFY `ID` int(11) NOT NULL AUTO_INCREMENT;
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;

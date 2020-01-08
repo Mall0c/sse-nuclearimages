@@ -153,7 +153,8 @@ exports.upload =  (req, res, next) => {
 exports.searchForTags = (req, res, next) => {
     const limit = parseInt(req.params.count, 10);
     const offset = parseInt(req.params.offset, 10);
-    const tag = req.body.tag;
+    const tag = req.params.tag;
+    console.log(atob(tag));
     mysql_query('SELECT ID, Image FROM images WHERE Tags LIKE \'%' + tag + '%\' AND Deleted = 0 ORDER BY Upload_Time DESC LIMIT ? OFFSET ?', [limit, offset], (err, result, fields) => {
         if(err) {
             return res.status(500).send("Something went wrong.");

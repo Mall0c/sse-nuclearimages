@@ -49,9 +49,10 @@ function searchUsingTag() {
   location.href = URL_add_parameter(
     location.href,
     "loadTaggedImages",
-    document.getElementById("searchTagField").value
+    btoa(document.getElementById("searchTagField").value)
   );
 }
+
 
 settingsBtn.onclick = function() {
   settingsModal.style.display = "block";

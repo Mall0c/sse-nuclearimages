@@ -37,6 +37,7 @@ exports.oneImage = (req, res, next) => {
         if(err) {
             return res.status(500).send("Something went wrong.");
         }
+
         if(result === undefined || result.length === 0) {
             return res.status(404).send("Image does not exist.");
         }
@@ -49,6 +50,7 @@ exports.oneImage = (req, res, next) => {
         if(req.isAdmin === 0 && result[0].Anonymous === 1) {
             result[0].Username = undefined;
         }
+        
         var imageData = fs.readFileSync('./image_upload/' + result[0].Image);
         // Split file name to get the file's suffix (e.g. jpg or png).
         var splitFileName = result[0].Image.split(".");

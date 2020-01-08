@@ -12,7 +12,7 @@ const request = require('request');
 
 describe('UserController', () => {
 	after(() => {
-		setTimeout(function() { app.close(); }, 5000);
+		setTimeout(function() { app.close(); }, 1000);
 	});
 
 	describe('Register', () => {

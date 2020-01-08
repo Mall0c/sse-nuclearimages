@@ -50,7 +50,7 @@ exports.oneImage = (req, res, next) => {
         if(req.isAdmin === 0 && result[0].Anonymous === 1) {
             result[0].Username = undefined;
         }
-        
+
         var imageData = fs.readFileSync('./image_upload/' + result[0].Image);
         // Split file name to get the file's suffix (e.g. jpg or png).
         var splitFileName = result[0].Image.split(".");
@@ -82,7 +82,7 @@ exports.imagesOfOneUser = (req, res, next) => {
 
 exports.upload =  (req, res, next) => {
     if(req.id === undefined) {
-        return res.status(403).send("Not logged in");
+        return res.status(403).send("Not logged in.");
     }
     const timestamp = Date.now();
     mysql_query('SELECT ID FROM images WHERE Uploader = ? AND Upload_Time + 5000 > ?', [req.id, timestamp], async (err0, result0, fields0) => {
@@ -175,6 +175,10 @@ exports.searchForTags = (req, res, next) => {
 exports.rateImage = (req, res, next) => {
     const imageId = parseInt(req.params.imageId);
     const ratingValue = parseInt(req.body.ratingValue);
+    if(!(ratingValue === 1 || ratingValue === -1)) {
+        logger.info({level: 'info', message: 'Invalid rating value. ImageController.RateImage.1'});
+        return res.status(400).send("Bad request.");
+    }
     mysql_query('SELECT ID FROM images WHERE ID = ? AND Deleted = 0', [imageId], (err1, result1, fields1) => {
         if(err1) {
             return res.status(500).send("Something went wrong.");
@@ -205,7 +209,7 @@ exports.rateImage = (req, res, next) => {
 exports.deleteImage = (req, res, next) => {
     const imageId = parseInt(req.params.imageId);
     if(req.username === undefined) {
-        return res.status(401).send("Not logged in");
+        return res.status(401).send("Not logged in.");
     }
     mysql_query('SELECT Uploader FROM images WHERE ID = ? AND Deleted = 0', [imageId], (err1, result1, fields1) => {
         if(err1) {
@@ -230,7 +234,7 @@ exports.reportImage = (req, res, next) => {
     const imageId = parseInt(req.params.imageId);
     const text = req.body.text;
     if(req.username === undefined) {
-        return res.status(401).send("Not logged in");
+        return res.status(401).send("Not logged in.");
     }
     mysql_query('SELECT * FROM images_reports WHERE UserID = ? AND ImageID = ?', [req.id, imageId], (err1, result1, fields1) => {
         if(err1) {

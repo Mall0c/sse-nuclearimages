@@ -375,8 +375,6 @@ function loadComments() {
         var commentElem = document.createElement("div");
         commentElem.classList = "comment";
         commentElem.innerHTML =
-          "CommentID:" +
-          data[i].ID +
           " Username: " +
           data[i].Username +
           " Rating: " +

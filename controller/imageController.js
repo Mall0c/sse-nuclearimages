@@ -3,6 +3,7 @@ const mysql_query = require('../mysql_query');
 const jimp = require('jimp');
 const crypto = require('crypto');
 const logger = require('../logger');
+const atob = require('atob');
 
 // Return the last <count> images' thumbnails with <offset>.
 // Initial query would be with offset = 0.
@@ -153,7 +154,7 @@ exports.upload =  (req, res, next) => {
 exports.searchForTags = (req, res, next) => {
     const limit = parseInt(req.params.count, 10);
     const offset = parseInt(req.params.offset, 10);
-    const tag = req.body.tag;
+    const tag = atob(req.params.tag);
     mysql_query('SELECT ID, Image FROM images WHERE Tags LIKE \'%' + tag + '%\' AND Deleted = 0 ORDER BY Upload_Time DESC LIMIT ? OFFSET ?', [limit, offset], (err, result, fields) => {
         if(err) {
             return res.status(500).send("Something went wrong.");

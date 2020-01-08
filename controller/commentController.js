@@ -91,7 +91,6 @@ exports.deleteComment = (req, res, next) => {
 exports.rateComment = (req, res, next) => {
     const commentId = parseInt(req.params.commentId);
     const ratingValue = parseInt(req.body.ratingValue);
-    console.log(ratingValue, commentId);
     if(1 - Math.abs(ratingValue) !== 0) {
         logger.info({level: 'info', message: 'Invalid rating value. CommentController.RateComment.1'});
         return res.status(400).send("Invalid rating value.");

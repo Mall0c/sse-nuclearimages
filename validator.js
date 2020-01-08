@@ -31,7 +31,7 @@ exports.commentControllerAllComments = () => {
 
 exports.commentControllerWriteComment = () => {
     return [
-        // check('comment').escape().isLength({ min: 1, max: 140 }).withMessage("Comment does not match length requirements."),
+        //check('comment').escape().isLength({ min: 1, max: 140 }).withMessage("Comment does not match length requirements."),
         check('comment').isLength({ min: 1, max: 140 }).withMessage("Comment does not match length requirements."),
         check('imageId').isNumeric().withMessage("ImageID is not numeric.")
     ]

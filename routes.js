@@ -52,7 +52,7 @@ router.delete('/comments/:commentId', verifyToken, validator.commentControllerDe
 router.put('/voteComment/:commentId', verifyToken, validator.commentControllerRateComment(), validator.defaultValidation, commentController.rateComment);
 
 // Bilder nach einem Tag suchen.
-router.get('/search/:count/:offset/:tag', verifyToken, validator.imageControllerSearchForTags(), validator.defaultValidation, imageController.searchForTags);
+router.post('/search/:count/:offset/:tag', verifyToken, validator.imageControllerSearchForTags(), validator.defaultValidation, imageController.searchForTags);
 
 // Bild melden.
 router.put('/image/report/:imageId', verifyToken, validator.imageControllerReportImage(), validator.defaultValidation, imageController.reportImage);

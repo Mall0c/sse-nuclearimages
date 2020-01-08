@@ -111,7 +111,6 @@ $(document).ready(function() {
             (Number(document.getElementById("imageForModal").rating) - 1);
       },
       error: function(jqXhr, textStatus, errorThrown) {
-        console.log(errorThrown);
       }
     });
   });
@@ -165,7 +164,6 @@ $(document).ready(function() {
         });
       },
       error: function(jqXhr, textStatus, errorThrown) {
-        console.log(errorThrown);
       }
     });
   });
@@ -225,8 +223,6 @@ window.onload = function() {
     this.isAdmin = false;
   }
 
-  console.log(document.cookie);
-
   getImages(imagesPerPage, 0);
   cookieUsername = document.cookie.replace(
     /(?:(?:^|.*;\s*)name\s*\=\s*([^;]*).*$)|^.*$/,
@@ -255,9 +251,11 @@ function sendToken(xhr) {
 }
 function getImages(count, offset, tag) {
   var destURL;
+  let formdata = new FormData();
+  var sendType = "get";
   if (getURLParamter("loadMyProfileImages") == "1")
     destURL = "/user/images/" + count + "/" + offset;
-  else if (getURLParamter("loadTaggedImages"))
+  else if (getURLParamter("loadTaggedImages")) {
     destURL =
       "/search/" +
       count +
@@ -265,6 +263,9 @@ function getImages(count, offset, tag) {
       offset +
       "/" +
       getURLParamter("loadTaggedImages");
+      sendType = "post";
+      formdata.append("tag", getURLParamter("loadTaggedImages"));
+  }
   else destURL = "/frontpage/" + count + "/" + offset;
 
   $.ajax({
@@ -273,10 +274,10 @@ function getImages(count, offset, tag) {
     cache: false,
     contentType: false,
     processData: false,
-    type: "GET",
+    data: formdata,
+    type: sendType,
     beforeSend: sendToken,
     success: function(data, textStatus, jQxhr) {
-      console.log(pblOffset);
       if (data.length == 0) {
         pblOffset -= imagesPerPage;
         return;
@@ -306,7 +307,6 @@ function getImages(count, offset, tag) {
               processData: false,
               type: "GET",
               success: function(data, textStatus, jQxhr) {
-                //console.log(data);
                 var base64String = data.split(":");
 
                 document.getElementById("uploaderName").innerText =
@@ -352,7 +352,6 @@ function getImages(count, offset, tag) {
     },
     error: function(jqXhr, textStatus, errorThrown) {
       pblOffset -= imagesPerPage;
-      console.log(errorThrown);
     }
   });
 }
@@ -400,7 +399,6 @@ function loadComments() {
               loadComments();
             },
             error: function(jqXhr, textStatus, errorThrown) {
-              console.log(errorThrown);
             }
           });
         };
@@ -419,7 +417,6 @@ function loadComments() {
               loadComments();
             },
             error: function(jqXhr, textStatus, errorThrown) {
-              console.log(errorThrown);
             }
           });
         };
@@ -438,7 +435,6 @@ function loadComments() {
               loadComments();
             },
             error: function(jqXhr, textStatus, errorThrown) {
-              console.log(errorThrown);
             }
           });
         };
@@ -468,7 +464,6 @@ function loadComments() {
               loadComments();
             },
             error: function(jqXhr, textStatus, errorThrown) {
-              console.log(errorThrown);
             }
           });
 
@@ -524,7 +519,6 @@ function loadComments() {
               });
             },
             error: function(jqXhr, textStatus, errorThrown) {
-              console.log(errorThrown);
             }
           });
 
@@ -567,7 +561,6 @@ function loadComments() {
       }
     },
     error: function(jqXhr, textStatus, errorThrown) {
-      console.log(errorThrown);
     }
   });
 }
@@ -590,7 +583,6 @@ $(document).ready(function() {
         loadComments();
       },
       error: function(jqXhr, textStatus, errorThrown) {
-        console.log(errorThrown);
       }
     });
   });
@@ -616,7 +608,6 @@ function ScrollHandler(e) {
   //throttle event:
   clearTimeout(_throttleTimer);
   _throttleTimer = setTimeout(function() {
-    console.log("scroll");
 
     //do work
     if ($window.scrollTop() + $window.height() > $document.height() - 100) {
@@ -653,11 +644,9 @@ $(document).ready(function() {
       data: form_data,
       type: "put",
       success: function(data, textStatus, jQxhr) {
-        console.log(data);
         location.reload();
       },
       error: function(jqXhr, textStatus, errorThrown) {
-        console.log(errorThrown);
       }
     });
   });
@@ -711,7 +700,6 @@ $(document).ready(function() {
     e.preventDefault();
 
     var form_data = new FormData(this);
-    //console.log(document.cookie);
 
     $.ajax({
       url: "/login",
@@ -723,7 +711,6 @@ $(document).ready(function() {
       data: form_data,
       type: "post",
       success: function(data, textStatus, jQxhr) {
-        //console.log(form_data);
         if (data["auth"] == true) {
           document.cookie = "name=" + form_data.get("username");
           document.cookie = "token=" + data["token"];

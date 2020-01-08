@@ -251,9 +251,11 @@ function sendToken(xhr) {
 }
 function getImages(count, offset, tag) {
   var destURL;
+  let formdata = new FormData();
+  var sendType = "get";
   if (getURLParamter("loadMyProfileImages") == "1")
     destURL = "/user/images/" + count + "/" + offset;
-  else if (getURLParamter("loadTaggedImages"))
+  else if (getURLParamter("loadTaggedImages")) {
     destURL =
       "/search/" +
       count +
@@ -261,6 +263,9 @@ function getImages(count, offset, tag) {
       offset +
       "/" +
       getURLParamter("loadTaggedImages");
+      sendType = "post";
+      formdata.append("tag", getURLParamter("loadTaggedImages"));
+  }
   else destURL = "/frontpage/" + count + "/" + offset;
 
   $.ajax({
@@ -269,7 +274,8 @@ function getImages(count, offset, tag) {
     cache: false,
     contentType: false,
     processData: false,
-    type: "GET",
+    data: formdata,
+    type: sendType,
     beforeSend: sendToken,
     success: function(data, textStatus, jQxhr) {
       if (data.length == 0) {

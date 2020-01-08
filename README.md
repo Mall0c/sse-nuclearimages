@@ -14,5 +14,5 @@ The directory `tests` contains unit tests against the backend API.
 **Important**: don't simply run the tests as it could screw the database up. Before running the tests, do these steps:
 1) Go to phpmyadmin and create an arbitrary database, e.g. `tests`.
 2) Adjust it in dbConfig.js! This means that the database has to be changed for tests and dev. Thats a dirty workaround for now.
-3) Run `npm test test/createTable.js` to have the tables inside `tests` created.
+3) Import .sql file into the database that was created in step 1.
 4) To run the tests, run for example `npm test test/userControllerTest.js`. The script will delete all records in the test database **before** the tests are run, meaning one can examine the database afterwards.

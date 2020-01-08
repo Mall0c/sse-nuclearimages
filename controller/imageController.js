@@ -124,7 +124,7 @@ exports.upload =  (req, res, next) => {
         // Check if tags have been provided
         var tags = "";
         if(req.body.tags !== undefined) {
-            tags = req.body.tags;
+            tags = req.body.tags.toLowerCase();
         }
         fs.writeFile('./image_upload/' + imageName, req.files.file.data, (err) => {
             if(err) {
@@ -153,8 +153,8 @@ exports.upload =  (req, res, next) => {
 exports.searchForTags = (req, res, next) => {
     const limit = parseInt(req.params.count, 10);
     const offset = parseInt(req.params.offset, 10);
-    const tag = req.params.tag;
-    mysql_query('SELECT ID, Image FROM images WHERE Tags LIKE \'%' + req.params.tag + '%\' AND Deleted = 0 ORDER BY Upload_Time DESC LIMIT ? OFFSET ?', [limit, offset], (err, result, fields) => {
+    const tag = req.body.tag;
+    mysql_query('SELECT ID, Image FROM images WHERE Tags LIKE \'%' + tag + '%\' AND Deleted = 0 ORDER BY Upload_Time DESC LIMIT ? OFFSET ?', [limit, offset], (err, result, fields) => {
         if(err) {
             return res.status(500).send("Something went wrong.");
         }

@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Erstellungszeit: 07. Jan 2020 um 16:42
+-- Erstellungszeit: 09. Jan 2020 um 15:31
 -- Server-Version: 10.4.8-MariaDB
 -- PHP-Version: 7.1.33
 
@@ -100,7 +100,7 @@ CREATE TABLE `images_ratings` (
 CREATE TABLE `images_reports` (
   `ID` int(11) NOT NULL,
   `UserID` int(11) NOT NULL,
-  `ImagesID` int(11) NOT NULL,
+  `ImageID` int(11) NOT NULL,
   `Text` varchar(300) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 

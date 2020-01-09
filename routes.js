@@ -6,8 +6,12 @@ const imageController = require('./controller/imageController');
 const commentController = require('./controller/commentController');
 const validator = require('./validator');
 
+const cookieParser = require('cookie-parser');
+const csrf = require('csurf');
+const csrfProtection = csrf({ cookie: true });
+
 // Frontpage laden.
-router.get('/frontpage/:count/:offset', verifyToken, validator.imageControllerFrontpage(), validator.defaultValidation, imageController.frontpage);
+router.get('/frontpage/:count/:offset', csrfProtection, verifyToken, validator.imageControllerFrontpage(), validator.defaultValidation, imageController.frontpage);
 
 // Ein Bild mit Informationen dazu laden.
 router.get('/frontpage/:imageId', verifyToken, validator.imageControllerOneImage(), validator.defaultValidation, imageController.oneImage);
@@ -16,48 +20,48 @@ router.get('/frontpage/:imageId', verifyToken, validator.imageControllerOneImage
 router.get('/user/images/:count/:offset', verifyToken, validator.imageControllerImagesOfOneUser(), validator.defaultValidation, imageController.imagesOfOneUser);
 
 // Ein Bild bewerten.
-router.put('/voteImage/:imageId', verifyToken, validator.imageControllerRateImage(), validator.defaultValidation, imageController.rateImage);
+router.put('/voteImage/:imageId', csrfProtection, verifyToken, validator.imageControllerRateImage(), validator.defaultValidation, imageController.rateImage);
 
 // Ein Bild hochladen.
-router.post('/upload', verifyToken, validator.imageControllerUpload(), validator.defaultValidation, imageController.upload);
+router.post('/upload', csrfProtection, verifyToken, validator.imageControllerUpload(), validator.defaultValidation, imageController.upload);
 
 // Ein Bild löschen.
-router.delete('/image/:imageId', verifyToken, validator.imageControllerDeleteImage(), validator.defaultValidation, imageController.deleteImage);
+router.delete('/image/:imageId', csrfProtection, verifyToken, validator.imageControllerDeleteImage(), validator.defaultValidation, imageController.deleteImage);
 
 // Einloggen.
-router.post('/login', verifyToken, validator.userControllerLoginRules(), validator.defaultValidation, userController.login);
+router.post('/login', csrfProtection, verifyToken, validator.userControllerLoginRules(), validator.defaultValidation, userController.login);
 
 // Registrieren.
-router.post('/register', verifyToken, validator.userControllerRegisterRules(), validator.defaultValidation, userController.register);
+router.post('/register', csrfProtection, verifyToken, validator.userControllerRegisterRules(), validator.defaultValidation, userController.register);
 
 // Benutzerdaten ändern.
-router.put('/user', verifyToken, validator.userControllerChangeDataRules(), validator.defaultValidation, userController.changeData);
+router.put('/user', csrfProtection, verifyToken, validator.userControllerChangeDataRules(), validator.defaultValidation, userController.changeData);
 
 // Einen User löschen.
-router.delete('/user', verifyToken, userController.deleteUser);
+router.delete('/user', csrfProtection, verifyToken, userController.deleteUser);
 
 // Kommentare zu einem Bild bekommen.
 router.get('/comments/:imageId', verifyToken, validator.commentControllerAllComments(), validator.defaultValidation, commentController.allComments);
 
 // Kommentar zu einem Bild schreiben.
-router.post('/comments/:imageId', verifyToken, validator.commentControllerWriteComment(), validator.defaultValidation, commentController.writeComment);
+router.post('/comments/:imageId', csrfProtection, verifyToken, validator.commentControllerWriteComment(), validator.defaultValidation, commentController.writeComment);
 
 // Kommentar bearbeiten.
-router.put('/comments/:commentId', verifyToken, validator.commentControllerEditComment(), validator.defaultValidation, commentController.editComment);
+router.put('/comments/:commentId', csrfProtection, verifyToken, validator.commentControllerEditComment(), validator.defaultValidation, commentController.editComment);
 
 // Kommentar löschen.
-router.delete('/comments/:commentId', verifyToken, validator.commentControllerDeleteComment(), validator.defaultValidation, commentController.deleteComment);
+router.delete('/comments/:commentId', csrfProtection, verifyToken, validator.commentControllerDeleteComment(), validator.defaultValidation, commentController.deleteComment);
 
 // Kommentar bewerten.
-router.put('/voteComment/:commentId', verifyToken, validator.commentControllerRateComment(), validator.defaultValidation, commentController.rateComment);
+router.put('/voteComment/:commentId', csrfProtection, verifyToken, validator.commentControllerRateComment(), validator.defaultValidation, commentController.rateComment);
 
 // Bilder nach einem Tag suchen.
-router.post('/search/:count/:offset/:tag', verifyToken, validator.imageControllerSearchForTags(), validator.defaultValidation, imageController.searchForTags);
+router.post('/search/:count/:offset/:tag', csrfProtection, verifyToken, validator.imageControllerSearchForTags(), validator.defaultValidation, imageController.searchForTags);
 
 // Bild melden.
-router.put('/image/report/:imageId', verifyToken, validator.imageControllerReportImage(), validator.defaultValidation, imageController.reportImage);
+router.put('/image/report/:imageId', csrfProtection, verifyToken, validator.imageControllerReportImage(), validator.defaultValidation, imageController.reportImage);
 
 // Kommentar melden.
-router.put('/comment/report/:commentId', verifyToken, validator.commentControllerReportComment(), validator.defaultValidation, commentController.reportComment);
+router.put('/comment/report/:commentId', csrfProtection, verifyToken, validator.commentControllerReportComment(), validator.defaultValidation, commentController.reportComment);
 
 module.exports = router;

@@ -1,5 +1,4 @@
 const express = require("express");
-const app = express();
 const path = require("path");
 const fileUpload = require("express-fileupload");
 const bodyParser = require("body-parser");
@@ -7,6 +6,12 @@ const routes = require("./routes");
 const fs = require("fs");
 const https = require("https");
 
+const cookieParser = require('cookie-parser');
+//const csrf = require('csurf');
+
+//const csrfProtection = csrf({ cookie: true });
+const app = express();
+app.use(cookieParser());
 /*
 var httpApp = express();
 
@@ -18,6 +23,7 @@ httpApp.listen(3000, function() {
   console.log("Example app listening on port 3000!");
 });
 */
+
 app.use(bodyParser.json({}));
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(express.static(path.join(__dirname, "public")));

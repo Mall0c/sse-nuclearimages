@@ -120,7 +120,7 @@ exports.upload =  (req, res, next) => {
             isImage = false;
         });
         if(!isImage) {
-            return res.status(400).send("2");
+            return res.status(400).send("File is not an image");
         }
         // Image's name is a random string concatenated with the file ending.
         const imageName = crypto.randomBytes(16).toString('hex') + "." + fileEnding;

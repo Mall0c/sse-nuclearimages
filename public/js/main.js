@@ -112,6 +112,23 @@ $(document).ready(function() {
             (Number(document.getElementById("imageForModal").rating) - 1);
       },
       error: function(jqXhr, textStatus, errorThrown) {
+        if (jqXhr.status == 401) {
+          iziToast.show({
+            title: "Error: " + jqXhr.responseText,
+            message: "Log in to rate an Image."
+          });
+        } else if (jqXhr.status == 404) {
+          iziToast.show({
+            title: "Error: " + jqXhr.responseText,
+            message: "Please refresh."
+          });
+        } 
+        else if (jqXhr.status == 403) {
+          iziToast.show({
+            title: "Error: " + jqXhr.responseText,
+            message: "You can only vote once."
+          });
+        } 
       }
     });
   });
@@ -165,6 +182,23 @@ $(document).ready(function() {
         });
       },
       error: function(jqXhr, textStatus, errorThrown) {
+       if (jqXhr.status == 401) {
+          iziToast.show({
+            title: "Error: " + jqXhr.responseText,
+            message: "Please Log in"
+          });
+        } 
+        else if (jqXhr.status == 400) {
+          iziToast.show({
+            title: "Error: " + jqXhr.responseText,
+            message: ""
+          });
+        }         else  {
+          iziToast.show({
+            title: "Error: " + jqXhr.responseText,
+            message: "Please try again later."
+          });
+        } 
       }
     });
   });
@@ -186,11 +220,17 @@ document.getElementById("deleteImage").onclick = function() {
       location.reload();
     },
     error: function(jqXhr, textStatus, errorThrown) {
+      if (jqXhr.status == 404) {
+        iziToast.show({
+          title: "Error: " + jqXhr.responseText,
+          message: "Image has probably been deleted already."
+        });
+      } else if (jqXhr.status == 403){
       iziToast.show({
         title: "Error",
         message: "You're not authorized to delete this image."
       });
-    }
+    }}
   });
 };
 
@@ -370,6 +410,11 @@ function getImages(count, offset, tag) {
         iziToast.show({
           title: "Error: " + jqXhr.responseText,
           message: "Please refresh the website."
+        });
+      } else if (jqXhr.status == 400) {
+        iziToast.show({
+          title: "Error: " + jqXhr.responseText,
+          message: ""
         });
       } 
 

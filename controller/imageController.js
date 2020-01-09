@@ -182,7 +182,7 @@ exports.searchForTags = (req, res, next) => {
     const tag = atob(req.params.tag);
     if(tag.length > 100) {
         logger.info({level: 'info', message: 'Tag is too long. ImageController.Frontpage.1'});
-        return res.status(400).send("Bad request.");
+        return res.status(400).send("Tag too long.");
     }
     mysql_query('SELECT ID, Image FROM images WHERE Tags LIKE \'%' + tag + '%\' AND Deleted = 0 ORDER BY Upload_Time DESC LIMIT ? OFFSET ?', [limit, offset], (err, result, fields) => {
         if(err) {

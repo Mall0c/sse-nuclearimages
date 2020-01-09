@@ -8,7 +8,6 @@ const atob = require('atob');
 // Return the last <count> images' thumbnails with <offset>.
 // Initial query would be with offset = 0.
 exports.frontpage = (req, res, next) => {
-    res.cookie('XSRF-TOKEN', req.csrfToken());
     const limit = parseInt(req.params.count, 10);
     const offset = parseInt(req.params.offset, 10);
     mysql_query("SELECT ID, Image FROM images WHERE (? = 1 AND Deleted = 0) OR Private = 0 AND Deleted = 0 ORDER BY Upload_Time DESC LIMIT ? OFFSET ?", [req.isAdmin, limit, offset], (err, result, fields) => {

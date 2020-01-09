@@ -66,7 +66,7 @@ exports.register = (req, res, next) => {
                 });
                 return res.status(200).send({ auth: true, token: token, isAdmin: 0 });
             })
-            .catch(err => { 
+            .catch(err => {
                 logger.info({level: 'error', message: err.stack + " UserController.Register.5" });
                 return res.status(500).send("Something went wrong.");
             });
@@ -128,7 +128,7 @@ exports.changeData = (req, res, next) => {
         }
         if(result1.length === 0) {
             logger.info({level: 'info', message: 'User does not exist. UserController.ChangeData.6'});
-            return res.status(400).send("User does not exist");
+            return res.status(404).send("User does not exist.");
         }
         const hashedPassword = result1[0].Password;
         bcrypt
@@ -142,7 +142,7 @@ exports.changeData = (req, res, next) => {
                                 return res.status(500).send("Something went wrong.");
                             }
                             return res.status(200).send("Information has been changed.")
-                        });  
+                        });
                     });
             } else {
                 logger.info({level: 'info', message: 'Wrong password. UserController.ChangeData.10'});

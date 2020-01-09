@@ -1,4 +1,5 @@
 const express = require("express");
+const app = express();
 const path = require("path");
 const fileUpload = require("express-fileupload");
 const bodyParser = require("body-parser");
@@ -6,12 +7,6 @@ const routes = require("./routes");
 const fs = require("fs");
 const https = require("https");
 
-const cookieParser = require('cookie-parser');
-//const csrf = require('csurf');
-
-//const csrfProtection = csrf({ cookie: true });
-const app = express();
-app.use(cookieParser());
 /*
 var httpApp = express();
 

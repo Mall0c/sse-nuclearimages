@@ -334,11 +334,25 @@ function getImages(count, offset, tag) {
                 loadComments();
               },
               error: function(jqXhr, textStatus, errorThrown) {
+                waitUploadFinish = false;
+                if (jqXhr.status == 404) {
+                  iziToast.show({
+                    title: "Error: " + jqXhr.responseText,
+                    message: "Image has probably been deleted. Please refresh."
+                  });
+                }
+                if (jqXhr.status == 403) {
+                  iziToast.show({
+                    title: "Error: " + jqXhr.responseText,
+                    message: "You're not allowed to view this image"
+                  });
+                } 
+                else {
                 iziToast.show({
                   title: "Error",
-                  message: "Image unavailable."
+                  message: "Image unavailable. Please refresh."
                 });
-              }
+              }}
             });
           };
 
@@ -352,6 +366,13 @@ function getImages(count, offset, tag) {
       }
     },
     error: function(jqXhr, textStatus, errorThrown) {
+      if (jqXhr.status == 500) {
+        iziToast.show({
+          title: "Error: " + jqXhr.responseText,
+          message: "Please refresh the website."
+        });
+      } 
+
       pblOffset -= imagesPerPage;
     }
   });
@@ -682,7 +703,12 @@ $(document).ready(function() {
             title: "Error: " + jqXhr.responseText,
             message: "Please log in to upload images."
           });
-        } else {
+        } else if (jqXhr.status == 400) {
+          iziToast.show({
+            title: "Error: " + jqXhr.responseText,
+            message: "Please try again."
+          });
+        }else {
           iziToast.show({
             title: "Upload failed",
             message: "Please try again later."

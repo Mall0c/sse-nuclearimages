@@ -18,7 +18,7 @@ exports.allComments = (req, res, next) => {
 
 exports.writeComment = (req, res, next) => {
     if(req.username === undefined) {
-        return res.status(401).send("Not logged in");
+        return res.status(401).send("Not logged in.");
     }
     const timestamp = Date.now();
     mysql_query('SELECT ID FROM comments WHERE Autor = ? AND Upload_Time + 5000 > ?', [req.id, timestamp], (err0, result0, fields0) => {
@@ -26,7 +26,7 @@ exports.writeComment = (req, res, next) => {
             return res.status(500).send("Something went wrong.");
         }
         if(result0.length !== 0) {
-            return res.status(400).send("Too many uploads.")
+            return res.status(400).send("Too many posts.")
         }
         mysql_query('INSERT INTO comments (Text, Autor, Image, Deleted, Upload_Time) VALUES (?, ?, ?, ?, ?)',
         [req.body.comment, req.id, parseInt(req.params.imageId), 0, timestamp], (err, result, fields) => {
@@ -93,7 +93,7 @@ exports.rateComment = (req, res, next) => {
     const ratingValue = parseInt(req.body.ratingValue);
     if(1 - Math.abs(ratingValue) !== 0) {
         logger.info({level: 'info', message: 'Invalid rating value. CommentController.RateComment.1'});
-        return res.status(400).send("Invalid rating value.");
+        return res.status(400).send("Bad request.");
     }
     mysql_query('SELECT ID FROM comments WHERE ID = ? AND Deleted = 0', [commentId], (err1, result1, fields1) => {
         if(err1) {

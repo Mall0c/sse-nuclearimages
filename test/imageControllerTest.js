@@ -168,7 +168,6 @@ describe('ImageController', () => {
                         }
                     }, async function(error1, response1, body1) {
                         if(error1) throw error1;
-                        const res = await mysql_query_async().query('SELECT * FROM images');
                         // Assert.
                         assert.equal(response1.statusCode, 404);
                         assert.equal(body1, "Image does not exist.");
@@ -341,7 +340,7 @@ describe('ImageController', () => {
                             }, function(error3, response3, body3){
                                 if(error3) throw error3;
                                 // Assert.
-                                //assert.equal(response3.statusCode, 403);
+                                assert.equal(response3.statusCode, 403);
                                 assert.equal(body3, "No authorization.");
                             });
                         });
@@ -377,7 +376,6 @@ describe('ImageController', () => {
 			}, async function(error, response, body) {
                 if(error) throw error;
                 const token = body.token;
-                console.log(token);
                 await mysql_query_async().query('INSERT INTO images (ID, Deleted) VALUES (999220, 0)')
                 // setTimeout is necessary because sometimes there were cases where the database has not written the new user
                 // into the database yet.

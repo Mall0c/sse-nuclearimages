@@ -114,3 +114,6 @@ image_upload/*
 
 # logs
 logs/
+
+# vscode
+.vscode/

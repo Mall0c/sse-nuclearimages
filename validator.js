@@ -96,7 +96,7 @@ exports.imageControllerSearchForTags = () => {
     return [
         check('count').isInt({min: 0, max: 20}).withMessage("Count must be between 0 and 20."),
         check('offset').isInt({min: 0, max: 1000000000}).withMessage("Offset must be between 0 and 1.000.000.000"),
-        check('tag').matches(/^[a-zA-Z0-9\ \%\=\']+$/,"i").withMessage("Only alphanumerical tags, separated by white spaces.")//isLength
+        check('tag').matches(/^[a-zA-Z0-9\ \%\=\']+$/,"i").withMessage("Only alphanumerical tags, separated by white spaces.")
     ]
 }
 

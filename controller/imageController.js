@@ -18,7 +18,6 @@ exports.frontpage = (req, res, next) => {
         var isThereAnError = false;
         try {
             result.forEach(element => {
-                logger.info({level: 'info', message: 'Image file does not exist. ImageController.Frontpage.1'});
                 var imageData = fs.readFileSync('./image_upload/' + "thumbnail_" + element.Image);
 
                 // Split file name to get the file's suffix (e.g. jpg or png).
@@ -29,6 +28,7 @@ exports.frontpage = (req, res, next) => {
             isThereAnError = true;
         }
         if(isThereAnError) {
+            logger.info({level: 'info', message: 'Image file does not exist. ImageController.Frontpage.1'});
             return res.status(500).send("Something went wrong.");
         }
         return res.status(200).send(response);
@@ -60,8 +60,12 @@ exports.oneImage = (req, res, next) => {
         if(req.isAdmin === 0 && result[0].Anonymous === 1) {
             result[0].Username = undefined;
         }
-
-        var imageData = fs.readFileSync('./image_upload/' + result[0].Image);
+        try {
+            var imageData = fs.readFileSync('./image_upload/' + result[0].Image);
+        } catch(e) {
+            logger.info({level: 'info', message: 'Image file does not exist. ImageController.OneImage.1'});
+            return res.status(500).send("Something went wrong");
+        }
         // Split file name to get the file's suffix (e.g. jpg or png).
         var splitFileName = result[0].Image.split(".");
         const username = (req.isAdmin === 0 ? result[0].Username : "(anon)"+result[0].Username);
@@ -80,12 +84,21 @@ exports.imagesOfOneUser = (req, res, next) => {
             return res.status(500).send("Something went wrong.");
         }
         var response = [];
-        result.forEach(element => {
-            var imageData = fs.readFileSync('./image_upload/' + "thumbnail_" + element.Image);
-            // Split file name to get the file's suffix (e.g. jpg or png).
-            var splitFileName = element.Image.split(".");
-            response.push(element.ID + ":" + splitFileName[1] + ":" + base64_encode(imageData))
-        });
+        var isThereAnError = false;
+        try {
+            result.forEach(element => {
+                var imageData = fs.readFileSync('./image_upload/' + "thumbnail_" + element.Image);
+                // Split file name to get the file's suffix (e.g. jpg or png).
+                var splitFileName = element.Image.split(".");
+                response.push(element.ID + ":" + splitFileName[1] + ":" + base64_encode(imageData))
+            });
+        } catch(error) {
+            isThereAnError = true;
+        }
+        if(isThereAnError) {
+            logger.info({level: 'info', message: 'Image file does not exist. ImageController.ImagesOfOneUser.1'});
+            return res.status(500).send("Something went wrong.");
+        }
         return res.status(200).send(response);
     });
 };
@@ -143,7 +156,7 @@ exports.upload =  (req, res, next) => {
             if(err) {
                 return res.status(500).send("Something went wrong.");
             }
-            mysql_query('INSERT INTO images (Image, Upload_Time, Uploader, Tags, Private, Anonymous, Deleted) VALUES (?, ?, ?, ?, ? ,?, ?)', 
+            mysql_query('INSERT INTO images (Image, Upload_Time, Uploader, Tags, Private, Anonymous, Deleted) VALUES (?, ?, ?, ?, ? ,?, ?)',
             [imageName, timestamp, req.id, tags, private, anonymous, 0], (err1, result, fields) => {
                 if(err1) {
                     return res.status(500).send("Something went wrong.");
@@ -167,17 +180,30 @@ exports.searchForTags = (req, res, next) => {
     const limit = parseInt(req.params.count, 10);
     const offset = parseInt(req.params.offset, 10);
     const tag = atob(req.params.tag);
+    if(tag.length > 100) {
+        logger.info({level: 'info', message: 'Tag is too long. ImageController.Frontpage.1'});
+        return res.status(400).send("Bad request.");
+    }
     mysql_query('SELECT ID, Image FROM images WHERE Tags LIKE \'%' + tag + '%\' AND Deleted = 0 ORDER BY Upload_Time DESC LIMIT ? OFFSET ?', [limit, offset], (err, result, fields) => {
         if(err) {
             return res.status(500).send("Something went wrong.");
         }
         var response = [];
-        result.forEach(element => {
-            var imageData = fs.readFileSync('./image_upload/' + "thumbnail_" + element.Image);
-            // Split file name to get the file's suffix (e.g. jpg or png).
-            var splitFileName = element.Image.split(".");
-            response.push(element.ID + ":" + splitFileName[1] + ":" + base64_encode(imageData))
-        });
+        var isThereAnError = false;
+        try {
+            result.forEach(element => {
+                var imageData = fs.readFileSync('./image_upload/' + "thumbnail_" + element.Image);
+                // Split file name to get the file's suffix (e.g. jpg or png).
+                var splitFileName = element.Image.split(".");
+                response.push(element.ID + ":" + splitFileName[1] + ":" + base64_encode(imageData))
+            });
+        } catch(error) {
+            isThereAnError = true;
+        }
+        if(isThereAnError) {
+            logger.info({level: 'info', message: 'Image file does not exist. ImageController.Frontpage.2'});
+            return res.status(500).send("Something went wrong.");
+        }
         return res.status(200).send(response);
     });
 };

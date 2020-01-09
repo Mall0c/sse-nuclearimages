@@ -15,12 +15,22 @@ exports.frontpage = (req, res, next) => {
             return res.status(500).send("Something went wrong.");
         }
         var response = [];
-        result.forEach(element => {
-            var imageData = fs.readFileSync('./image_upload/' + "thumbnail_" + element.Image);
-            // Split file name to get the file's suffix (e.g. jpg or png).
-            var splitFileName = element.Image.split(".");
-            response.push(element.ID + ":" + splitFileName[1] + ":" + base64_encode(imageData))
-        });
+        var isThereAnError = false;
+        try {
+            result.forEach(element => {
+                logger.info({level: 'info', message: 'Image file does not exist. ImageController.Frontpage.1'});
+                var imageData = fs.readFileSync('./image_upload/' + "thumbnail_" + element.Image);
+
+                // Split file name to get the file's suffix (e.g. jpg or png).
+                var splitFileName = element.Image.split(".");
+                response.push(element.ID + ":" + splitFileName[1] + ":" + base64_encode(imageData))
+            });
+        } catch(error) {
+            isThereAnError = true;
+        }
+        if(isThereAnError) {
+            return res.status(500).send("Something went wrong.");
+        }
         return res.status(200).send(response);
     });
 };

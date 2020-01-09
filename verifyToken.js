@@ -25,8 +25,13 @@ function verifyToken(req, res, next) {
                     logger.log({level: 'error', message: 'verifyToken' + err.stack + '\n'});
                     return res.status(500).send("Something went wrong.");
                 }
-                req.id = result[0].ID;
-                req.isAdmin = parseInt(result[0].isAdmin);
+                try {
+                    req.id = result[0].ID;
+                    req.isAdmin = parseInt(result[0].isAdmin);
+                } catch(e) {
+                    logger.log({level: 'error', message: 'verifyToken' + e.stack + '\n'});
+                    return res.status(500).send("Something went wrong.");
+                }
                 next();
             });
         });

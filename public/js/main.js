@@ -527,6 +527,8 @@ function loadComments() {
 
         textElem.id = "textElem" + data[i].ID;
         textElem.type = "text";
+        textElem.maxLength = "140";
+        textElem.minLength = "1";
         textElem.style.display = "none";
 
         saveElem.id = "saveElem" + data[i].ID;
@@ -582,6 +584,8 @@ function loadComments() {
 
         reportTextElem.id = "reportTextElem" + data[i].ID;
         reportTextElem.type = "text";
+        reportTextElem.minLength = "1";
+        reportTextElem.maxLength = "300";
         reportTextElem.style.display = "none";
 
         sendReportElem.id = "sendReportElem" + data[i].ID;

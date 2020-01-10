@@ -56,7 +56,7 @@
                 <div id="reportArea" style="display: none;">
                 <form id="reportForm" class="form-container">
                     <h1>Report Form</h1>
-                    <input type="text" placeholder="Type the reason in here..." name="text">
+                    <input minlength="1" maxlength="300" type="text" placeholder="Type the reason in here..." name="text">
                     <button type="submit" class="">Report</button>
                 </form>
                 </div>
@@ -185,7 +185,7 @@
             </li>
             <li><a href="index.html">browse</a></li>
             <li>
-                <input id="searchTagField" class="inputField" type="text" placeholder="Single tag search...">
+                <input minlength="1" maxlength="32" id="searchTagField" class="inputField" type="text" placeholder="Single tag search...">
             </li>
             <li>
                 <a href="#" onclick="searchUsingTag()"><img src="img/searchIcon.svg"

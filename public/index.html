@@ -19,10 +19,10 @@
             <h1>Change account info</h1>
             <form id="changeSettings">
                 *Current password:<br>
-                <input type="password" name="currentPassword"><br>
+                <input minlength="8" maxlength="16" type="password" name="currentPassword"><br>
                 <br>
                 New password:<br>
-                <input type="password" name="newPassword">
+                <input minlength="8" maxlength="16" type="password" name="newPassword">
                 <br>*necessary fields<br>
                 <input type="submit" value="Change my data">
             </form>
@@ -67,7 +67,7 @@
                 <br>
                 <form id="sendCommentForm">
                 Comment: <br>
-                <input id="commentTextField" type="text" name="comment"><br>
+                <input minlength="1" maxlength="140" id="commentTextField" type="text" name="comment"><br>
 
                 <input type="submit" value="Submit Comment"></form>
                 <!--List all comments-->
@@ -135,14 +135,14 @@
                         <hr>
 
                         <label for="username"><b>Username</b></label>
-                        <input class="loginRegisterField" type="text" placeholder="Enter Username" name="username"
+                        <input minlength="3" maxlength="15" class="loginRegisterField" type="text" placeholder="Enter Username" name="username"
                             required>
 
                         <label for="username"><b>E-mail</b></label>
-                        <input class="loginRegisterField" type="text" placeholder="Enter E-mail" name="email" required>
+                        <input minlength="3" maxlength="15" class="loginRegisterField" type="email" placeholder="Enter E-mail" name="email" required>
 
                         <label for="psw"><b>Password</b></label>
-                        <input class="loginRegisterField" type="password" placeholder="Enter Password" name="password"
+                        <input minlength="8" maxlength="16" class="loginRegisterField" type="password" placeholder="Enter Password" name="password"
                             required>
 
                         <hr>
@@ -158,11 +158,11 @@
                         <hr>
 
                         <label for="username"><b>Username</b></label>
-                        <input class="loginRegisterField" type="text" placeholder="Enter Username" name="username"
+                        <input minlength="3" maxlength="15" class="loginRegisterField" type="text" placeholder="Enter Username" name="username"
                             required>
 
                         <label for="psw"><b>Password</b></label>
-                        <input class="loginRegisterField" type="password" placeholder="Enter Password" name="password"
+                        <input minlength="8" maxlength="16" class="loginRegisterField" type="password" placeholder="Enter Password" name="password"
                             required>
                         <div class="forgotPwContainer" style="visibility: hidden;">
                             Forgot <a href="#">password?</a>

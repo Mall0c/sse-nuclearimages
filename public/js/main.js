@@ -230,6 +230,10 @@ document.getElementById("deleteImage").onclick = function() {
         title: "Error",
         message: "You're not authorized to delete this image."
       });
+      iziToast.show({
+        title: "Error: " + jqXhr.responseText,
+        message: "Please try again later."
+      });
     }}
   });
 };
@@ -464,6 +468,10 @@ function loadComments() {
               loadComments();
             },
             error: function(jqXhr, textStatus, errorThrown) {
+              iziToast.show({
+                title: "Error: " +jqXhr.responseText,
+                message: ""
+              });
             }
           });
         };
@@ -482,6 +490,10 @@ function loadComments() {
               loadComments();
             },
             error: function(jqXhr, textStatus, errorThrown) {
+              iziToast.show({
+                title: "Error: " +jqXhr.responseText,
+                message: ""
+              });
             }
           });
         };
@@ -500,6 +512,10 @@ function loadComments() {
               loadComments();
             },
             error: function(jqXhr, textStatus, errorThrown) {
+              iziToast.show({
+                title: "Error: " +jqXhr.responseText,
+                message: ""
+              });
             }
           });
         };
@@ -529,6 +545,10 @@ function loadComments() {
               loadComments();
             },
             error: function(jqXhr, textStatus, errorThrown) {
+              iziToast.show({
+                title: "Error: " +jqXhr.responseText,
+                message: ""
+              });
             }
           });
 
@@ -584,6 +604,10 @@ function loadComments() {
               });
             },
             error: function(jqXhr, textStatus, errorThrown) {
+              iziToast.show({
+                title: "Error: " +jqXhr.responseText,
+                message: ""
+              });
             }
           });
 
@@ -626,6 +650,10 @@ function loadComments() {
       }
     },
     error: function(jqXhr, textStatus, errorThrown) {
+      iziToast.show({
+        title: "Error: " +jqXhr.responseText,
+        message: ""
+      });
     }
   });
 }
@@ -648,6 +676,10 @@ $(document).ready(function() {
         loadComments();
       },
       error: function(jqXhr, textStatus, errorThrown) {
+        iziToast.show({
+          title: "Error: " +jqXhr.responseText,
+          message: ""
+        });
       }
     });
   });
@@ -709,9 +741,14 @@ $(document).ready(function() {
       data: form_data,
       type: "put",
       success: function(data, textStatus, jQxhr) {
+        logOut();
         location.reload();
       },
       error: function(jqXhr, textStatus, errorThrown) {
+        iziToast.show({
+          title: "Error: " +jqXhr.responseText,
+          message: ""
+        });
       }
     });
   });
@@ -791,8 +828,8 @@ $(document).ready(function() {
       },
       error: function(jqXhr, textStatus, errorThrown) {
         iziToast.show({
-          title: "Error ",
-          message: "Wrong username or password."
+          title: "Error: " + jqXhr.responseText,
+          message: ""
         });
       }
     });

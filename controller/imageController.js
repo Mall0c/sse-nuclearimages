@@ -16,8 +16,10 @@ exports.frontpage = (req, res, next) => {
         }
         var response = [];
         var isThereAnError = false;
+        var imageId;
         try {
             result.forEach(element => {
+                imageId = element.ID;
                 var imageData = fs.readFileSync('./image_upload/' + "thumbnail_" + element.Image);
 
                 // Split file name to get the file's suffix (e.g. jpg or png).
@@ -26,10 +28,15 @@ exports.frontpage = (req, res, next) => {
             });
         } catch(error) {
             isThereAnError = true;
+            mysql_query('UPDATE images SET Deleted = 1 WHERE ID = ?', [imageId], (err2, result2, fields2) => {
+                if(err2) {
+                    logger.info({level: 'info', message: 'Couldnt delete. ImageController.Frontpage.2'});
+                }
+            });
         }
         if(isThereAnError) {
             logger.info({level: 'info', message: 'Image file does not exist. ImageController.Frontpage.1'});
-            return res.status(500).send("Something went wrong.");
+            //return res.status(500).send("Something went wrong.");
         }
         return res.status(200).send(response);
     });
@@ -143,7 +150,7 @@ exports.upload =  (req, res, next) => {
             isImage = false;
         });
         if(!isImage) {
-            return res.status(400).send("File is not an image");
+            return res.status(400).send("Invalid Image File (check upload requirements)");
         }
         // Image's name is a random string concatenated with the file ending.
         const imageName = crypto.randomBytes(16).toString('hex') + "." + fileEnding;

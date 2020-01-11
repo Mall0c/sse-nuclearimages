@@ -1,6 +1,7 @@
 const jwt = require('jsonwebtoken');
 const dbConfig = require('./dbConfig');
 const mysql_query = require('./mysql_query');
+const logger = require('./logger');
 
 function verifyToken(req, res, next) {
     // Express headers are auto converted to lowercase.

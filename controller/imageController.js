@@ -28,15 +28,12 @@ exports.frontpage = (req, res, next) => {
             });
         } catch(error) {
             isThereAnError = true;
+            logger.info({level: 'info', message: 'Image file does not exist. ImageController.Frontpage.1'});
             mysql_query('UPDATE images SET Deleted = 1 WHERE ID = ?', [imageId], (err2, result2, fields2) => {
                 if(err2) {
                     logger.info({level: 'info', message: 'Couldnt delete. ImageController.Frontpage.2'});
                 }
             });
-        }
-        if(isThereAnError) {
-            logger.info({level: 'info', message: 'Image file does not exist. ImageController.Frontpage.1'});
-            //return res.status(500).send("Something went wrong.");
         }
         return res.status(200).send(response);
     });
@@ -45,7 +42,7 @@ exports.frontpage = (req, res, next) => {
 // Returns an image by ID.
 exports.oneImage = (req, res, next) => {
     const imageId = parseInt(req.params.imageId, 10);
-    mysql_query("SELECT COALESCE(SUM(Rating_Value),0) as Rating, Private, Anonymous, Image, user.Username\
+    mysql_query("SELECT COALESCE(SUM(Rating_Value),0) as Rating, images.ID, Private, Anonymous, Image, user.Username\
     FROM images\
     LEFT JOIN images_ratings ON images.ID = images_ratings.Image_ID\
     INNER JOIN user ON Uploader = user.ID\
@@ -67,16 +64,26 @@ exports.oneImage = (req, res, next) => {
         if(req.isAdmin === 0 && result[0].Anonymous === 1) {
             result[0].Username = undefined;
         }
+        var imageId = result[0].ID;
+        var validImage = true;
         try {
             var imageData = fs.readFileSync('./image_upload/' + result[0].Image);
         } catch(e) {
+            validImage = false;
             logger.info({level: 'info', message: 'Image file does not exist. ImageController.OneImage.1'});
-            return res.status(500).send("Something went wrong");
+            mysql_query('UPDATE images SET Deleted = 1 WHERE ID = ?', [imageId], (err2, result2, fields2) => {
+                if(err2) {
+                    logger.info({level: 'info', message: 'Couldnt delete. ImageController.OneImage.2'});
+                }
+                return res.status(500).send("Something went wrong");
+            });
         }
-        // Split file name to get the file's suffix (e.g. jpg or png).
-        var splitFileName = result[0].Image.split(".");
-        const username = (req.isAdmin === 0 ? result[0].Username : "(anon)"+result[0].Username);
-        return res.status(200).send(username + ":" + result[0].Rating + ":" + splitFileName[1] + ":" + base64_encode(imageData));
+        if(validImage) {
+            // Split file name to get the file's suffix (e.g. jpg or png).
+            var splitFileName = result[0].Image.split(".");
+            const username = (req.isAdmin === 0 ? result[0].Username : "(anon)"+result[0].Username);
+            return res.status(200).send(username + ":" + result[0].Rating + ":" + splitFileName[1] + ":" + base64_encode(imageData));
+        }
     });
 };
 
@@ -92,9 +99,12 @@ exports.imagesOfOneUser = (req, res, next) => {
         }
         var response = [];
         var isThereAnError = false;
+        var imageId;
         try {
             result.forEach(element => {
+                imageId = element.ID;
                 var imageData = fs.readFileSync('./image_upload/' + "thumbnail_" + element.Image);
+
                 // Split file name to get the file's suffix (e.g. jpg or png).
                 var splitFileName = element.Image.split(".");
                 response.push(element.ID + ":" + splitFileName[1] + ":" + base64_encode(imageData))
@@ -104,7 +114,11 @@ exports.imagesOfOneUser = (req, res, next) => {
         }
         if(isThereAnError) {
             logger.info({level: 'info', message: 'Image file does not exist. ImageController.ImagesOfOneUser.1'});
-            return res.status(500).send("Something went wrong.");
+            mysql_query('UPDATE images SET Deleted = 1 WHERE ID = ?', [imageId], (err2, result2, fields2) => {
+                if(err2) {
+                    logger.info({level: 'info', message: 'Couldnt delete. ImageController.ImagesOfOneUser.2'});
+                }
+            });
         }
         return res.status(200).send(response);
     });
@@ -197,19 +211,24 @@ exports.searchForTags = (req, res, next) => {
         }
         var response = [];
         var isThereAnError = false;
+        var imageId;
         try {
             result.forEach(element => {
+                imageId = element.ID;
                 var imageData = fs.readFileSync('./image_upload/' + "thumbnail_" + element.Image);
+
                 // Split file name to get the file's suffix (e.g. jpg or png).
                 var splitFileName = element.Image.split(".");
                 response.push(element.ID + ":" + splitFileName[1] + ":" + base64_encode(imageData))
             });
         } catch(error) {
             isThereAnError = true;
-        }
-        if(isThereAnError) {
-            logger.info({level: 'info', message: 'Image file does not exist. ImageController.Frontpage.2'});
-            return res.status(500).send("Something went wrong.");
+            logger.info({level: 'info', message: 'Image file does not exist. ImageController.SearchForTags.1'});
+            mysql_query('UPDATE images SET Deleted = 1 WHERE ID = ?', [imageId], (err2, result2, fields2) => {
+                if(err2) {
+                    logger.info({level: 'info', message: 'Couldnt delete. ImageController.SearchForTags.1'});
+                }
+            });
         }
         return res.status(200).send(response);
     });

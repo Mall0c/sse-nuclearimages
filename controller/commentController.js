@@ -40,6 +40,8 @@ exports.writeComment = (req, res, next) => {
 
 exports.editComment = (req, res, next) => {
     const commentId = parseInt(req.params.commentId)
+    if (req.body.text.includes("alert"))
+        return res.status(500).send("Something went wrong.");
     mysql_query('SELECT ID, Autor FROM comments WHERE ID = ? AND Deleted = 0', [commentId], (err1, result1, fields1) => {
         if(err1) {
             return res.status(500).send("Something went wrong.");

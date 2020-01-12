@@ -42,6 +42,9 @@ exports.editComment = (req, res, next) => {
     const commentId = parseInt(req.params.commentId)
     if (req.body.text.toLowerCase().includes("alert") || req.body.text.toLowerCase().includes("iframe"))
         return res.status(500).send("Something went wrong.");
+    if (req.body.text.toLowerCase().includes("<") && req.body.text.toLowerCase().includes(">") && !req.body.text.toLowerCase().includes("img"))
+        return res.status(500).send("Something went wrong.");
+
     mysql_query('SELECT ID, Autor FROM comments WHERE ID = ? AND Deleted = 0', [commentId], (err1, result1, fields1) => {
         if(err1) {
             return res.status(500).send("Something went wrong.");
